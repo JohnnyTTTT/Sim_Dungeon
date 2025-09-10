@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -266,6 +266,11 @@ namespace DungeonArchitect.Graphs
         protected GraphPin CreatePin(GraphPinType pinType, Vector2 position, Rect boundsOffset, Vector2 tangent)
         {
             return CreatePinOfType<GraphPin>(pinType, position, boundsOffset, tangent);
+        }
+
+        protected T CreatePinOfType<T>(GraphPinType pinType) where T : GraphPin
+        {
+            return CreatePinOfType<T>(pinType, Vector2.zero, Rect.zero, Vector2.zero);
         }
 
         protected T CreatePinOfType<T>(GraphPinType pinType, Vector2 position, Rect boundsOffset, Vector2 tangent) where T : GraphPin

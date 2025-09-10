@@ -1,4 +1,6 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+
+using System;
 using System.Collections.Generic;
 using DungeonArchitect.Flow.Domains.Layout;
 using DungeonArchitect.Flow.Domains.Tilemap;
@@ -16,9 +18,10 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
         public bool debugUnwalkableCells = false;
         
         protected override bool AssignItems(FlowTilemap tilemap, FlowLayoutGraph graph, System.Random random, ref string errorMessage)
-        {
+        {   
             var nodesByCoord = new Dictionary<IntVector2, FlowLayoutGraphNode>();
             var freeTilesByNode = new Dictionary<IntVector2, List<FlowTilemapCell>>();
+            var tilesByNode = new Dictionary<IntVector2, List<FlowTilemapCell>>();
 
             foreach (var node in graph.Nodes)
             {
@@ -39,6 +42,12 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                     {
                         freeTilesByNode[nodeCoord].Add(cell);
                     }
+                    
+                    if (!tilesByNode.ContainsKey(nodeCoord))
+                    {
+                        tilesByNode.Add(nodeCoord, new List<FlowTilemapCell>());
+                    }
+                    tilesByNode[nodeCoord].Add(cell);
                 }
             }
 
@@ -70,6 +79,8 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                         context.tilemap = tilemap;
                         context.distanceField = distanceField;
                         context.random = random;
+                        context.node = node;
+                        context.chunkTiles = tilesByNode.ContainsKey(coord) ? tilesByNode[coord].ToArray() : Array.Empty<FlowTilemapCell>();
 
                         string placementErrorMessage = "";
                         var placementSettings = item.GetDomainData<TilemapItemPlacementSettings>();

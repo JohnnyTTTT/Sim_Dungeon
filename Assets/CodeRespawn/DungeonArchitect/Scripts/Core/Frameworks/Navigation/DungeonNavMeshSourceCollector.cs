@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -25,8 +25,8 @@ namespace DungeonArchitect
 
             if (dungeon == null) return;
             
-            var components = GameObject.FindObjectsOfType<DungeonSceneProviderData>();
-            foreach (var component in components)
+            var allSpawnedComponents = GameObject.FindObjectsOfType<DungeonSceneProviderData>();
+            foreach (var component in allSpawnedComponents)
             {
                 if (component.dungeon == dungeon && component.affectsNavigation)
                 {
@@ -36,10 +36,17 @@ namespace DungeonArchitect
                         var colliders = gameObject.GetComponentsInChildren<Collider>();
                         foreach (var collider in colliders)
                         {
+                            var userData = collider.GetComponent<DungeonSceneItemUserMeta>();
+                            if (userData != null && userData.overrideNavigation && !userData.affectsNavigation)
+                            {
+                                continue;
+                            }
+                            
                             if (collider is MeshCollider)
                             {
                                 var meshCollider = collider as MeshCollider;
-                                NavMeshBuildSource source = CreateMeshSource(meshCollider.sharedMesh, meshCollider.transform.localToWorldMatrix);
+                                NavMeshBuildSource source = CreateMeshSource(meshCollider.sharedMesh,
+                                    meshCollider.transform.localToWorldMatrix);
                                 sources.Add(source);
                             }
                             else
@@ -61,7 +68,15 @@ namespace DungeonArchitect
                         foreach (var meshFilter in meshFilters)
                         {
                             if (meshFilter == null || meshFilter.sharedMesh == null) continue;
-                            NavMeshBuildSource source = CreateMeshSource(meshFilter.sharedMesh, meshFilter.transform.localToWorldMatrix);
+                            
+                            var userData = meshFilter.GetComponent<DungeonSceneItemUserMeta>();
+                            if (userData != null && userData.overrideNavigation && !userData.affectsNavigation)
+                            {
+                                continue;
+                            }
+                            
+                            NavMeshBuildSource source = CreateMeshSource(meshFilter.sharedMesh,
+                                meshFilter.transform.localToWorldMatrix);
                             sources.Add(source);
                         }
                     }

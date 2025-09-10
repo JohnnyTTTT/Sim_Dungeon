@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using DungeonArchitect.Flow.Domains.Layout;
 using DungeonArchitect.Flow.Domains.Layout.Pathing;
 using DungeonArchitect.Utils;
@@ -10,11 +10,13 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Constraints
     {
         private readonly IGridFlowLayoutNodePositionConstraint scriptConstraint;
         private readonly Vector2Int gridSize;
+        private readonly System.Random random;
 
-        public GridFlowLayoutNodeConstraintProcessorScript(IGridFlowLayoutNodePositionConstraint scriptConstraint, Vector2Int gridSize)
+        public GridFlowLayoutNodeConstraintProcessorScript(IGridFlowLayoutNodePositionConstraint scriptConstraint, Vector2Int gridSize, System.Random random)
         {
             this.scriptConstraint = scriptConstraint;
             this.gridSize = gridSize;
+            this.random = random;
         }
         
         public bool CanCreateNodeAt(FlowLayoutGraphNode node, int totalPathLength, int currentPathPosition)

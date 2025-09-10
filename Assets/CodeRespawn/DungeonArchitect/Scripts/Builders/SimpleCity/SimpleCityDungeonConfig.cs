@@ -1,5 +1,6 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace DungeonArchitect.Builders.SimpleCity
 {
@@ -23,8 +24,8 @@ namespace DungeonArchitect.Builders.SimpleCity
     {
         public Vector2 CellSize = new Vector2(4, 4);
 
-        public int minSize = 15;
-        public int maxSize = 20;
+        public Vector2Int minCitySize = new Vector2Int(15, 15);
+        public Vector2Int maxCitySize = new Vector2Int(20, 20);
 
         public int minBlockSize = 2;
         public int maxBlockSize = 4;
@@ -34,7 +35,9 @@ namespace DungeonArchitect.Builders.SimpleCity
         public int cityWallPadding = 1;
         public int cityDoorSize = 1;
 
-		public float roadEdgeRemovalProbability = 0;
+        public float roadEdgeRemovalProbability = 0;
+
+        public bool avoidEdgeRemovalFromBoundary = true;
 
         public CityBlockDimension[] customBlockDimensions;
 

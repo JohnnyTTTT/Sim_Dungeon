@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using DungeonArchitect.Flow.Domains;
 using DungeonArchitect.Flow.Domains.Layout;
 using DungeonArchitect.Flow.Domains.Layout.Pathing;
@@ -42,7 +42,7 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
             return gridSize;
         }
 
-        protected override IFlowLayoutNodeCreationConstraint CreateNodeCreationConstraint(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph)
+        protected override IFlowLayoutNodeCreationConstraint CreateNodeCreationConstraint(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph, System.Random random)
         {
             if (graph != null)
             {
@@ -53,7 +53,7 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                     if (scriptInstance != null)
                     {
                         var gridSize = FindGridSize(graph);
-                        return new GridFlowLayoutNodeConstraintProcessorScript(scriptInstance, gridSize);
+                        return new GridFlowLayoutNodeConstraintProcessorScript(scriptInstance, gridSize, random);
                     }
                 }
             }

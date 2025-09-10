@@ -1,8 +1,9 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 using System;
 using System.Collections.Generic;
 using DungeonArchitect.Graphs;
+using Object = UnityEngine.Object;
 
 namespace DungeonArchitect.UI.Widgets.GraphEditors
 {
@@ -139,6 +140,33 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
             {
                 undo.DestroyObjectImmediate(link);
             }
+        }
+
+        public static void DestroyPinLinks(Graph graph, GraphPin pin, UIUndoSystem undo)
+        {
+            var linksToRemove = new HashSet<GraphLink>();
+            foreach (var link in graph.Links)
+            {
+                if (link.Input == pin || link.Output == pin)
+                {
+                    linksToRemove.Add(link);       
+                }
+            }
+            
+            if (undo != null)
+            {
+                undo.RecordObject(graph, "Destroy Link");
+            }
+            foreach (var link in linksToRemove)
+            {
+                graph.Links.Remove(link);
+                
+                if (undo != null)
+                {
+                    undo.DestroyObjectImmediate(link);
+                }
+            }
+
         }
 
         /// <summary>

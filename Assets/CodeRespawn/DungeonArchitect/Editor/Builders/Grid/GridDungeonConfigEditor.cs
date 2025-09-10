@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEditor;
 using UnityEngine;
 using DungeonArchitect.Builders.Grid;
@@ -21,12 +21,12 @@ namespace DungeonArchitect.Editors
 		SerializedProperty CorridorWidth;
 		SerializedProperty InitialRoomRadius;
 		SerializedProperty SpanningTreeLoopProbability;
-        SerializedProperty StairConnectionTollerance;
-        SerializedProperty HeightVariationProbability;
+        //SerializedProperty StairConnectionTollerance;
+        //SerializedProperty HeightVariationProbability;
 		SerializedProperty NormalMean;
 		SerializedProperty NormalStd;
 		SerializedProperty GridCellSize;
-		SerializedProperty MaxAllowedStairHeight;
+		//SerializedProperty MaxAllowedStairHeight;
 		SerializedProperty Mode2D;
         SerializedProperty DoorProximitySteps;
         
@@ -47,12 +47,12 @@ namespace DungeonArchitect.Editors
             CorridorWidth = sobject.FindProperty("CorridorWidth");
 			InitialRoomRadius = sobject.FindProperty("InitialRoomRadius");
 			SpanningTreeLoopProbability = sobject.FindProperty("SpanningTreeLoopProbability");
-			StairConnectionTollerance = sobject.FindProperty("StairConnectionTollerance");
-			HeightVariationProbability = sobject.FindProperty("HeightVariationProbability");
+			//StairConnectionTollerance = sobject.FindProperty("StairConnectionTollerance");
+			//HeightVariationProbability = sobject.FindProperty("HeightVariationProbability");
+			//MaxAllowedStairHeight = sobject.FindProperty("MaxAllowedStairHeight");
 			NormalMean = sobject.FindProperty("NormalMean");
 			NormalStd = sobject.FindProperty("NormalStd");
 			GridCellSize = sobject.FindProperty("GridCellSize");
-			MaxAllowedStairHeight = sobject.FindProperty("MaxAllowedStairHeight");
             Mode2D = sobject.FindProperty("Mode2D");
             DoorProximitySteps = sobject.FindProperty("DoorProximitySteps");
 
@@ -90,14 +90,6 @@ namespace DungeonArchitect.Editors
 			EditorGUILayout.PropertyField(CorridorWidth);
             EditorGUILayout.Space();
 
-            // Height variations
-            GUILayout.Label("Height Variations", EditorStyles.boldLabel);
-			EditorGUILayout.PropertyField(HeightVariationProbability);
-			EditorGUILayout.PropertyField(MaxAllowedStairHeight);
-			EditorGUILayout.PropertyField(StairConnectionTollerance);
-			EditorGUILayout.PropertyField(SpanningTreeLoopProbability);
-            EditorGUILayout.Space();
-
             // Misc
             GUILayout.Label("Misc", EditorStyles.boldLabel);
 			EditorGUILayout.PropertyField(Mode2D);
@@ -105,6 +97,7 @@ namespace DungeonArchitect.Editors
 			EditorGUILayout.PropertyField(NormalStd);
 			EditorGUILayout.PropertyField(InitialRoomRadius);
             EditorGUILayout.PropertyField(DoorProximitySteps);
+            EditorGUILayout.PropertyField(SpanningTreeLoopProbability);
             EditorGUILayout.Space();
 
             GUILayout.Label("Experimental", EditorStyles.boldLabel);

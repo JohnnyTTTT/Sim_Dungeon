@@ -1,4 +1,6 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using DungeonArchitect.Utils;
@@ -17,7 +19,8 @@ namespace DungeonArchitect.Builders.Snap
         SnapModel snapModel;
         
         new System.Random random;
-
+        ModuleBuildNode buildNode;
+        
         /// <summary>
         /// Builds the dungeon layout.  In this method, you should build your dungeon layout and save it in your model file
         /// No markers should be emitted here.   (EmitMarkers function will be called later by the engine to do that)
@@ -27,26 +30,7 @@ namespace DungeonArchitect.Builders.Snap
         public override void BuildDungeon(DungeonConfig config, DungeonModel model)
         {
             base.BuildDungeon(config, model);
-
-            markers.Clear();
-        }
-
-        /// <summary>
-        /// Override the builder's emit marker function to emit our own markers based on the layout that we built
-        /// You should emit your markers based on the layout you have saved in the model generated previously
-        /// When the user is designing the theme interactively, this function will be called whenever the graph state changes,
-        /// so the theme engine can populate the scene (BuildDungeon will not be called if there is no need to rebuild the layout again)
-        /// </summary>
-        public override void EmitMarkers()
-        {
-            base.EmitMarkers();
-
-        }
-        
-        public override bool IsThemingSupported() { return false; }
-
-        // This is called by the builders that do not support theming
-        public override void BuildNonThemedDungeon(DungeonSceneProvider sceneProvider, IDungeonSceneObjectInstantiator objectInstantiator) {
+            buildNode = null;
             random = new System.Random((int)config.Seed);
             markers.Clear();
 
@@ -111,16 +95,29 @@ namespace DungeonArchitect.Builders.Snap
             var startGraphNode = GrammarRuntimeGraphUtils.FindStartNode(levelGraph);
 
             // Build the main branch
-            ModuleBuildNode BuildNode = BuildLayoutRecursive(StartNode, ref OccupiedBounds, startGraphNode, LayoutBuildState);
+            buildNode = BuildLayoutRecursive(StartNode, ref OccupiedBounds, startGraphNode, LayoutBuildState);
+        }
+        
+        public override bool IsThemingSupported() { return false; }
 
+        // This is called by the builders that do not support theming
+        public override GameObject[] SpawnManagedObjects(DungeonSceneProvider sceneProvider, IDungeonSceneObjectInstantiator objectInstantiator) {
             snapModel.ResetModel();
+            markers.Clear();
 
+            if (buildNode == null)
+            {
+                return Array.Empty<GameObject>();
+            }
+
+            var spawnedObjects = new List<GameObject>();
+            
             sceneProvider.OnDungeonBuildStart();
 
             // Spawn the modules and register them in the model
             {
                 var spawnedModuleList = new List<SnapModuleInstance>();
-                TraverseTree(BuildNode, delegate (ModuleBuildNode Node)
+                TraverseTree(buildNode, delegate (ModuleBuildNode Node)
                 {
                     // Spawn a module at this location
                     ModuleInfo moduleInfo = Node.Module;
@@ -130,9 +127,11 @@ namespace DungeonArchitect.Builders.Snap
                     //templateInfo.NodeId = moduleInfo.ModuleGuid.ToString();
                     templateInfo.NodeId = Node.ModuleInstanceID;
                     templateInfo.Offset = Matrix4x4.identity;
+                    templateInfo.affectsNavigation = true;
                     templateInfo.StaticState = DungeonThemeItemStaticMode.Unchanged;
 
                     Node.spawnedModule = sceneProvider.AddGameObject(templateInfo, Node.AttachmentConfig.AttachedModuleTransform, objectInstantiator);
+                    spawnedObjects.Add(Node.spawnedModule);
 
                     // Register this in the model
                     var snapModule = new SnapModuleInstance();
@@ -147,7 +146,7 @@ namespace DungeonArchitect.Builders.Snap
             // Generate the list of connections
             {
                 var connectionList = new List<SnapModuleConnection>();
-                TraverseTree(BuildNode, delegate (ModuleBuildNode Node)
+                TraverseTree(buildNode, delegate (ModuleBuildNode Node)
                 {
                     if (Node.Parent != null)
                     {
@@ -166,7 +165,9 @@ namespace DungeonArchitect.Builders.Snap
             
             sceneProvider.OnDungeonBuildStop();
 
-            FixupDoorStates(BuildNode);
+            FixupDoorStates(buildNode);
+
+            return spawnedObjects.ToArray();
         }
 
         T GetArrayEntry<T>(int index, T[] array) where T : class

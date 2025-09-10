@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -161,7 +161,22 @@ namespace DungeonArchitect.Builders.Maze
                 }
             }
         }
-
+        
+        protected override LevelMarkerList CreateMarkerListObject(DungeonConfig config)
+        {
+            var mazeConfig = config as MazeDungeonConfig;
+            if (mazeConfig != null)
+            {
+                var bucketSize = Mathf.Max(mazeConfig.gridSize.x, mazeConfig.gridSize.y) * 2;
+                bucketSize = Mathf.Max(0.1f, bucketSize);
+                return new SpatialPartionedLevelMarkerList(bucketSize);
+            }
+            else
+            {
+                return base.CreateMarkerListObject(config);
+            }
+        }
+        
 		void EmitLevelMarkers()
         {
             var gridSize = new Vector3(MazeConfig.gridSize.x, 0, MazeConfig.gridSize.y);

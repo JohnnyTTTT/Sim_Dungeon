@@ -1,6 +1,9 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 using System.Collections.Generic;
+using DungeonArchitect.MarkerGenerator.Processor;
+using DungeonArchitect.MarkerGenerator.Processor.Grid;
+using DungeonArchitect.Utils;
 
 namespace DungeonArchitect.Builders.SimpleCity
 {
@@ -72,8 +75,8 @@ namespace DungeonArchitect.Builders.SimpleCity
         void GenerateCityLayout()
         {
             cityConfig.roadWidth = Mathf.Max(1, cityConfig.roadWidth);
-            var cityWidth = random.Range(cityConfig.minSize, cityConfig.maxSize);
-            var cityLength = random.Range(cityConfig.minSize, cityConfig.maxSize);
+            var cityWidth = random.Range(cityConfig.minCitySize.x, cityConfig.maxCitySize.x);
+            var cityLength = random.Range(cityConfig.minCitySize.y, cityConfig.maxCitySize.y);
             var roadWidth = cityConfig.roadWidth;
 
             cityModel.CityWidth = cityWidth;
@@ -301,8 +304,19 @@ namespace DungeonArchitect.Builders.SimpleCity
 					if (IsStraightRoad(x, z)) {
 						bool bRemove = random.NextFloat() < cityConfig.roadEdgeRemovalProbability;
 						if (bRemove) {
-							RemoveRoadEdge(x, z);
+                            if (cityConfig.avoidEdgeRemovalFromBoundary)
+                            {
+                                if (x == 0 || z == 0 || x == Width - 1 || z == Length - 1)
+                                {
+                                    bRemove = false;
+                                }
+                            }
 						}
+
+                        if (bRemove)
+                        {
+                            RemoveRoadEdge(x, z);
+                        }
 					}
 				}
 			}
@@ -503,12 +517,13 @@ namespace DungeonArchitect.Builders.SimpleCity
         /// </summary>
         void EmitCityMarkers()
         {
-            var basePosition = transform.position;
             var cells = cityModel.Cells;
             var width = cells.GetLength(0);
             var length = cells.GetLength(1);
             var cellSize = new Vector3(cityConfig.CellSize.x, 0, cityConfig.CellSize.y);
 
+            var t = transform;
+            
             for (int x = 0; x < width; x++)
             {
                 for (int z = 0; z < length; z++)
@@ -517,7 +532,8 @@ namespace DungeonArchitect.Builders.SimpleCity
                     string markerName = "Unknown";
 
                     Quaternion rotation = Quaternion.identity;
-                    var worldPosition = cell.Position * cellSize + basePosition;
+                    var worldPosition = cell.Position * cellSize;
+                    worldPosition = t.TransformPoint(worldPosition);
 
                     if (cell.CellType == SimpleCityCellType.House)
                     {
@@ -542,7 +558,7 @@ namespace DungeonArchitect.Builders.SimpleCity
                         rotation = Quaternion.Euler(0, angle, 0);
                     }
 
-                    var markerTransform = Matrix4x4.TRS(worldPosition, rotation, Vector3.one);
+                    var markerTransform = Matrix4x4.TRS(worldPosition, t.rotation * rotation, Vector3.one);
                     EmitMarker(markerName, markerTransform, cell.Position, -1);
 
                     // Emit the generic road marker
@@ -560,13 +576,62 @@ namespace DungeonArchitect.Builders.SimpleCity
             var cells = cityModel.Cells;
 
             var padding = config.cityWallPadding;
-            var doorSize = config.cityDoorSize;
+            //var doorSize = Mathf.Max(1, config.cityDoorSize);
 
             var width = cells.GetLength(0);
             var length = cells.GetLength(1);
 
+            
             var cellSize = new Vector3(config.CellSize.x, 0, config.CellSize.y);
             for (int p = 1; p <= padding; p++)
+            {
+                var start = new Vector2Int(-p, -p);
+                var size = new Vector2Int(width + p * 2, length + p * 2);
+                BoundaryTraversal.TraverseBoundary(start, size, true, (coord, angle) =>
+                {
+                    EmitMarkerAt(cellSize, SimpleCityDungeonMarkerNames.CityWallPadding, coord.x, coord.y, angle);
+                });
+            }
+
+            int wallBoundaryPadding = padding + 1;
+            var wallBoundaryStart = new Vector2Int(-wallBoundaryPadding, -wallBoundaryPadding);
+            var wallBoundarySize = new Vector2Int(width + wallBoundaryPadding * 2, length + wallBoundaryPadding * 2);
+            Vector2 wallBoundaryCenterF = new Vector2(wallBoundarySize.x - 1, wallBoundarySize.y - 1) / 2.0f;
+            var doorStartF = wallBoundaryCenterF - new Vector2(cityConfig.cityDoorSize / 2.0f, cityConfig.cityDoorSize / 2.0f);
+            var doorEndF = doorStartF + new Vector2Int(cityConfig.cityDoorSize, cityConfig.cityDoorSize);
+            var doorStart = new Vector2Int(Mathf.FloorToInt(doorStartF.x + 0.001f), Mathf.FloorToInt(doorStartF.y + 0.001f));
+            var doorEnd = new Vector2Int(Mathf.FloorToInt(doorEndF.x + 0.001f), Mathf.FloorToInt(doorEndF.y + 0.001f));
+
+            BoundaryTraversal.TraverseBoundary(wallBoundaryStart, wallBoundarySize, false, (coord, angle) =>
+            {
+                if (coord.x >= doorStart.x && coord.x < doorEnd.x)
+                {
+                    if (coord.x == doorStart.x)
+                    {
+                        EmitMarkerAt(cellSize, SimpleCityDungeonMarkerNames.CityDoor, coord.x + (cityConfig.cityDoorSize - 1) * 0.5f, coord.y, angle);
+                    }
+                }
+                else if (coord.y >= doorStart.y && coord.y < doorEnd.y)
+                {
+                    if (coord.y == doorStart.y)
+                    {
+                        EmitMarkerAt(cellSize, SimpleCityDungeonMarkerNames.CityDoor, coord.x, coord.y + (cityConfig.cityDoorSize - 1) * 0.5f, angle);
+                    }
+                }
+                else
+                {
+                    EmitMarkerAt(cellSize, SimpleCityDungeonMarkerNames.CityWall, coord.x, coord.y, angle);
+                }
+                
+            });
+            
+            BoundaryTraversal.TraverseCorners(wallBoundaryStart, wallBoundarySize, (coord, angle) =>
+            {
+                EmitMarkerAt(cellSize, SimpleCityDungeonMarkerNames.CornerTower, coord.x, coord.y, angle);
+            });
+            
+            /*
+            for (int p = 1; p <= padding + 1; p++)
             {
 
                 var currentPadding = p;
@@ -576,7 +641,7 @@ namespace DungeonArchitect.Builders.SimpleCity
                 var ex = width + currentPadding - 1;
                 var ez = length + currentPadding - 1;
 
-                if (currentPadding == padding)
+                if (currentPadding == padding + 1)
                 {
                     var halfDoorSize = doorSize / 2.0f;
                     // Insert markers along the 4 wall sides
@@ -586,7 +651,7 @@ namespace DungeonArchitect.Builders.SimpleCity
                         {
                             EmitDoorMarker(cellSize, x + halfDoorSize, sz, 0);
                             EmitDoorMarker(cellSize, x + halfDoorSize, ez, 180);
-                            x += halfDoorSize;
+                            x += doorSize - 1;
                             continue;
                         }
                         EmitWallMarker(cellSize, x + 0.5f, sz, 0);
@@ -599,7 +664,7 @@ namespace DungeonArchitect.Builders.SimpleCity
                         {
                             EmitDoorMarker(cellSize, sx, z + halfDoorSize, 90);
                             EmitDoorMarker(cellSize, ex, z + halfDoorSize, 270);
-                            z += halfDoorSize;
+                            z += doorSize - 1;
                             continue;
                         }
                         EmitWallMarker(cellSize, sx, z + 0.5f, 90);
@@ -628,7 +693,8 @@ namespace DungeonArchitect.Builders.SimpleCity
                     }
                 }
             }
-
+            */
+            
             // Emit a ground marker since the city builder doesn't emit any ground.  
             // The theme can add a plane here if desired (won't be needed if building on a landscape)
             EmitGroundMarker(width, length, cellSize);
@@ -647,21 +713,41 @@ namespace DungeonArchitect.Builders.SimpleCity
 
         void EmitGroundMarker(int sizeX, int sizeZ, Vector3 cellSize)
         {
-            var position = Vector3.Scale(new Vector3(sizeX, 0, sizeZ) / 2.0f, cellSize) + transform.position;
+            var t = transform;
+            var position = Vector3.Scale(new Vector3(sizeX, 0, sizeZ) / 2.0f, cellSize);
+            position = t.TransformPoint(position);
             var scale = new Vector3(sizeX, 1, sizeZ);
-            var trans = Matrix4x4.TRS(position, Quaternion.identity, scale);
+            var trans = Matrix4x4.TRS(position, t.rotation, scale);
             EmitMarker(SimpleCityDungeonMarkerNames.CityGround, trans, IntVector.Zero, -1);
         }
 
         void EmitMarkerAt(Vector3 cellSize, string markerName, float x, float z, float angle)
         {
-            var worldPosition = Vector3.Scale(new Vector3(x, 0, z), cellSize) + transform.position;
-            var rotation = Quaternion.Euler(0, angle, 0);
+            var t = transform;
+            var worldPosition = Vector3.Scale(new Vector3(x, 0, z), cellSize);
+            worldPosition = t.TransformPoint(worldPosition);
+            var rotation = t.rotation * Quaternion.Euler(0, angle, 0);
             var transformation = Matrix4x4.TRS(worldPosition, rotation, Vector3.one);
             var gridPosition = new IntVector((int)x, 0, (int)z); // Optionally provide where this marker is in the grid position
             EmitMarker(markerName, transformation, gridPosition, -1);
         }
 
+        public override IMarkerGenProcessor CreateMarkerGenProcessor()
+        {
+            var gridSize = new Vector3(cityConfig.CellSize.x, 0, cityConfig.CellSize.y);
+            Matrix4x4 baseTransform;
+            {
+                var t = gameObject.transform;
+                var rotation = t.rotation;
+                var halfCellOffset = rotation * (gridSize * 0.5f);
+                var dungeonPosition = t.position - halfCellOffset;
+                baseTransform = Matrix4x4.TRS(dungeonPosition, rotation, Vector3.one);
+            }
+
+            var query = GetComponent<DungeonQuery>();
+            return new GridMarkerGenProcessor(baseTransform, gridSize, this, model, config, query);
+        }
+        
         Quaternion GetRandomRotation()
         {
             // Randomly rotate in steps of 90

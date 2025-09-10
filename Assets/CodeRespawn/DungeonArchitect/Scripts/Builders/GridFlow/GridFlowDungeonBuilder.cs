@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -10,6 +10,8 @@ using DungeonArchitect.Flow.Domains.Tilemap;
 using DungeonArchitect.Flow.Domains.Tilemap.Tasks;
 using DungeonArchitect.Flow.Impl.GridFlow;
 using DungeonArchitect.Flow.Items;
+using DungeonArchitect.MarkerGenerator.Processor;
+using DungeonArchitect.MarkerGenerator.Processor.Grid;
 
 namespace DungeonArchitect.Builders.GridFlow
 {
@@ -147,7 +149,7 @@ namespace DungeonArchitect.Builders.GridFlow
             return domainData.RoomType;
         }
 
-        Quaternion GetBaseTransform(FlowTilemap tilemap, int x, int y)
+        Quaternion GetBaseRotation(FlowTilemap tilemap, int x, int y)
         {
             var cellTypesToTransform = new FlowTilemapCellType[]
             {
@@ -183,6 +185,18 @@ namespace DungeonArchitect.Builders.GridFlow
             return Quaternion.Euler(0, angleY, 0);
         }
 
+
+        Matrix4x4 GetBaseTransform()
+        {
+            return Matrix4x4.TRS(transform.position, Quaternion.identity, Vector3.one);
+        }
+
+        public override IMarkerGenProcessor CreateMarkerGenProcessor()
+        {
+            var query = GetComponent<DungeonQuery>();
+            return new GridMarkerGenProcessor(GetBaseTransform(), gridFlowConfig.gridSize, this, model, config, query);
+        }
+        
         string GetEdgeMarkerName(FlowTilemapEdgeType edgeType)
         {
             if (edgeType == FlowTilemapEdgeType.Wall) return GridFlowDungeonMarkerNames.Wall;
@@ -194,6 +208,21 @@ namespace DungeonArchitect.Builders.GridFlow
             else
             {
                 return "[Empty]";
+            }
+        }
+
+        protected override LevelMarkerList CreateMarkerListObject(DungeonConfig config)
+        {
+            var flowConfig = config as GridFlowDungeonConfig;
+            if (flowConfig != null)
+            {
+                var bucketSize = Mathf.Max(flowConfig.gridSize.x, flowConfig.gridSize.z) * 2;
+                bucketSize = Mathf.Max(0.1f, bucketSize);
+                return new SpatialPartionedLevelMarkerList(bucketSize);
+            }
+            else
+            {
+                return base.CreateMarkerListObject(config);
             }
         }
 
@@ -252,7 +281,7 @@ namespace DungeonArchitect.Builders.GridFlow
                 for (int y = 0; y < tilemap.Height; y++)
                 {
                     var position = basePosition + Vector3.Scale(new Vector3(x + 0.5f, 0, y + 0.5f), gridSize);
-                    var baseRotation = GetBaseTransform(tilemap, x, y);
+                    var baseRotation = GetBaseRotation(tilemap, x, y);
                     var markerTransform = Matrix4x4.TRS(position, baseRotation, Vector3.one);
                     var cell = tilemap.Cells[x, y];
                     int cellId = tilemap.Width * y + x;

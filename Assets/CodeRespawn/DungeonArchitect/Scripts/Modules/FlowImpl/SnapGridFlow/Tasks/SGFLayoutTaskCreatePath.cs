@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using DungeonArchitect.Flow.Domains;
 using DungeonArchitect.Flow.Domains.Layout;
 using DungeonArchitect.Flow.Domains.Layout.Pathing;
@@ -101,7 +101,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow.Tasks
             return extension.ModuleDatabase;
         }
         
-        protected override FlowLayoutNodeGroupGenerator CreateNodeGroupGenerator(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph)
+        protected override FlowLayoutNodeGroupGenerator CreateNodeGroupGenerator(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph, System.Random random)
         {
             var moduleDatabase = GetModuleDatabase(domainExtensions);
             if (moduleDatabase == null)
@@ -110,11 +110,11 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow.Tasks
             }
             else
             {
-                return new SnapFlowLayoutNodeGroupGenerator(moduleDatabase, this);
+                return new SnapFlowLayoutNodeGroupGenerator(moduleDatabase, this, random);
             }
         }
 
-        protected override IFlowLayoutGraphConstraints CreateGraphConstraint(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph)
+        protected override IFlowLayoutGraphConstraints CreateGraphConstraint(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph, System.Random random)
         {
             var moduleDatabase = GetModuleDatabase(domainExtensions);
             if (moduleDatabase == null)
@@ -123,7 +123,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow.Tasks
             }
             else
             {             
-                return new SnapFlowLayoutGraphConstraints(moduleDatabase, this);   
+                return new SnapFlowLayoutGraphConstraints(moduleDatabase, this, random);   
             }
         }
 
@@ -143,7 +143,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow.Tasks
             return gridSize;
         }
 
-        protected override IFlowLayoutNodeCreationConstraint CreateNodeCreationConstraint(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph)
+        protected override IFlowLayoutNodeCreationConstraint CreateNodeCreationConstraint(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph, System.Random random)
         {           if (graph != null)
             {
                 if (positionConstraintMode == NodeConstraintType.Script)
@@ -153,7 +153,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow.Tasks
                     if (scriptInstance != null)
                     {
                         var gridSize = FindGridSize(graph);
-                        return new SGFLayoutNodeConstraintProcessorScript(scriptInstance, gridSize);
+                        return new SGFLayoutNodeConstraintProcessorScript(scriptInstance, gridSize, random);
                     }
                 }
             }

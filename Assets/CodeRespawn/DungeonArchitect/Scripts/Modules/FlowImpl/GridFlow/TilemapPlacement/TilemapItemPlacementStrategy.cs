@@ -1,5 +1,6 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using DungeonArchitect.Flow.Domains;
+using DungeonArchitect.Flow.Domains.Layout;
 using DungeonArchitect.Flow.Domains.Tilemap;
 using DungeonArchitect.Flow.Items;
 
@@ -10,6 +11,8 @@ namespace DungeonArchitect.Flow.Impl.GridFlow
         public FlowTilemap tilemap;
         public FlowTilemapDistanceField distanceField;
         public System.Random random;
+        public FlowLayoutGraphNode node;
+        public FlowTilemapCell[] chunkTiles;
     }
 
     public interface ITilemapItemPlacementStrategy

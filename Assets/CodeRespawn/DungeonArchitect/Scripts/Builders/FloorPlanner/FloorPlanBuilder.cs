@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 using System.Collections.Generic;
 using DungeonArchitect.Utils;
@@ -534,7 +534,22 @@ namespace DungeonArchitect.Builders.FloorPlan
 		        ConnectIslandRecursive(IslandId, AdjacencyByIsland, IslandVisited, random, DoorManager, IslandToChunkMap);
 	        }
         }
-
+        
+        protected override LevelMarkerList CreateMarkerListObject(DungeonConfig config)
+        {
+	        var floorConfig = config as FloorPlanConfig;
+	        if (floorConfig != null)
+	        {
+		        var bucketSize = Mathf.Max(floorConfig.GridSize.x, floorConfig.GridSize.z) * 2;
+		        bucketSize = Mathf.Max(0.1f, bucketSize);
+		        return new SpatialPartionedLevelMarkerList(bucketSize);
+	        }
+	        else
+	        {
+		        return base.CreateMarkerListObject(config);
+	        }
+        }
+        
         FloorChunk GetPriorityChunk(FloorChunk A, FloorChunk B)
         {
             if (A == null) return B;

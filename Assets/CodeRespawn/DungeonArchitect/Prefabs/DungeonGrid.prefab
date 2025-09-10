@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 473886}
   m_RootOrder: 0
@@ -58,6 +59,7 @@ GameObject:
   - component: {fileID: 473886}
   - component: {fileID: 11455964}
   - component: {fileID: 11457970}
+  - component: {fileID: 4728402887157601744}
   - component: {fileID: 114094275185137718}
   - component: {fileID: 11405048}
   - component: {fileID: 11447134}
@@ -83,6 +85,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 474610}
   m_Father: {fileID: 0}
@@ -102,6 +105,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dungeonThemes:
   - {fileID: 0}
+  patterns: []
   debugDraw: 0
 --- !u!114 &11457970
 MonoBehaviour:
@@ -123,10 +127,7 @@ MonoBehaviour:
   RoomAreaThreshold: 20
   RoomAspectDelta: 0.4
   CorridorWidth: 2
-  HeightVariationProbability: 0.2
-  MaxAllowedStairHeight: 1
   SpanningTreeLoopProbability: 0.15
-  StairConnectionTollerance: 7
   DoorProximitySteps: 3
   NormalMean: 0
   NormalStd: 0.3
@@ -137,6 +138,23 @@ MonoBehaviour:
   CellDistributionWidth: 20
   CellDistributionLength: 30
   Mode2D: 0
+--- !u!114 &4728402887157601744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 195034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d9c6d0ef0e3467abd01a560f7800c95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxAllowedStairHeight: 1
+  HeightVariationProbability: 0.2
+  StairConnectionTollerance: 6
+  avoidStairsInsideRooms: 1
+  avoidSingleCellStairDeadEnds: 1
 --- !u!114 &114094275185137718
 MonoBehaviour:
   m_ObjectHideFlags: 0

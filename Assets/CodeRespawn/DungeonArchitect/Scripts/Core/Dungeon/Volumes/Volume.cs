@@ -1,6 +1,7 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 using DungeonArchitect.Utils;
+using UnityEngine.Serialization;
 
 namespace DungeonArchitect
 {
@@ -13,7 +14,9 @@ namespace DungeonArchitect
     {
         public Dungeon dungeon;
 		public bool mode2D = false;
-
+        public bool disableRendering = false;
+        public bool autoBuildOnMove = true;
+        
         /// <summary>
         /// Gets the bounds of the volume
         /// </summary>
@@ -53,11 +56,11 @@ namespace DungeonArchitect
             var scale = transform.rotation * transform.localScale;
             MathUtils.Abs(ref scale);
 
-            var positionGridF = DungeonArchitect.Utils.MathUtils.Divide(position, LogicalGridSize);
-            var scaleGridF = DungeonArchitect.Utils.MathUtils.Divide(scale, LogicalGridSize);
+            var positionGridF = MathUtils.Divide(position - new Vector3(0.5f, 0.5f, 0.5f), LogicalGridSize);
+            var scaleGridF = MathUtils.Divide(scale, LogicalGridSize);
 
-            positionGrid = DungeonArchitect.Utils.MathUtils.ToIntVector(positionGridF);
-            scaleGrid = DungeonArchitect.Utils.MathUtils.ToIntVector(scaleGridF);
+            positionGrid = DungeonArchitect.Utils.MathUtils.RoundToVector3Int(positionGridF);
+            scaleGrid = DungeonArchitect.Utils.MathUtils.RoundToVector3Int(scaleGridF);
 
             if (mode2D)
             {
@@ -81,18 +84,20 @@ namespace DungeonArchitect
 
         void DrawGizmo(bool selected)
         {
-            var transform = gameObject.transform;
-            var position = transform.position;
-            var scale = transform.localScale;
-            scale = transform.rotation * scale;
+            if (!disableRendering)
+            {
+                var transform = gameObject.transform;
+                var position = transform.position;
+                var scale = transform.localScale;
+                scale = transform.rotation * scale;
 
-            // Draw the wireframe
-            Gizmos.color = COLOR_WIRE;
-            Gizmos.DrawWireCube(position, scale);
+                // Draw the wireframe
+                Gizmos.color = COLOR_WIRE;
+                Gizmos.DrawWireCube(position, scale);
 
-            Gizmos.color = selected ? COLOR_SOLID : COLOR_SOLID_DESELECTED;
-            Gizmos.DrawCube(position, scale);
+                Gizmos.color = selected ? COLOR_SOLID : COLOR_SOLID_DESELECTED;
+                Gizmos.DrawCube(position, scale);
+            }
         }
-
     }
 }

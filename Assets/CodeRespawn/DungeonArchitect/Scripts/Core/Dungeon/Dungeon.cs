@@ -1,10 +1,14 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+
+using System;
 using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using DungeonArchitect.Graphs;
+using DungeonArchitect.MarkerGenerator;
 using DungeonArchitect.Themeing;
 using DungeonArchitect.SpatialConstraints;
+using Random = UnityEngine.Random;
 
 namespace DungeonArchitect
 {
@@ -18,6 +22,8 @@ namespace DungeonArchitect
         /// </summary>
         public List<Graph> dungeonThemes;
 
+        public MarkerGeneratorAsset[] patterns = Array.Empty<MarkerGeneratorAsset>();
+	        
         /// <summary>
         /// Draw debug data
         /// </summary>
@@ -27,6 +33,7 @@ namespace DungeonArchitect
         PooledDungeonSceneProvider sceneProvider;
         DungeonBuilder dungeonBuilder;
         DungeonModel dungeonModel;
+        DungeonQuery dungeonQuery;
         DungeonSceneObjectSpawner objectSpawner;
 
         /// <summary>
@@ -94,6 +101,11 @@ namespace DungeonArchitect
 			
 			if (dungeonBuilder == null) {
 				dungeonBuilder = GetComponent<DungeonBuilder> ();
+			}
+
+			if (dungeonQuery == null)
+			{
+				dungeonQuery = GetComponent<DungeonQuery>();
 			}
 
 			if (dungeonModel == null) {
@@ -164,15 +176,25 @@ namespace DungeonArchitect
 			dungeonBuilder.BuildDungeon(config, dungeonModel);
             markers = dungeonBuilder.Markers;
 
+            if (dungeonQuery != null)
+            {
+	            dungeonQuery.OnPostLayoutBuild();
+            }
+            
 			NotifyPostLayoutBuild();
 
+			// Spawn the scene objects
+			var spawnedManagedObjects = dungeonBuilder.SpawnManagedObjects(sceneProvider, objectInstantiator);
+			NotifySpawnedManagedObjects(spawnedManagedObjects);
+			
             if (dungeonBuilder.IsThemingSupported())
             {
-                ReapplyTheme(objectInstantiator);
+                ApplyTheme(objectInstantiator);
             }
-            else
+
+            if (dungeonQuery != null)
             {
-                dungeonBuilder.BuildNonThemedDungeon(sceneProvider, objectInstantiator);
+	            dungeonQuery.OnPostDungeonBuild();
             }
 
             // Build the navigation
@@ -185,24 +207,73 @@ namespace DungeonArchitect
             NotifyPostBuild();
         }
 
-        /// <summary>
-        /// Runs the theming engine over the existing layout to rebuild the game objects from the theme file.  
-        /// The layout is not built in this stage
-        /// </summary>
-        public void ReapplyTheme(IDungeonSceneObjectInstantiator objectInstantiator) {
-	        if (!dungeonBuilder.IsThemingSupported())
+
+        private void ApplyPatternMatchers()
+        {
+	        if (patterns == null || dungeonBuilder == null || dungeonBuilder.Markers == null)
+	        {
+		        return;
+	        }
+
+	        var random = new System.Random(config != null ? (int)config.Seed : 0);
+	        bool processed = false;
+	        var markerList = dungeonBuilder.Markers.GetMarkerList();
+	        foreach (var patternAsset in patterns)
+	        {
+		        foreach (var pattern in patternAsset.patterns)
+		        {
+			        var processor = dungeonBuilder.CreateMarkerGenProcessor();
+			        if (processor == null)
+			        {
+				        continue;
+			        }
+
+			        if (processor.Process(pattern, markerList, random, out var newMarkerList))
+			        {
+				        markerList = newMarkerList;
+				        processed = true;
+			        }
+
+			        processor.Release();
+		        }
+	        }
+
+	        if (processed)
+	        {
+		        dungeonBuilder.Markers.Set(markerList);
+	        }
+        }
+
+        private void EmitMarkers()
+        {
+	        if (dungeonBuilder == null || !dungeonBuilder.IsThemingSupported())
 	        {
 		        return;
 	        }
 	        
-            // Emit markers defined by this builder
-			dungeonBuilder.EmitMarkers();
+	        // Emit markers defined by this builder
+	        dungeonBuilder.EmitMarkers();
 
-            // Emit markers defined by the users (by attaching implementation of DungeonMarkerEmitter behaviors)
-            dungeonBuilder.EmitCustomMarkers();
+	        // Emit markers defined by the users (by attaching implementation of DungeonMarkerEmitter behaviors)
+	        dungeonBuilder.EmitCustomMarkers();
 
-            NotifyMarkersEmitted(dungeonBuilder.Markers);
-
+	        ApplyPatternMatchers();
+            
+	        NotifyMarkersEmitted(dungeonBuilder.Markers);
+        }
+        
+        /// <summary>
+        /// Runs the theming engine over the existing layout to rebuild the game objects from the theme file.  
+        /// The layout is not built in this stage
+        /// </summary>
+        public void ApplyTheme(IDungeonSceneObjectInstantiator objectInstantiator) {
+	        if (dungeonBuilder == null)
+	        {
+		        return;
+	        }
+	        
+	        EmitMarkers();
+	        
             var themes = GetThemeAssets();
             var themeContext = CreateThemeExecutionContext(objectInstantiator);
             var themeEngine = new DungeonThemeEngine(themeContext);
@@ -268,6 +339,13 @@ namespace DungeonArchitect
 			}
 		}
 
+		private void NotifySpawnedManagedObjects(GameObject[] spawnedManagedObjects)
+		{
+			foreach (var listener in GetListeners()) {
+				listener.OnSpawnedManagedObjects(this, spawnedManagedObjects, ActiveModel);
+			}
+		}
+		
         void NotifyPreBuild()
         {
             // Notify all listeners of the post build event
@@ -346,6 +424,11 @@ namespace DungeonArchitect
                 navigation.DestroyNavMesh();
             }
 
+            if (dungeonQuery != null)
+            {
+	            dungeonQuery.Release();
+            }
+            
             if (dungeonModel != null) {
 				dungeonModel.ResetModel();
 			}
@@ -393,8 +476,13 @@ namespace DungeonArchitect
             }
         }
 
-        void OnDrawGizmosSelected()
-        {
+		private void OnDrawGizmos()
+		{
+			Gizmos.DrawIcon(transform.position, "CodeRespawn/DungeonArchitect/logo.png", true);
+		}
+
+		void OnDrawGizmosSelected()
+        {   
             if (debugDraw && dungeonBuilder != null)
             {
                 dungeonBuilder.DebugDrawGizmos();

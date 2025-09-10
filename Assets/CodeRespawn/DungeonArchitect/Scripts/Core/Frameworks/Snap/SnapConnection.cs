@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 
 namespace DungeonArchitect.Frameworks.Snap
@@ -10,6 +10,14 @@ namespace DungeonArchitect.Frameworks.Snap
         DoorOneWay,
         DoorLocked,
         None
+    }
+
+    public enum SnapConnectionDirection2D
+    {
+        Top,
+        Down,
+        Left,
+        Right
     }
 
     [System.Serializable]
@@ -29,12 +37,15 @@ namespace DungeonArchitect.Frameworks.Snap
         public SnapConnectionLockedDoorInfo[] lockedDoors;
         public SnapConnectionState connectionState = SnapConnectionState.None;
 
+        public bool mode2D = false;
+        public SnapConnectionDirection2D outgoingDirection2D = SnapConnectionDirection2D.Top;
+        
         public GameObject UpdateDoorState(SnapConnectionState state)
         {
             return UpdateDoorState(state, "");
         }
 
-        public GameObject UpdateDoorState(SnapConnectionState state, string markerName)
+        public virtual GameObject UpdateDoorState(SnapConnectionState state, string markerName)
         {
             connectionState = state;
             DeactivateAll();
@@ -95,14 +106,24 @@ namespace DungeonArchitect.Frameworks.Snap
 
         void OnDrawGizmos()
         {
-            if (transform != null)
+            var t = transform;
+            var start = t.position;
+            Vector3 end;
+            
+            if (mode2D)
             {
-                var start = transform.position;
-                var end = start + transform.forward;
-                Gizmos.color = Color.red;
-                Gizmos.DrawLine(start, end);
+                end = start;
+                if (outgoingDirection2D == SnapConnectionDirection2D.Left) end += Vector3.left;
+                else if (outgoingDirection2D == SnapConnectionDirection2D.Right) end += Vector3.right;
+                else if (outgoingDirection2D == SnapConnectionDirection2D.Top) end += Vector3.up;
+                else if (outgoingDirection2D == SnapConnectionDirection2D.Down) end += Vector3.down;
             }
-
+            else
+            {
+                end = start + t.forward;
+            }
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(start, end);
         }
         
         public bool IsWallState()

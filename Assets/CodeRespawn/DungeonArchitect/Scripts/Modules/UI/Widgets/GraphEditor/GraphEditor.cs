@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System;
 using System.Linq;
 using UnityEngine;
@@ -78,6 +78,8 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
             get { return events; }
         }
 
+        public bool supportInteractiveWidgets = false;
+        
         // The no. of pixels to add during the camera culling
         [SerializeField]
         protected float renderCullingBias = 0;
@@ -106,6 +108,9 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
 
         public IGraphLinkRenderer GraphLinkRenderer { get; private set; }
 
+        public delegate void OnGraphChanged(Graph graph, UISystem uiSystem);
+        public event OnGraphChanged GraphChanged;
+        
         protected GraphSelectionBox selectionBox;
         KeyboardState keyboardState;
         CursorDragLink cursorDragLink;
@@ -186,10 +191,14 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
         {
             uiSystem.Undo.UndoRedoPerformed -= OnUndoRedoPerformed;
         }
-
+        
         protected void SetGraph(Graph graph)
         {
             this.graph = graph;
+            if (graph != null)
+            {
+                graph.Sanitize();
+            }
         }
 
 
@@ -337,6 +346,7 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
 
         public virtual void HandleGraphStateChanged(UISystem uiSystem)
         {
+            GraphChanged?.Invoke(graph, uiSystem);
         }
 
         public virtual void HandleNodePropertyChanged(GraphNode node)
@@ -784,8 +794,12 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
 
         protected virtual void DestroyNode(GraphNode node, UISystem uiSystem)
         {
-            GraphOperations.DestroyNode(node, uiSystem.Undo);
-            HandleMarkedDirty(uiSystem);
+            var schema = GetGraphSchema();
+            if (schema.CanDestroyNode(node))
+            {
+                GraphOperations.DestroyNode(node, uiSystem.Undo);
+                HandleMarkedDirty(uiSystem);
+            }
         }
 
         void PerformDelete(Event e, UISystem uiSystem) {
@@ -825,11 +839,11 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
         public virtual void Draw(UISystem uiSystem, UIRenderer renderer)
         {
             var e = Event.current;
-            if (e != null && e.type != EventType.Repaint)
+            if (!supportInteractiveWidgets && e != null && e.type != EventType.Repaint)
             {
                 return;
             }
-
+            
             rendererContext.GraphEditor = this;
             var bounds = WidgetBounds;
             camera.ScreenOffset = bounds.position;
@@ -876,16 +890,34 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
             GraphNode[] sortedNodes = graph.Nodes.ToArray();
             System.Array.Sort(sortedNodes, new NodeZIndexComparer());
 
-            foreach (var node in sortedNodes)
+            // Draw the nodes
             {
-                if (node == null) continue;
-                // Draw only if this node is visible in the editor
-                if (DMathUtils.Intersects(windowWorldBounds, node.Bounds))
+                bool stateChanged = false;
+                NotifyNodeRendererBeginFrame(graph, sortedNodes.ToArray());
+                foreach (var node in sortedNodes)
                 {
-                    var nodeRenderer = nodeRenderers.GetRenderer(node.GetType());
-                    nodeRenderer.Draw(renderer, rendererContext, node, camera);
+                    if (node == null) continue;
+                    // Draw only if this node is visible in the editor
+                    if (DMathUtils.Intersects(windowWorldBounds, node.Bounds))
+                    {
+                        var nodeRenderer = nodeRenderers.GetRenderer(node.GetType());
+                        nodeRenderer.Draw(renderer, rendererContext, node, camera);
+
+                        if (nodeRenderer.GraphStateChanged)
+                        {
+                            stateChanged = true;
+                            nodeRenderer.GraphStateChanged = false;
+                        }
+                    }
+                }
+                NotifyNodeRendererEndFrame(graph, sortedNodes.ToArray());
+
+                if (stateChanged)
+                {
+                    HandleGraphStateChanged(uiSystem);
                 }
             }
+
             selectionBox.Draw(renderer, editorStyle);
             DrawHUD(uiSystem, renderer, bounds);
 
@@ -902,11 +934,50 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
             lastDrawBounds = bounds;
         }
 
+        private void NotifyNodeRendererBeginFrame(Graph graph, GraphNode[] nodes)
+        {
+            var renderers = new HashSet<GraphNodeRenderer>();
+            foreach (var node in nodes)
+            {
+                renderers.Add(nodeRenderers.GetRenderer(node.GetType()));
+            }
+            foreach (var renderer in renderers)
+            {
+                renderer.BeginFrame(graph);
+            }
+        }
+
+        private void NotifyNodeRendererEndFrame(Graph graph1, GraphNode[] nodes)
+        {
+            var renderers = new HashSet<GraphNodeRenderer>();
+            foreach (var node in nodes)
+            {
+                renderers.Add(nodeRenderers.GetRenderer(node.GetType()));
+            }
+            foreach (var renderer in renderers)
+            {
+                renderer.EndFrame();
+            }
+        }
+        
         protected bool IsPaintEvent(UISystem uiSystem)
         {
-            return uiSystem.Platform.CurrentEvent.type == EventType.Repaint;
+            if (uiSystem.Platform.CurrentEvent.type == EventType.Repaint)
+            {
+                return true;
+            }
+
+            if (supportInteractiveWidgets)
+            {
+                if (uiSystem.Platform.CurrentEvent.type == EventType.MouseUp)
+                {
+                    return true;
+                }
+            }
             
+            return false;
         }
+        
         void DrawEditorStats(UIRenderer renderer, Rect bounds) {
 			var skin = renderer.GetResource<GUISkin>(UIResourceLookup.GUI_STYLE_BANNER) as GUISkin;
 			var style = skin.GetStyle("label");
@@ -1020,6 +1091,9 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
             int ey = Mathf.CeilToInt(worldEnd.y / cellSizeWorld);
 
 
+            var lineSegmentsThick = new List<Vector3>();
+            var lineSegmentsThin = new List<Vector3>();
+            
             for (int x = sx; x <= ex; x++)
             {
                 var startWorld = new Vector2(x, sy) * cellSizeWorld;
@@ -1032,8 +1106,11 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
                 startScreen += bounds.position;
                 endScreen += bounds.position;
 
-                var color = (x % 2 == 0) ? EditorStyle.gridLineColorThick : EditorStyle.gridLineColorThin;
-                renderer.DrawLine(color, startScreen, endScreen);
+                var segments = (x % 2 == 0) ? lineSegmentsThick : lineSegmentsThin; 
+                segments.Add(startScreen);
+                segments.Add(endScreen);
+                //var color = (x % 2 == 0) ? EditorStyle.gridLineColorThick : EditorStyle.gridLineColorThin;
+                //renderer.DrawLine(color, startScreen, endScreen);
             }
 
             for (int y = sy; y <= ey; y++)
@@ -1048,9 +1125,17 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
                 startScreen += bounds.position;
                 endScreen += bounds.position;
 
-                var color = (y % 2 == 0) ? EditorStyle.gridLineColorThick : EditorStyle.gridLineColorThin;
-                renderer.DrawLine(color, startScreen, endScreen);
+                var segments = (y % 2 == 0) ? lineSegmentsThick : lineSegmentsThin;
+                segments.Add(startScreen);
+                segments.Add(endScreen);
+                
+                //var color = (y % 2 == 0) ? EditorStyle.gridLineColorThick : EditorStyle.gridLineColorThin;
+                //renderer.DrawLine(color, startScreen, endScreen);
             }
+            
+            renderer.DrawLines(EditorStyle.gridLineColorThick, lineSegmentsThick.ToArray());
+            renderer.DrawLines(EditorStyle.gridLineColorThin, lineSegmentsThin.ToArray());
+            
             guiState.Restore();
         }
 
@@ -1206,7 +1291,7 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
             // Make sure a link doesn't already exists
             foreach (T link in graph.Links)
             {
-                if (link.Input == input && link.Output == output)
+                if (link != null && link.Input == input && link.Output == output)
                 {
                     return link;
                 }
@@ -1215,9 +1300,8 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
             {
                 uiSystem.Undo.RecordObject(graph, "Create Link");
 
-                T link = GraphOperations.CreateLink<T>(graph);
-                link.Input = input;
-                link.Output = output;
+                // Create the link
+                T link = graphSchema.TryCreateLink<T>(graph, output, input);
 
                 uiSystem.Undo.RegisterCreatedObjectUndo(link, "Create Link");
                 return link;

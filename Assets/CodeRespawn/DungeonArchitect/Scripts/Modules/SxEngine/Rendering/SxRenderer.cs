@@ -1,8 +1,10 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DungeonArchitect.Utils;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
 namespace DungeonArchitect.SxEngine
@@ -92,10 +94,14 @@ namespace DungeonArchitect.SxEngine
         public RenderTexture Texture { get; private set; }
         public SxCamera Camera { get; } = new SxCamera();
 
+        public Matrix4x4 ViewMatrix => Camera.ViewMatrix;
+        
         private ClearState clearState = new ClearState();
 
-        public float FOV { get; } = 75;
+        public bool SortRenderCommands { get; set; } = true;
 
+        public int BatchCount { get; private set; } = 0;
+        
         public delegate void DrawDelegate(SxRenderContext context);
 
         public event DrawDelegate Draw;
@@ -114,11 +120,6 @@ namespace DungeonArchitect.SxEngine
                 CameraPosition = Camera.Location
             };
         }
-
-        public float GetAspectRatio()
-        {
-            return Texture != null ? (float) Texture.width / Texture.height : 1.0f;
-        }
         
         public void Render(Vector2 size, SxWorld world)
         {
@@ -128,7 +129,7 @@ namespace DungeonArchitect.SxEngine
             RenderTexture.active = Texture;
             
             GL.PushMatrix();
-            GL.LoadProjectionMatrix(Matrix4x4.Perspective(FOV, GetAspectRatio(), 0.1f, 100.0f));
+            GL.LoadProjectionMatrix(Camera.ProjectionMatrix);
 
             if (clearState.ClearColor || clearState.ClearDepth)
             {
@@ -139,7 +140,12 @@ namespace DungeonArchitect.SxEngine
             
             var renderCommandList = new SxRenderCommandList();
             world.Draw(context, renderCommandList);
-            renderCommandList.Sort(context.CameraPosition);
+
+            if (SortRenderCommands)
+            {
+                renderCommandList.Sort(context.CameraPosition);
+            }
+            
             Render(renderCommandList, Camera.ViewMatrix);
             
             if (Draw != null)
@@ -165,11 +171,16 @@ namespace DungeonArchitect.SxEngine
             {
                 ReleaseTexture();
             }
-
+            
             if (Texture == null)
             {
                 Texture = new RenderTexture(Mathf.RoundToInt(size.x), Mathf.RoundToInt(size.y), 16, RenderTextureFormat.ARGB32);
-                Texture.Create();
+                var textureCreated = Texture.Create();
+                if (textureCreated)
+                {
+                    Camera.SetAspectRatio(Texture.width, Texture.height);
+                }
+                    
             }
         }
 
@@ -180,123 +191,73 @@ namespace DungeonArchitect.SxEngine
             Texture = null;
         }
         
-        class MergedMesh
-        {
-            public int DrawMode;
-            public SxMaterial Material;
-            public List<SxMeshVertex> Vertices = new List<SxMeshVertex>();
-        }
-
-        class MergeMeshList
-        {
-            public MergedMesh ActiveMesh;
-            private List<MergedMesh> mergedMeshes = new List<MergedMesh>();
-            public MergedMesh[] Meshes
-            {
-                get => mergedMeshes.ToArray();
-            }
-            
-            public MergeMeshList()
-            {
-            }
-
-            public void CreateNew()
-            {
-                ActiveMesh = new MergedMesh();
-                mergedMeshes.Add(ActiveMesh);
-            }
-        }
-
-        public void RenderDefault(SxRenderCommandList renderCommandList, Matrix4x4 viewMatrix)
-        {
-            foreach (var command in renderCommandList.Commands)
-            {
-                command.Material.Assign();
-                GL.modelview = viewMatrix * command.AccumWorldTransform; 
-
-                foreach (var entry in command.Mesh.Sections)
-                {
-                    var section = entry.Value;
-                    GL.Begin(section.DrawMode);
-                    
-                    foreach (var vertex in section.Vertices)
-                    {
-                        GL.Color(vertex.Color);
-                        GL.TexCoord(vertex.UV0);
-
-                        var p = vertex.Position;
-                        GL.Vertex3(p.x, p.y, p.z);
-                    }
-                    
-                    GL.End();
-                }
-            }
-        }
-
-        public void RenderMerged(SxRenderCommandList renderCommandList, Matrix4x4 viewMatrix)
-        {
-            GL.modelview = viewMatrix;
-            
-            // Merge similar meshes
-            var mergedMeshes = new MergeMeshList();
-            foreach (var command in renderCommandList.Commands)
-            {
-                GenerateMergedMeshes(command, mergedMeshes);
-            }
-
-            // draw the merged meshes
-            foreach (var mesh in mergedMeshes.Meshes)
-            {
-                mesh.Material.Assign();
-                GL.Begin(mesh.DrawMode);
-                foreach (var vertex in mesh.Vertices)
-                {
-                    GL.Color(vertex.Color);
-                    GL.TexCoord(vertex.UV0);
-
-                    var p = vertex.Position;
-                    GL.Vertex3(p.x, p.y, p.z);
-
-                }
-                GL.End();
-            }
-        }
-        
         public void Render(SxRenderCommandList renderCommandList, Matrix4x4 viewMatrix)
         {
-            RenderDefault(renderCommandList, viewMatrix);
-            //RenderMerged(renderCommandList, viewMatrix);
-        }
-
-        void GenerateMergedMeshes(SxRenderCommand command, MergeMeshList mergedMeshes)
-        {
-            if (command.Material == null || command.Mesh == null) return;
-            
-            foreach (var entry in command.Mesh.Sections)
+            var renderQueueCommands = new Dictionary<int, List<SxRenderCommand>>();
+            foreach (var command in renderCommandList.Commands)
             {
-                var section = entry.Value;
-                bool createNewMesh = mergedMeshes.ActiveMesh == null 
-                                     || mergedMeshes.ActiveMesh.Material != command.Material
-                                     || mergedMeshes.ActiveMesh.DrawMode != section.DrawMode;
+                if (command == null) continue;
 
-                if (createNewMesh)
+                int renderQueue;
+                if (command.Material != null && command.Material.UnityMaterial != null)
                 {
-                    mergedMeshes.CreateNew();
-                    mergedMeshes.ActiveMesh.Material = command.Material;
-                    mergedMeshes.ActiveMesh.DrawMode = section.DrawMode;
+                    renderQueue = command.Material.UnityMaterial.renderQueue;
                 }
-                
-                foreach (var vertex in section.Vertices)
+                else
                 {
-                    var mergedVertex = new SxMeshVertex();
-                    mergedVertex.Color = vertex.Color;
-                    mergedVertex.UV0 = vertex.UV0;
+                    renderQueue = (int)RenderQueue.Geometry;
+                }
 
-                    var p = command.AccumWorldTransform * MathUtils.ToVector4(vertex.Position, 1);
-                    p /= p.w;
+                if (!renderQueueCommands.ContainsKey(renderQueue))
+                {
+                    renderQueueCommands.Add(renderQueue, new List<SxRenderCommand>());
+                }
+                renderQueueCommands[renderQueue].Add(command);
+            }
+
+            BatchCount = 0;
+            var renderQueues = renderQueueCommands.Keys.ToList();
+            renderQueues.Sort();
+            foreach (var renderQueue in renderQueues)
+            {
+                var commands = renderQueueCommands[renderQueue];
+                Material activeMaterial = null;
+                int activePass = -1;
+                foreach (var command in commands)
+                {
+                    var mat = command.Material.UnityMaterial;
+                    if (mat == null) continue;
+                    var passCount = mat.passCount;
+                    for (int passIdx = 0; passIdx < passCount; passIdx++)
+                    {
+                        if (activeMaterial != mat || activePass != passIdx)
+                        {
+                            mat.SetPass(passIdx);
+                            BatchCount++;
+                            
+                            activeMaterial = mat;
+                            activePass = passIdx;
+                        }
+                        
+                        GL.modelview = viewMatrix * command.AccumWorldTransform; 
+
+                        foreach (var entry in command.Mesh.Sections)
+                        {
+                            var section = entry.Value;
+                            GL.Begin(section.DrawMode);
                     
-                    mergedVertex.Position = p;
-                    mergedMeshes.ActiveMesh.Vertices.Add(mergedVertex);
+                            foreach (var vertex in section.Vertices)
+                            {
+                                GL.Color(vertex.Color);
+                                GL.TexCoord(vertex.UV0);
+
+                                var p = vertex.Position;
+                                GL.Vertex3(p.x, p.y, p.z);
+                            }
+                    
+                            GL.End();
+                        }
+                    }
                 }
             }
         }

@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System;
 using System.Collections.Generic;
 using DungeonArchitect.Utils;
@@ -25,6 +25,18 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow.Components
         void DrawGizmo(bool selected)
         {
             if (!drawBounds || moduleBounds == null) return;
+            if (moduleBounds.mode == SnapGridFlowModuleBoundsMode.Mode3D)
+            {
+                DrawBounds3D();
+            }
+            else
+            {
+                DrawBounds2D();
+            }
+        }
+
+        void DrawBounds3D()
+        {
             var localToWorld = transform.localToWorldMatrix;
             
             var boxSize = Vector3.Scale(moduleBounds.chunkSize, MathUtils.ToVector3(numChunks));
@@ -146,6 +158,97 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow.Components
                             var transformB = localToWorldMatrix * Matrix4x4.TRS(doorPosB, rotationY, Vector3.one);
                             DrawLines(transformB, verticalDoorPoints);
                         }
+                    }
+                }
+            }
+        }
+
+        void DrawBounds2D()
+        {
+            var localToWorld = transform.localToWorldMatrix;
+
+            var chunkSize = new Vector3(moduleBounds.chunkSize2D.x, moduleBounds.chunkSize2D.y, 0);
+            var boxSize = Vector3.Scale(chunkSize, MathUtils.ToVector3(numChunks));
+            var extent = boxSize * 0.5f;
+            var center = extent;
+            
+            // Draw the module bounds
+            Gizmos.color = moduleBounds.boundsColor;
+            DrawWireCube(localToWorld, center, extent);
+
+            // Draw internal chunk bounds
+            {
+                var wireColor = moduleBounds.boundsColor;
+                wireColor *= 0.5f;
+                Gizmos.color = wireColor;
+                
+                Func<int, Vector2, Vector3Int, Vector3> funcCoordX = (i, p, chunkCount) => new Vector3(i, p.x * chunkCount.y, p.y * chunkCount.z);
+                Func<int, Vector2, Vector3Int, Vector3> funcCoordY = (i, p, chunkCount) => new Vector3(p.x * chunkCount.x, i, p.y * chunkCount.z);
+                Func<int, Vector2, Vector3Int, Vector3> funcCoordZ = (i, p, chunkCount) => new Vector3(p.x * chunkCount.x, p.y * chunkCount.y, i);
+
+                Func<Vector3Int, int> funcSizeX = (v) => v.x;
+                Func<Vector3Int, int> funcSizeY = (v) => v.y;
+                Func<Vector3Int, int> funcSizeZ = (v) => v.z;
+
+                DrawInterChunkBounds(localToWorld, funcCoordX, funcSizeX);
+                DrawInterChunkBounds(localToWorld, funcCoordY, funcSizeY);
+                DrawInterChunkBounds(localToWorld, funcCoordZ, funcSizeZ);
+            }
+            
+            // Draw door indicators
+            {
+                Gizmos.color = moduleBounds.doorColor;
+                var offsetY = moduleBounds.doorOffsetY;
+
+                Vector3[] doorPoints = new Vector3[Constants.VerticalDoorPoints.Length];
+                for (var i = 0; i < doorPoints.Length; i++)
+                {
+                    doorPoints[i] = Constants.VerticalDoorPoints[i] * moduleBounds.doorDrawSize;
+                    doorPoints[i].y = doorPoints[i].z;
+                    doorPoints[i].z = 0;
+                }
+
+                var localToWorldMatrix = transform.localToWorldMatrix;
+                
+
+                // Draw along the Y-axis
+                {
+                    var rotationZ = Quaternion.identity;
+                    for (int y = 0; y < numChunks.y; y++)
+                    {
+                        var coordA = new Vector3(0, y + 0.5f, 0.5f);
+                        var coordB = new Vector3(numChunks.x, y + 0.5f, 0.5f);
+                        var rotation = Quaternion.identity;
+
+                        var doorPosA = Vector3.Scale(coordA, chunkSize);
+                        var doorPosB = Vector3.Scale(coordB, chunkSize);
+
+                        var transformA = localToWorldMatrix * Matrix4x4.TRS(doorPosA, rotationZ, Vector3.one);
+                        DrawLines(transformA, doorPoints);
+
+                        var transformB = localToWorldMatrix * Matrix4x4.TRS(doorPosB, rotationZ, Vector3.one);
+                        DrawLines(transformB, doorPoints);
+                    }
+                }
+                
+                // Draw along the X-axis
+                {
+                    var rotationY = Quaternion.identity;
+                    
+                    for (int x = 0; x < numChunks.x; x++)
+                    {
+                        var coordA = new Vector3(x + 0.5f, 0, 0.5f);
+                        var coordB = new Vector3(x + 0.5f, numChunks.y, 0.5f);
+                        var rotation = Quaternion.identity;
+
+                        var doorPosA = Vector3.Scale(coordA, chunkSize);
+                        var doorPosB = Vector3.Scale(coordB, chunkSize);
+
+                        var transformA = localToWorldMatrix * Matrix4x4.TRS(doorPosA, rotationY, Vector3.one);
+                        DrawLines(transformA, doorPoints);
+
+                        var transformB = localToWorldMatrix * Matrix4x4.TRS(doorPosB, rotationY, Vector3.one);
+                        DrawLines(transformB, doorPoints);
                     }
                 }
             }

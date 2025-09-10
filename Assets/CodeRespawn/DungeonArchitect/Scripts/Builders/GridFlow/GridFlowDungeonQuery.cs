@@ -1,4 +1,4 @@
-﻿//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+﻿//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using DungeonArchitect.Flow.Domains.Layout;
 using DungeonArchitect.Flow.Domains.Tilemap;
@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace DungeonArchitect.Builders.GridFlow
 {
-    public class GridFlowDungeonQuery : DungeonEventListener
+    public class GridFlowDungeonQuery : DungeonQuery
     {
         private FlowTilemap tilemap;
         private FlowLayoutGraph graph;
@@ -18,17 +18,15 @@ namespace DungeonArchitect.Builders.GridFlow
         Dictionary<IntVector2, List<FlowTilemapCell>> tilesByNode = new Dictionary<IntVector2, List<FlowTilemapCell>>();
         Dictionary<IntVector2, List<FlowTilemapCell>> freeTilesByNode = new Dictionary<IntVector2, List<FlowTilemapCell>>();
 
-        public override void OnPostDungeonLayoutBuild(Dungeon dungeon, DungeonModel model)
+        public override void OnPostLayoutBuild()
         {
-            base.OnPostDungeonLayoutBuild(dungeon, model);
-
-            var gridFlowModel = model as GridFlowDungeonModel;
+            var gridFlowModel = GetComponent<GridFlowDungeonModel>();
             if (gridFlowModel == null)
             {
                 return;
             }
 
-            var gridFlowConfig = dungeon.GetComponent<GridFlowDungeonConfig>();
+            var gridFlowConfig = GetComponent<GridFlowDungeonConfig>();
             if (gridFlowConfig == null)
             {
                 return;
@@ -39,6 +37,15 @@ namespace DungeonArchitect.Builders.GridFlow
             gridSize = gridFlowConfig.gridSize;
 
             GenerateTileLookup();
+        }
+
+        public override void Release()
+        {
+            tilemap = null;
+            graph = null;
+            nodesByCoord.Clear();
+            tilesByNode.Clear();
+            freeTilesByNode.Clear();
         }
 
         public bool IsMainPath(Vector3 worldPosition)

@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using DungeonArchitect.Frameworks.Snap;
 using UnityEngine;
@@ -28,15 +28,15 @@ namespace DungeonArchitect.Builders.Snap
         public bool isDoor;
     }
 
-    public class SnapQuery : DungeonEventListener
+    public class SnapQuery : DungeonQuery
     {
         [HideInInspector]
         [SerializeField]
         public SnapQueryModuleInfo[] modules;
 
-        public override void OnPostDungeonBuild(Dungeon dungeon, DungeonModel model)
+        public override void OnPostDungeonBuild()
         {
-            var snapModel = model as SnapModel;
+            var snapModel = GetComponent<SnapModel>();
             // Build the module game object mapping
             var instanceMap = new Dictionary<string, SnapModuleInstance>();
             foreach (var instance in snapModel.modules)
@@ -93,6 +93,11 @@ namespace DungeonArchitect.Builders.Snap
                 moduleList.Add(moduleInfo);
             }
             modules = moduleList.ToArray();
+        }
+
+        public override void Release()
+        {
+            modules = System.Array.Empty<SnapQueryModuleInfo>();
         }
 
         public bool GetModuleInfo(Vector3 position, out SnapQueryModuleInfo outModule)

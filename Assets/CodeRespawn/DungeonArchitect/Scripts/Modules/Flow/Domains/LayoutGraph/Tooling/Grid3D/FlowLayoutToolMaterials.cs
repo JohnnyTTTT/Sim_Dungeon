@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using DungeonArchitect.SxEngine;
 
 namespace DungeonArchitect.Flow.Domains.Layout.Tooling.Graph3D
@@ -61,8 +61,4 @@ namespace DungeonArchitect.Flow.Domains.Layout.Tooling.Graph3D
         public SxFlowLinkOneWayHeadMaterial() : base("FlowLinkOneWayMaterial") {}
     }
     
-    public class SxGridMaterial : SxUnityResourceMaterial
-    {
-        public SxGridMaterial() : base("GridMaterial") {}
-    }
 }

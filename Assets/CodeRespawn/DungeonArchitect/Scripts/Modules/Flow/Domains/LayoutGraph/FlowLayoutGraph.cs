@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System;
 using System.Collections.Generic;
 using DungeonArchitect.Flow.Items;
@@ -52,6 +52,23 @@ namespace DungeonArchitect.Flow.Domains.Layout
             return null;
         }
 
+        
+        public FlowLayoutGraphNode GetNodeWithItem(FlowGraphItemType itemType)
+        {
+            foreach (var node in Nodes)
+            {
+                foreach (var nodeItem in node.items)
+                {
+                    if (nodeItem != null && nodeItem.type == itemType)
+                    {
+                        return node;
+                    }
+                }
+            }
+
+            return null;
+        }
+        
         public FlowLayoutGraphLink GetLink(FlowLayoutGraphNode sourceNode, FlowLayoutGraphNode destNode)
         {
             return GetLink(sourceNode, destNode, false);

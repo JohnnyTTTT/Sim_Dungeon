@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using System.Linq;
 using DungeonArchitect.Flow.Domains;
@@ -146,6 +146,16 @@ namespace DungeonArchitect.Editors.Flow
                     errorMessage = "Not Allowed: Already connected";
                     return false;
                 }
+            }
+
+            return true;
+        }
+
+        public override bool CanDestroyNode(GraphNode node)
+        {
+            if (node is FlowExecResultGraphNode)
+            {
+                return false;
             }
 
             return true;

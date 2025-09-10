@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEditor;
 using UnityEngine;
 using MU = DungeonArchitect.Utils.MathUtils;
@@ -76,7 +76,7 @@ namespace DungeonArchitect.RoomDesigner.Editors
             var doorWorldPos = Vector3.Scale(baseOffset + door.logicalCursorPosition, room.gridSize);
             Handles.color = Color.green;
             float size = HandleUtility.GetHandleSize(doorWorldPos) * 0.25f;
-            var fmh_79_65_638927151455832067 = Quaternion.identity; doorWorldPos = Handles.FreeMoveHandle(doorWorldPos, size, snap, Handles.SphereHandleCap);
+            var fmh_79_65_638684544973473317 = Quaternion.identity; doorWorldPos = Handles.FreeMoveHandle(doorWorldPos, size, snap, Handles.SphereHandleCap);
             var logicalPos = MU.Divide(doorWorldPos, room.gridSize) - baseOffset;
 
             var oldLogicalPosition = door.logicalPosition;

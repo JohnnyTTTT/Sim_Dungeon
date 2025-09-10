@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using System.Linq;
 using DungeonArchitect.SxEngine.Utils;
@@ -80,7 +80,7 @@ namespace DungeonArchitect.SxEngine
 
         public void RemoveChild(ISxSceneNode child)
         {
-            child.RemoveChild(child);
+            children.Remove(child);
         }
 
         public ISxSceneNode Parent { get; set; }

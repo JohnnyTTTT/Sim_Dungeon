@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -45,6 +45,11 @@ namespace DungeonArchitect.Utils
         public static Vector3 ToVector3(Vector3Int v) {
 	        return new Vector3(v.x, v.y, v.z);
         }
+        
+        public static Vector2 ToVector2(Vector2Int v) {
+	        return new Vector2(v.x, v.y);
+        }
+
         
         public static Vector4 ToVector4(Vector3 v, float w) {
 	        return new Vector4(v.x, v.y, v.z, w);
@@ -230,6 +235,14 @@ namespace DungeonArchitect.Utils
             return rect;
         }
 
+
+        public static Vector3 ClampToRect(Vector3 position, Rect bounds)
+        {
+	        var pos2D = new Vector2(position.x, position.z);
+	        pos2D = ClampToRect(pos2D, bounds);
+	        return new Vector3(pos2D.x, position.y, pos2D.y);
+        }
+        
         public static Vector2 ClampToRect(Vector2 position, Rect bounds)
         {
             var result = position;
@@ -394,6 +407,61 @@ namespace DungeonArchitect.Utils
         public static Vector3 ReflectVector(Vector3 direction, Vector3 normal)
         {
 	        return direction - 2 * Vector3.Dot(direction, normal) * normal;
+        }
+
+        public static bool RayPlaneIntersection(Ray ray, Plane plane, out float distance)
+        {
+	        // https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-plane-and-ray-disk-intersection
+	        var denominator = Vector3.Dot(ray.direction, plane.normal);
+	        if (Mathf.Abs(denominator) < 1e-6f)
+	        {
+		        distance = 0;
+		        return false;
+	        }
+
+	        var p0 = plane.normal * plane.distance;
+	        var l0 = ray.origin;
+	        distance = Vector3.Dot(p0 - l0, plane.normal) / denominator;
+	        return distance >= 0;
+        }
+        
+        public static List<Vector2Int> GetBoundaryCoordinates(Vector2Int position, Vector2Int size, System.Action<Vector2Int> callback = null)
+        {
+	        var boundary = new List<Vector2Int>();
+	        int x = position.x;
+	        int y = position.y;
+	        int width = size.x;
+	        int height = size.y;
+
+	        // Top edge
+	        for (int i = x; i < x + width; i++)
+	        {
+		        boundary.Add(new Vector2Int(i, y));
+		        callback?.Invoke(new Vector2Int(i, y));
+	        }
+
+	        // Right edge
+	        for (int i = y + 1; i < y + height; i++)
+	        {
+		        boundary.Add(new Vector2Int(x + width - 1, i));
+		        callback?.Invoke(new Vector2Int(x + width - 1, i));
+	        }
+
+	        // Bottom edge
+	        for (int i = x + width - 2; i >= x; i--)
+	        {
+		        boundary.Add(new Vector2Int(i, y + height - 1));
+		        callback?.Invoke(new Vector2Int(i, y + height - 1));
+	        }
+
+	        // Left edge
+	        for (int i = y + height - 2; i > y; i--)
+	        {
+		        boundary.Add(new Vector2Int(x, i));
+		        callback?.Invoke(new Vector2Int(x, i));
+	        }
+
+	        return boundary;
         }
     }
 }

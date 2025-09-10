@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 
 namespace DungeonArchitect.Builders.Grid
@@ -74,42 +74,12 @@ namespace DungeonArchitect.Builders.Grid
         public int CorridorWidth = 1;
         
         /// <summary>
-        /// Tweak this value to increase / reduce the height variations (and stairs)
-        /// in your dungeon. A value close to 0 reduces the height variation and increases
-        /// as you approach 1. Increasing this value to a higher level might create dungeons 
-        /// with no place for proper stair placement since there is too much height variation.
-        /// A value of 0.2 to 0.4 seems good
-        /// </summary>
-        [Tooltip(@"Tweak this value to increase / reduce the height variations (and stairs) in your dungeon. A value close to 0 reduces the height variation and increases as you approach 1. Increasing this value to a higher level might create dungeons  with no place for proper stair placement since there is too much height variation. A value of 0.2 to 0.4 seems good")]
-        public float HeightVariationProbability = 0.2f;
-
-        /// <summary>
-        /// The number of logical floor units the dungeon height can vary. This determines how 
-        /// high the dungeon's height can vary (e.g. max 2 floors high). Set this value depending 
-        /// on the stair meshes you designer has created. In the sample demo, there are two stair
-        /// meshes, one 200 units high (1 floor) and another 400 units high (2 floors).
-        /// So the default is set to 2
-        /// </summary>
-        [Tooltip(@"The number of logical floor units the dungeon height can vary. This determines how  high the dungeon's height can vary (e.g. max 2 floors high). Set this value depending  on the stair meshes you designer has created. In the sample demo, there are two stair meshes, one 200 units high (1 floor) and another 400 units high (2 floors). So the default is set to 2")]
-        public int MaxAllowedStairHeight = 1;
-
-        /// <summary>
         /// Determines how many loops you would like to have in your dungeon. A value near 0 will create
         /// fewer loops creating linear dungeons. A value near 1 would create lots of loops, which would look unoriginal.
         /// Its good to allow a few loops so a value close to zero (like 0.2 should be good)
         /// </summary>
         [Tooltip(@"Determines how many loops you would like to have in your dungeon. A value near 0 will create fewer loops creating linear dungeons. A value near 1 would create lots of loops, which would look unoriginal. Its good to allow a few loops so a value close to zero (like 0.2 should be good)")]
         public float SpanningTreeLoopProbability = 0.15f;
-
-        /// <summary>
-        /// The generator would add stairs to make different areas of the dungeon accessible. However, we do not want too
-        /// many stairs. For e.g., before adding a stair in a particular elevated area, the generator would check if this
-        /// area is already accessible from a nearby stair. If so, it would not add it. This tolerance parameter determines
-        /// how far to look for an existing path before we can add a stair. Play with this parameter if you see too many
-        /// stairs close to each other, or too few
-        /// </summary>
-        [Tooltip(@"The generator would add stairs to make different areas of the dungeon accessible. However, we do not want too many stairs. For e.g., before adding a stair in a particular elevated area, the generator would check if this area is already accessible from a nearby stair. If so, it would not add it. This tolerance parameter determines how far to look for an existing path before we can add a stair. Play with this parameter if you see too many stairs close to each other, or too few")]
-        public float StairConnectionTollerance = 6;
 
         /// <summary>
         /// Increase this value to remove nearby duplicate doors.  This value determines how many cell we can move to reach the two connected cells of a door if the door was removed

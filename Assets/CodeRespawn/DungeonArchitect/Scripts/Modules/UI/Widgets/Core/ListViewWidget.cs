@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -172,7 +172,13 @@ namespace DungeonArchitect.UI.Widgets
 
         public void SetSelectedItem(UISystem uiSystem, T item, bool selectOnInspector)
         {
+            if (item == null)
+            {
+                return;
+            }
             var items = dataSource.GetItems();
+            if (items == null) return;
+            
             int index = System.Array.IndexOf(items, item);
             SetSelectedIndex(index);
 

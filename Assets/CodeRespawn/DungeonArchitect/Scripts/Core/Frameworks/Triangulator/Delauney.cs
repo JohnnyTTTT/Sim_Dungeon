@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 //Credit to Paul Bourke (pbourke@swin.edu.au) for the original Triangulator Fortran 77 Program :))
 //Converted to a standalone C# 2.0 library by Morten Nielsen (www.iter.dk)
 //Check out: http://astronomy.swin.edu.au/~pbourke/terrain/triangulate/

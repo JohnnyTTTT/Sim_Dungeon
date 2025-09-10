@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 
 namespace DungeonArchitect
@@ -35,6 +35,14 @@ namespace DungeonArchitect
 		public virtual void OnPostDungeonBuild(Dungeon dungeon, DungeonModel model) {}
 
         /// <summary>
+        /// Called after the dungeon spawns its managed objects (e.g. SGF or SnapMap emits out the module prefab)
+        /// </summary>
+        /// <param name="dungeon"></param>
+        /// <param name="spawnedManagedObjects"></param>
+        /// <param name="activeModel"></param>
+		public virtual void OnSpawnedManagedObjects(Dungeon dungeon, GameObject[] spawnedManagedObjects, DungeonModel activeModel) {}
+		
+        /// <summary>
         /// Called after the dungeon is destroyed
         /// </summary>
         /// <param name="model">The dungeon model</param>
@@ -45,5 +53,6 @@ namespace DungeonArchitect
         /// </summary>
         /// <param name="model">The dungeon model</param>
         public virtual void OnDungeonDestroyed(Dungeon dungeon) {}
+
 	}
 }

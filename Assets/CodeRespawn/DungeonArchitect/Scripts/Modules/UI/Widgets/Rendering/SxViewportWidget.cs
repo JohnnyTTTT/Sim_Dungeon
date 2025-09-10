@@ -1,4 +1,6 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+
+using System.Collections.Generic;
 using DungeonArchitect.SxEngine;
 using UnityEngine;
 
@@ -7,6 +9,9 @@ namespace DungeonArchitect.UI.Widgets
     public class SxViewportWidget : WidgetBase
     {
         public SxWorld World { get; }
+        public SxRenderer Renderer => renderer;
+        public float MoveSpeed = 4.0f;
+        
         protected SxRenderer renderer;
         protected FrameTime frameTime = new FrameTime();
         protected float pitch = 0;
@@ -16,10 +21,11 @@ namespace DungeonArchitect.UI.Widgets
         
         protected Vector3 targetCamLocation;
             
-        public float MoveSpeed = 4.0f;
 
         private Matrix4x4 lastRenderViewMatrix;
         protected bool renderStateInvalidated = false;
+        
+        public bool RenderEveryFrame { get; set; } = false;
 
         
         public SxCamera Camera
@@ -66,8 +72,24 @@ namespace DungeonArchitect.UI.Widgets
         protected class FrameTime
         {
             private double lastUpdateTimestamp = 0;
-            public float DeltaTime { get; set; } = 0;
+
+            public float DeltaTime
+            {
+                get
+                {
+                    consumed = true;
+                    return deltaTime;
+                }
+                set
+                {
+                    Debug.Assert(consumed);
+                    consumed = false;
+                    deltaTime = value;
+                }
+            }
+            private float deltaTime = 0;
             public bool SkipNextFrameTime { get; set; }= false;
+            private bool consumed = true;
 
             public void Tick(double timeSinceStartup)
             {
@@ -75,18 +97,18 @@ namespace DungeonArchitect.UI.Widgets
 
                 if (lastUpdateTimestamp > 0)
                 {
-                    DeltaTime = (float) (currentTime - lastUpdateTimestamp);
+                    deltaTime = (float)(currentTime - lastUpdateTimestamp);
+                    deltaTime = Mathf.Min(0.066f, deltaTime);
                 }
 
                 if (SkipNextFrameTime)
                 {
                     SkipNextFrameTime = false;
-                    DeltaTime = 0;
+                    deltaTime = 0;
                 }
 
                 lastUpdateTimestamp = currentTime;
             }
-
         }
 
         public void ResetFrameTimer()
@@ -100,12 +122,12 @@ namespace DungeonArchitect.UI.Widgets
 
         public float FOV
         {
-            get => renderer != null ? renderer.FOV : 0;
+            get => renderer != null ? renderer.Camera.FOV : 0;
         }
 
         public float AspectRatio
         {
-            get => renderer != null ? renderer.GetAspectRatio() : 1;
+            get => renderer != null ? renderer.Camera.AspectRatio : 1;
         }
 
         public SxViewportWidget()
@@ -122,6 +144,14 @@ namespace DungeonArchitect.UI.Widgets
             UpdateCamera();
 
             World = new SxWorld();
+        }
+        
+        public void Release()
+        {
+            if (renderer != null)
+            {
+                renderer.Release();
+            }
         }
 
         public void ResetCamera(bool immediate)
@@ -153,34 +183,37 @@ namespace DungeonArchitect.UI.Widgets
         }
 
         public override bool RequiresInputEveryFrame() { return true; }
-        
+
         protected override void DrawImpl(UISystem uiSystem, UIRenderer uiRenderer)
         {
             var guiState = new GUIState(uiRenderer);
             var bounds = new Rect(Vector2.zero, WidgetBounds.size);
 
-            if (IsPaintEvent(uiSystem))
+            if (IsPaintEvent(uiSystem) || RenderEveryFrame)
             {
                 uiRenderer.DrawTexture(bounds, renderer.Texture);
             }
             
             guiState.Restore();
         }
-
+        
         public override void UpdateWidget(UISystem uiSystem, Rect bounds)
         {
             base.UpdateWidget(uiSystem, bounds);
-
             frameTime.Tick(uiSystem.Platform.timeSinceStartup);
-            
             UpdateCamera();
+            World.Tick(renderer.CreateRenderContext(), frameTime.DeltaTime);
 
-            if (renderStateInvalidated || IsCameraMoving())
+            if (renderStateInvalidated || IsCameraMoving() || RenderEveryFrame || renderer.Texture == null)
             {
-                World.Tick(renderer.CreateRenderContext(), frameTime.DeltaTime);
                 RenderTexture();
                 renderStateInvalidated = false;
             }
+        }
+
+        public void Invalidate()
+        {
+            renderStateInvalidated = true;
         }
 
         public void RenderTexture()
@@ -189,7 +222,7 @@ namespace DungeonArchitect.UI.Widgets
             lastRenderViewMatrix = Camera.ViewMatrix;
         }
 
-        void UpdateCamera()
+        protected virtual void UpdateCamera()
         {
             var rotPitch = Quaternion.AngleAxis(pitch, Vector3.right);
             var rotYaw = Quaternion.AngleAxis(yaw, Vector3.up);
@@ -200,6 +233,49 @@ namespace DungeonArchitect.UI.Widgets
             var currentCamLocation = renderer.Camera.Location;
             currentCamLocation = Vector3.Lerp(currentCamLocation, targetCamLocation, t);
             renderer.Camera.Location = currentCamLocation;
+        }
+        
+        public void FocusCameraOnPoints(Vector3[] points, float radius)
+        {
+            var rotation = Quaternion.Inverse(Camera.Rotation);
+            var sum = Vector3.zero;
+            foreach (var point in points)
+            {
+                sum += point;
+            }
+
+            var center = sum / points.Length;
+
+            var bounds = new Bounds();
+            for (var i = 0; i < points.Length; i++)
+            {
+                var point = points[i];
+                var p = rotation * (point - center);
+                if (i == 0)
+                {
+                    bounds.SetMinMax(p, p);
+                }
+                else
+                {
+                    bounds.Encapsulate(p);
+                }
+            }
+
+            float distanceV, distanceH;
+            {
+                var frustumHeight = bounds.extents.y * 2 + radius * 4;
+                distanceV = frustumHeight * 0.5f / Mathf.Tan(FOV * 0.5f * Mathf.Deg2Rad) + bounds.extents.z;
+            }
+            {
+                var frustumWidth = bounds.extents.x * 2 + radius * 4;
+                var frustumHeight = frustumWidth / AspectRatio;
+                distanceH = frustumHeight * 0.5f / Mathf.Tan(FOV * 0.5f * Mathf.Deg2Rad) + bounds.extents.z;
+            }
+            var distance = Mathf.Max(distanceV, distanceH);
+            var offset = Camera.Rotation * (Vector3.forward * distance * 1.1f);
+            var target = center + offset;
+            SetCameraLocation(target, false);
+            PivotDistance = (center - target).magnitude;
         }
 
         private bool keyStrafeLeft = false;
@@ -220,6 +296,11 @@ namespace DungeonArchitect.UI.Widgets
             return distance > 0.01f;
         }
 
+        public bool RequiresRepaint()
+        {
+            return IsCameraMoving();
+        }
+        
         public override void OnFocus()
         {
 
@@ -327,26 +408,36 @@ namespace DungeonArchitect.UI.Widgets
                 if (keyMoveUp) verticalDirection = 1;
                 if (keyMoveDown) verticalDirection = -1;
 
-                float deltaTime = Mathf.Min(0.1f, frameTime.DeltaTime);
-
+                var accumulatedMoveDist = Vector3.zero;
+                
+                float deltaTime = frameTime.DeltaTime;
+                var directionalMoveDist = deltaTime * MoveSpeed;
                 if (strafeDirection != 0)
                 {
                     var right = Quaternion.AngleAxis(yaw, Vector3.up) * Vector3.right;
-                    var move = right * (strafeDirection * MoveSpeed * deltaTime);
-                    targetCamLocation += move;
+                    accumulatedMoveDist += right * (strafeDirection * directionalMoveDist);
                 }
 
                 if (forwardDirection != 0)
                 {
                     var forward = renderer.Camera.Rotation * -Vector3.forward;
-                    var move = forward * (forwardDirection * MoveSpeed * deltaTime);
-                    targetCamLocation += move;
+                    accumulatedMoveDist += forward * (forwardDirection * directionalMoveDist);
                 }
 
                 if (verticalDirection != 0)
                 {
-                    var move = Vector3.up * (verticalDirection * MoveSpeed * deltaTime);
-                    targetCamLocation += move;
+                    accumulatedMoveDist += Vector3.up * (verticalDirection * directionalMoveDist);
+                }
+
+                var moveDistance = accumulatedMoveDist.magnitude;
+                if (moveDistance > 0)
+                {
+                    if (moveDistance > directionalMoveDist)
+                    {
+                        accumulatedMoveDist = accumulatedMoveDist.normalized * directionalMoveDist;
+                    }
+
+                    targetCamLocation += accumulatedMoveDist;
                 }
             }
         }

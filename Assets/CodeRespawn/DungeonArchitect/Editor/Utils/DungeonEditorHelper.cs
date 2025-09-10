@@ -1,10 +1,9 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using DungeonArchitect.Builders;
 using DungeonArchitect.Builders.Grid;
-using DungeonArchitect.Utils;
 using DungeonArchitect.Graphs;
 using DungeonArchitect.SpatialConstraints;
 using DungeonArchitect.Graphs.SpatialConstraints;
@@ -12,9 +11,11 @@ using DungeonArchitect.Grammar;
 using DungeonArchitect.Editors.SnapFlow;
 using DungeonArchitect.Editors.Flow;
 using DungeonArchitect.Editors.Flow.Impl;
+using DungeonArchitect.Editors.MarkerGenerator;
 using DungeonArchitect.Flow.Impl.GridFlow;
 using DungeonArchitect.Flow.Impl.SnapGridFlow;
 using DungeonArchitect.Landscape;
+using DungeonArchitect.MarkerGenerator;
 using DungeonArchitect.UI.Widgets.GraphEditors;
 using DungeonArchitect.UI;
 using DungeonArchitect.UI.Impl.UnityEditor;
@@ -29,7 +30,7 @@ namespace DungeonArchitect.Editors
         /// <summary>
         /// Creates a new Dungeon Theme in the specified asset folder.  Access from the Create context menu in the Project window
         /// </summary>
-        [MenuItem("Assets/Create/Dungeon Architect/Dungeon Theme", false, 100)]
+        [MenuItem("Assets/Create/Dungeon Architect/Theme Engine/Dungeon Theme", false, 100)]
         public static void CreateThemeAssetInBrowser()
         {
             var defaultFileName = "DungeonTheme.asset";
@@ -39,6 +40,20 @@ namespace DungeonArchitect.Editors
             HandlePostAssetCreated(graph);
         }
 
+        /// <summary>
+        /// Creates a new Dungeon Theme in the specified asset folder.  Access from the Create context menu in the Project window
+        /// </summary>
+        [MenuItem("Assets/Create/Dungeon Architect/Theme Engine/Pattern Matcher", false, 101)]
+        public static void CreateMarkerGeneratorAssetInBrowser()
+        {
+            var defaultFileName = "PatternMatcher.asset";
+            var path = GetAssetBrowserPath();
+            var asset = CreateAssetInBrowser<MarkerGeneratorAsset>(path, defaultFileName);
+            MarkerGenEditorUtils.InitAsset(asset, new UnityEditorUIPlatform());
+            HandlePostAssetCreated(asset);
+        }
+
+        
         [MenuItem("Assets/Create/Dungeon Architect/Snap Builder/Snap Graph", false, 1000)]
         public static void CreateSnapAssetInBrowser()
         {
@@ -146,6 +161,12 @@ namespace DungeonArchitect.Editors
                 ShowThemeEditor(graph);
                 return true; //catch open file
             }
+            else if (activeObject is MarkerGeneratorAsset)
+            {
+                var asset = Selection.activeObject as MarkerGeneratorAsset;
+                ShowMarkerGeneratorEditor(asset);
+                return true;
+            }
             else if (activeObject is SnapFlowAsset)
             {
                 var dungeonFlow = Selection.activeObject as SnapFlowAsset;
@@ -211,6 +232,26 @@ namespace DungeonArchitect.Editors
             else
             {
                 Debug.LogWarning("Invalid Dungeon theme file");
+            }
+        }
+
+        /// <summary>
+        /// Shows the Pattern Matcher editor window
+        /// </summary>
+        /// <param name="graph">The graph to load in the dungeon theme editor window</param>
+        public static void ShowMarkerGeneratorEditor(MarkerGeneratorAsset asset)
+        {
+            if (asset != null)
+            {
+                var window = EditorWindow.GetWindow<MarkerGenEditorWindow>();
+                if (window != null)
+                {
+                    window.Init(asset);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Invalid pattern matcher file");
             }
         }
 
@@ -439,6 +480,7 @@ namespace DungeonArchitect.Editors
             }
         }
 
+
         /// <summary>
         /// Creates an editor tag
         /// </summary>
@@ -480,14 +522,23 @@ namespace DungeonArchitect.Editors
 					node.Id = System.Guid.NewGuid().ToString();
 				}
 			}
-			
 		}
 
+        public static void MarkDungeonObjectDirty(GameObject gameObject)
+        {
+            EditorUtility.SetDirty(gameObject);
+            EditorUtility.SetDirty(gameObject.GetComponent<Dungeon>());
+            EditorUtility.SetDirty(gameObject.GetComponent<DungeonModel>());
+            EditorUtility.SetDirty(gameObject.GetComponent<DungeonBuilder>());
+            EditorUtility.SetDirty(gameObject.GetComponent<DungeonQuery>());
+            
+        }
+        
         public static void MarkSceneDirty()
         {
             if (!Application.isPlaying)
             {
-                UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene());
+                UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(UnityEngine.SceneManagement.SceneManager.GetActiveScene());
             }
         }
         

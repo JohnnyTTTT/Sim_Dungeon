@@ -1,10 +1,11 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System;
 using UnityEditor;
 using UnityEngine;
 using System.Collections;
 using DungeonArchitect.Splatmap;
 using DungeonArchitect.UI;
+using Random = UnityEngine.Random;
 
 namespace DungeonArchitect.Editors
 {
@@ -50,6 +51,9 @@ namespace DungeonArchitect.Editors
 			if (GUILayout.Button ("Destroy Dungeon")) {
 				DestroyDungeon();
 			}
+			if (GUILayout.Button ("Randomize Dungeon")) {
+				RandomizeDungeon();
+			}
 			
 			EditorGUILayout.Separator();
 
@@ -77,6 +81,19 @@ namespace DungeonArchitect.Editors
 			if (GUILayout.Button(new GUIContent("Launch Pad")))
 			{
 				OpenLaunchPad();
+			}
+		}
+
+		private void RandomizeDungeon()
+		{
+			var dungeon = target as Dungeon;
+			if (dungeon != null)
+			{
+				var config = dungeon.gameObject.GetComponent<DungeonConfig>();
+				if (config != null)
+				{
+					config.Seed = (uint)Random.Range(0, int.MaxValue);
+				}
 			}
 		}
 
@@ -171,6 +188,9 @@ namespace DungeonArchitect.Editors
                 //Undo.RecordObjects(new Object[] { dungeon, dungeon.ActiveModel }, "Dungeon Built");
                 dungeon.Build(new EditorDungeonSceneObjectInstantiator());
                 DungeonEditorHelper.MarkSceneDirty();
+                EditorUtility.SetDirty(dungeon.gameObject);
+                DungeonEditorHelper.MarkDungeonObjectDirty(dungeon.gameObject);
+                
                 DungeonPropertyEditorHook.NotifyDungeonBuilt(dungeon);
 
                 // Mark the splatmaps as dirty
@@ -205,7 +225,8 @@ namespace DungeonArchitect.Editors
             {
                 //Undo.RecordObjects(new Object[] { dungeon, dungeon.ActiveModel }, "Dungeon Destroyed");
                 dungeon.DestroyDungeon();
-                EditorUtility.SetDirty(dungeon.gameObject);
+                DungeonEditorHelper.MarkSceneDirty();
+                DungeonEditorHelper.MarkDungeonObjectDirty(dungeon.gameObject);
                 
                 // Notify the theme editor that the dungeon was rebuilt manually from the editor
                 var themeEditorWindow = DungeonEditorHelper.GetWindowIfOpen<DungeonThemeEditorWindow>();

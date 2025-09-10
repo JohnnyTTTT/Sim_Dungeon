@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using DungeonArchitect.Flow.Domains.Layout.Pathing;
 using DungeonArchitect.Flow.Exec;
 
@@ -12,17 +12,17 @@ namespace DungeonArchitect.Flow.Domains.Layout.Tasks
         }
 
 
-        protected virtual FlowLayoutNodeGroupGenerator CreateNodeGroupGenerator(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph)
+        protected virtual FlowLayoutNodeGroupGenerator CreateNodeGroupGenerator(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph, System.Random random)
         {
             return new NullFlowLayoutNodeGroupGenerator();
         }
 
-        protected virtual IFlowLayoutGraphConstraints CreateGraphConstraint(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph)
+        protected virtual IFlowLayoutGraphConstraints CreateGraphConstraint(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph, System.Random random)
         {
             return new NullFlowLayoutGraphConstraints();
         }
 
-        protected virtual IFlowLayoutNodeCreationConstraint CreateNodeCreationConstraint(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph)
+        protected virtual IFlowLayoutNodeCreationConstraint CreateNodeCreationConstraint(FlowDomainExtensions domainExtensions, FlowLayoutGraph graph, System.Random random)
         {
             return new NullFlowLayoutNodeCreationConstraint();
         }

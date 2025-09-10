@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 using UnityEditor;
 using System;
@@ -564,7 +564,7 @@ namespace DungeonArchitect.Editors
                 else
                 {
                     // Do not rebuild the layout as it has already been built. Just reapply the theme on the existing layout
-                    dungeon.ReapplyTheme(new EditorDungeonSceneObjectInstantiator());
+                    dungeon.ApplyTheme(new EditorDungeonSceneObjectInstantiator());
                 }
             }
         }

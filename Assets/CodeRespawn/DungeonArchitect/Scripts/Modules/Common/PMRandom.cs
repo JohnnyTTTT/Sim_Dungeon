@@ -1,18 +1,25 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System;
+using UnityEngine;
+using Random = System.Random;
 
 namespace DungeonArchitect.Utils
 {
     /// <summary>
     /// A random stream based on normal distribution. Also support uniform distsribution
     /// </summary>
+    [Serializable]
     public class PMRandom
     {
         const int A = 16807;
         const int M = 2147483647;
-        
+     
+        [SerializeField]
         uint seed = 0;
+        
+        [SerializeField]
         Random random = new Random();
+        
 		public Random UniformRandom {
 			get {
 				return random;

@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using DungeonArchitect.Flow.Domains.Layout;
 using DungeonArchitect.Flow.Domains.Layout.Tooling.Graph3D;
@@ -11,7 +11,7 @@ namespace DungeonArchitect.Builders.SnapGridFlow.DebugVisuals
     public class SnapGridFlowDebugVisualizer : DungeonEventListener
     {
         private SxWorld world;
-        public float offsetY = 3;
+        public Vector3 offset = new Vector3(0, 3, 0);
         public float nodeRadius = 1.5f;
         
         public override void OnPostDungeonBuild(Dungeon dungeon, DungeonModel model)
@@ -48,11 +48,12 @@ namespace DungeonArchitect.Builders.SnapGridFlow.DebugVisuals
                     var chunkSize = sgfConfig.moduleDatabase.ModuleBoundsAsset.chunkSize;
                     foreach (var node in graph.Nodes)
                     {
-                        var nodePos = Vector3.Scale(node.coord, chunkSize) + new Vector3(0, offsetY, 0);
+                        var nodePos = Vector3.Scale(node.coord, chunkSize) + offset;
                         node.position = t.TransformPoint(nodePos);
                         foreach (var subNode in node.MergedCompositeNodes)
                         {
-                            subNode.position = Vector3.Scale(subNode.coord, chunkSize) + new Vector3(0, offsetY, 0);
+                            var localSubNodePos = Vector3.Scale(subNode.coord, chunkSize) + offset;
+                            subNode.position = t.TransformPoint(localSubNodePos);
                         }
                     }
                 }

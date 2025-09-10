@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using DungeonArchitect.Flow.Domains.Layout.Pathing;
 using DungeonArchitect.Flow.Exec;
@@ -150,9 +150,9 @@ namespace DungeonArchitect.Flow.Domains.Layout.Tasks
                     staticState.PathName = pathName;
                     staticState.StartNodePathNameOverride = startNodePathNameOverride;
                     staticState.EndNodePathNameOverride = endNodePathNameOverride;
-                    staticState.NodeGroupGenerator = CreateNodeGroupGenerator(context.DomainExtensions, graph);
-                    staticState.GraphConstraint = CreateGraphConstraint(context.DomainExtensions, graph);
-                    staticState.NodeCreationConstraint = CreateNodeCreationConstraint(context.DomainExtensions, graph);
+                    staticState.NodeGroupGenerator = CreateNodeGroupGenerator(context.DomainExtensions, graph, context.Random);
+                    staticState.GraphConstraint = CreateGraphConstraint(context.DomainExtensions, graph, context.Random);
+                    staticState.NodeCreationConstraint = CreateNodeCreationConstraint(context.DomainExtensions, graph, context.Random);
                     
                     pathingSystem.RegisterGrowthSystem(startNode, staticState);
                 }

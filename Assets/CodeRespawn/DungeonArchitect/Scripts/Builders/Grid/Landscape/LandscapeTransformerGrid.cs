@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 using System.Collections.Generic;
 using DungeonArchitect.Landscape;
@@ -54,10 +54,10 @@ namespace DungeonArchitect.Builders.Grid
 
             if (model is GridDungeonModel && terrain != null)
             {
-                var gridMode = model as GridDungeonModel;
+                var gridModel = model as GridDungeonModel;
                 SetupTextures();
-                UpdateHeights(gridMode);
-                UpdateTerrainTextures(gridMode);
+                UpdateHeights(gridModel);
+                UpdateTerrainTextures(gridModel);
             }
 		}
 

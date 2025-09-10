@@ -1,4 +1,6 @@
- //$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+
+ //$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,44 +61,33 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
         //private static FLocalCoordBuilder coordBuilder = new FLocalCoordBuilder();
         private int minGroupSize = 1;
         private ISGFLayoutTaskPathBuilder pathingTask;
+        private SnapGridFlowModuleDatabase moduleDatabase;
         
-        public SnapFlowLayoutNodeGroupGenerator(SnapGridFlowModuleDatabase moduleDatabase, ISGFLayoutTaskPathBuilder pathingTask)
+        public SnapFlowLayoutNodeGroupGenerator(SnapGridFlowModuleDatabase moduleDatabase, ISGFLayoutTaskPathBuilder pathingTask, System.Random random)
         {
+	        this.moduleDatabase = moduleDatabase;
 	        this.pathingTask = pathingTask;
             if (moduleDatabase != null)
             {
-	            float maxSelectionWeight = 0.0f;
+	            var settings = new List<NodeGroupSettings>();
 	            foreach (var module in moduleDatabase.Modules)
 	            {
-		            maxSelectionWeight = Mathf.Max(maxSelectionWeight, module.SelectionWeight);
-	            }
-
-	            if (maxSelectionWeight == 0)
-	            {
-		            maxSelectionWeight = 1.0f;
-	            }
-	            
-	            {
-		            var settings = new List<NodeGroupSettings>();
-		            foreach (var module in moduleDatabase.Modules)
+		            for (int AsmIdx = 0; AsmIdx < module.RotatedAssemblies.Length; AsmIdx++)
 		            {
-			            for (int AsmIdx = 0; AsmIdx < module.RotatedAssemblies.Length; AsmIdx++)
+			            var assembly = module.RotatedAssemblies[AsmIdx];
+			            var groupSize = assembly.numChunks;
+			            var setting = new NodeGroupSettings()
 			            {
-				            var assembly = module.RotatedAssemblies[AsmIdx];
-				            var groupSize = assembly.numChunks;
-				            var setting = new NodeGroupSettings()
-				            {
-					            Weight = module.SelectionWeight,
-					            GroupSize = groupSize,
-					            Module = module,
-					            ModuleAssemblyIdx = AsmIdx,
-					            Category = module.Category
-				            };
-				            settings.Add(setting);
-			            }
-
-			            groupSettings = settings.ToArray();
+				            Weight = module.SelectionWeight,
+				            GroupSize = groupSize,
+				            Module = module,
+				            ModuleAssemblyIdx = AsmIdx,
+				            Category = module.Category
+			            };
+			            settings.Add(setting);
 		            }
+
+		            groupSettings = settings.ToArray();
 	            }
 
 	            if (groupSettings != null)
@@ -199,7 +190,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
 		        return new FlowLayoutPathNodeGroup[0];
 	        }
 
-	        if (groupSettings.Length == 0) {
+	        if (groupSettings.Length == 0 || moduleDatabase == null) {
 		        var nullGenerator = new NullFlowLayoutNodeGroupGenerator();
 		        return nullGenerator.Generate(graphQuery, currentNode, pathIndex, pathLength, random, visited);
 	        }
@@ -343,12 +334,14 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
     public class SnapFlowLayoutGraphConstraints : IFlowLayoutGraphConstraints
     {
         private SnapGridFlowModuleDatabase moduleDatabase;
-        private ISGFLayoutTaskPathBuilder pathingTask; 
+        private ISGFLayoutTaskPathBuilder pathingTask;
+        private System.Random random;
 
-        public SnapFlowLayoutGraphConstraints(SnapGridFlowModuleDatabase moduleDatabase, ISGFLayoutTaskPathBuilder pathingTask)
+        public SnapFlowLayoutGraphConstraints(SnapGridFlowModuleDatabase moduleDatabase, ISGFLayoutTaskPathBuilder pathingTask, System.Random random)
         {
             this.moduleDatabase = moduleDatabase;
             this.pathingTask = pathingTask;
+            this.random = random;
         }
         
         public bool IsValid(FlowLayoutGraphQuery graphQuery, FlowLayoutGraphNode node, FlowLayoutGraphNode[] incomingNodes)
@@ -411,7 +404,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
 
 
             SGFNodeGroupUserData sgfUserData = group.userdata as SGFNodeGroupUserData;
-            Debug.Assert(sgfUserData != null, "Invalid SGF user group data");
+            Debug.Assert(sgfUserData != null, "Invalid SGF user group data. Please try recompiling the module database");
             
             var registeredAssembly = sgfUserData.Module.RotatedAssemblies[sgfUserData.ModuleAssemblyIdx];
             

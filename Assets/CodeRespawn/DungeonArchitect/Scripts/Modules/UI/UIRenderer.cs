@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 namespace DungeonArchitect.UI
 {
@@ -12,6 +12,8 @@ namespace DungeonArchitect.UI
         void Box(Rect bounds, string text);
         void Box(Rect bounds, GUIContent content);
         void Box(Rect bounds, GUIContent content, GUIStyle style);
+        bool Toggle(Rect bounds, bool value, string text);
+        bool Toggle(Rect bounds, bool value, string text, GUIStyle style);
         void Label(Rect bounds, string text, GUIStyle style);
         void Label(Rect bounds, GUIContent content, GUIStyle style);
         Vector2 BeginScrollView(Rect bounds, Vector2 scrollPosition, Rect viewRect);
@@ -22,6 +24,7 @@ namespace DungeonArchitect.UI
         void EndGUI();
         void DrawLine(Vector3 v0, Vector3 v1);
         void DrawLine(Color color, Vector3 v0, Vector3 v1);
+        void DrawLines(Color color, Vector3[] lineSegments);
         void DrawPolyLine(params Vector3[] points);
         void DrawPolyLine(Color color, params Vector3[] points);
         void DrawAAPolyLine(float thickness, params Vector3[] points);

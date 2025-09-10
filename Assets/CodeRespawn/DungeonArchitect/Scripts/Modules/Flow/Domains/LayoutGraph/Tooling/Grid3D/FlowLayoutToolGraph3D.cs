@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using DungeonArchitect.UI.Widgets;
 using UnityEngine;
@@ -60,11 +60,11 @@ namespace DungeonArchitect.Flow.Domains.Layout.Tooling.Graph3D
 
             if (activePoints.Count > 0)
             {
-                FocusCameraOnPoints(activePoints.ToArray());
+                FocusCameraOnPoints(activePoints.ToArray(), renderSettings.NodeRadius);
             }
             else if (inactivePoints.Count > 0)
             {
-                FocusCameraOnPoints(inactivePoints.ToArray());
+                FocusCameraOnPoints(inactivePoints.ToArray(), renderSettings.NodeRadius);
             }
             else
             {
@@ -72,51 +72,6 @@ namespace DungeonArchitect.Flow.Domains.Layout.Tooling.Graph3D
             }
         }
         
-        void FocusCameraOnPoints(Vector3[] points)
-        {
-            var rotation = Quaternion.Inverse(Camera.Rotation);
-            var sum = Vector3.zero;
-            foreach (var point in points)
-            {
-                sum += point;
-            }
-
-            var center = sum / points.Length;
-
-            // Rotate around the center
-            var bounds = new Bounds();
-            var rotatedPoints = new List<Vector3>();
-            for (var i = 0; i < points.Length; i++)
-            {
-                var point = points[i];
-                var p = rotation * (point - center);
-                if (i == 0)
-                {
-                    bounds.SetMinMax(p, p);
-                }
-                else
-                {
-                    bounds.Encapsulate(p);
-                }
-            }
-
-            float distanceV, distanceH;
-            {
-                var frustumHeight = bounds.extents.y * 2 + renderSettings.NodeRadius * 4;
-                distanceV = frustumHeight * 0.5f / Mathf.Tan(FOV * 0.5f * Mathf.Deg2Rad) + bounds.extents.z;
-            }
-            {
-                var frustumWidth = bounds.extents.y * 2 + renderSettings.NodeRadius * 4;
-                var frustumHeight = frustumWidth / AspectRatio;
-                distanceH = frustumHeight * 0.5f / Mathf.Tan(FOV * 0.5f * Mathf.Deg2Rad) + bounds.extents.z;
-            }
-            var distance = Mathf.Max(distanceV, distanceH);
-            var offset = Camera.Rotation * (Vector3.forward * distance * 1.1f);
-            var target = center + offset;
-            SetCameraLocation(target, false);
-            PivotDistance = (center - target).magnitude;
-        }
-
         public void Build(FlowLayoutGraph graph)
         {
             SxLayout3DWorldBuilder.Build(World, graph);

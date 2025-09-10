@@ -38,12 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
+  serializedVersion: 11
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -97,8 +97,9 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: fdc8b7ddba5cd194199118c3b5189627, type: 2}
-  m_LightingSettings: {fileID: 4890085278179872738, guid: 1cec667e689e22e46b5ddc3fbc9af92b, type: 2}
+  m_LightingDataAsset: {fileID: 112000002, guid: 8f55da3fc6fa2b24db00b3b13ab55c52,
+    type: 2}
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -118,8 +119,6 @@ NavMeshSettings:
     manualTileSize: 0
     tileSize: 256
     accuratePlacement: 0
-    maxJobWorkers: 0
-    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -199,7 +198,6 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
-  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &491927132
@@ -224,10 +222,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 425268, guid: bcfd91cd7005e5541af1542b73f40864, type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 425268, guid: bcfd91cd7005e5541af1542b73f40864, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -240,10 +234,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 425268, guid: bcfd91cd7005e5541af1542b73f40864, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 425268, guid: bcfd91cd7005e5541af1542b73f40864, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
@@ -254,6 +244,14 @@ PrefabInstance:
     - target: {fileID: 425268, guid: bcfd91cd7005e5541af1542b73f40864, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 425268, guid: bcfd91cd7005e5541af1542b73f40864, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 425268, guid: bcfd91cd7005e5541af1542b73f40864, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bcfd91cd7005e5541af1542b73f40864, type: 3}
@@ -495,10 +493,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 473886, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 473886, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -509,10 +503,6 @@ PrefabInstance:
     - target: {fileID: 473886, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 473886, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 473886, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
       propertyPath: m_LocalRotation.x
@@ -526,13 +516,13 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 11447134, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
-      propertyPath: State
-      value: 0
+    - target: {fileID: 473886, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 11447134, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
-      propertyPath: Config
-      value: 
+    - target: {fileID: 473886, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 11447134, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
       propertyPath: Cells.Array.size
@@ -542,13 +532,26 @@ PrefabInstance:
       propertyPath: DoorManager.doors.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11447134, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
+      propertyPath: State
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11447134, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
+      propertyPath: Config
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 11455964, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
       propertyPath: dungeonThemes.Array.data[0]
       value: 
-      objectReference: {fileID: 11400000, guid: 4c6debc1750b526458c73e04a3c2dca4, type: 2}
+      objectReference: {fileID: 11400000, guid: 4c6debc1750b526458c73e04a3c2dca4,
+        type: 2}
     - target: {fileID: 11457970, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
-      propertyPath: CorridorWidth
-      value: 3
+      propertyPath: MaxAllowedStairHeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11457970, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
+      propertyPath: HeightVariationProbability
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 11457970, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
       propertyPath: GridCellSize.x
@@ -559,12 +562,8 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 11457970, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
-      propertyPath: MaxAllowedStairHeight
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11457970, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
-      propertyPath: HeightVariationProbability
-      value: 0
+      propertyPath: CorridorWidth
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 11486402, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
       propertyPath: itemParent
@@ -574,7 +573,8 @@ PrefabInstance:
   m_SourcePrefab: {fileID: 100100000, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
 --- !u!1 &1793394650 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 195034, guid: b6ed04db3c3704ec18271f4fc8c52c2d, type: 3}
+  m_CorrespondingSourceObject: {fileID: 195034, guid: b6ed04db3c3704ec18271f4fc8c52c2d,
+    type: 3}
   m_PrefabInstance: {fileID: 1793394648}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1793394651

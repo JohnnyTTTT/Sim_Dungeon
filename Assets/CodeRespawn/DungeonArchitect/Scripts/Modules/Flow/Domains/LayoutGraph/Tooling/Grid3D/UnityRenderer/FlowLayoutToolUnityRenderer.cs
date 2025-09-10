@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using DungeonArchitect.SxEngine;
 using UnityEngine;
@@ -42,6 +42,7 @@ namespace DungeonArchitect.Flow.Domains.Layout.Tooling.Graph3D
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();
             var colors = new List<Color>();
+            var normals = new List<Vector3>();
             var triangles = new List<int>();
 
             foreach (var sectionEntry in command.Mesh.Sections)
@@ -81,8 +82,8 @@ namespace DungeonArchitect.Flow.Domains.Layout.Tooling.Graph3D
             mesh.vertices = vertices.ToArray();
             mesh.uv = uvs.ToArray();
             mesh.colors = colors.ToArray();
+            mesh.normals = normals.ToArray();
             mesh.triangles = triangles.ToArray();
-
         }
 
         public void Destroy()

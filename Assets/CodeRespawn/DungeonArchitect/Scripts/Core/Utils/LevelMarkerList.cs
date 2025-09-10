@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +10,7 @@ namespace DungeonArchitect
     {
         protected List<PropSocket> markers = new List<PropSocket>();
         protected int _SocketIdCounter = 0;
+        public bool AllowDuplicateMarkers = true;
 
         public IEnumerator<PropSocket> GetEnumerator()
         {
@@ -40,6 +41,11 @@ namespace DungeonArchitect
         {
             _SocketIdCounter = 0;
             markers.Clear();
+        }
+        
+        public PropSocket[] GetMarkerList()
+        {
+            return markers.ToArray();
         }
 
         public int GetNextSocketId()
@@ -112,6 +118,14 @@ namespace DungeonArchitect
             }
         }
 
+        public void Set(PropSocket[] markerList)
+        {
+            Clear();
+            foreach (var marker in markerList)
+            {
+                Add(marker);
+            }
+        }
     }
 
     public class SpatialPartionedLevelMarkerList : LevelMarkerList
@@ -144,14 +158,34 @@ namespace DungeonArchitect
 
         public override void Add(PropSocket marker)
         {
-            base.Add(marker);
-
             var partitionCoord = GetBucketCoord(marker);
             if (!buckets.ContainsKey(partitionCoord))
             {
                 buckets.Add(partitionCoord, new List<PropSocket>());
             }
-            buckets[partitionCoord].Add(marker);
+
+            var bucket = buckets[partitionCoord];
+            bool shouldInsert = true;
+            if (!AllowDuplicateMarkers)
+            {
+                foreach (var bucketMarker in bucket)
+                {
+                    if (bucketMarker.SocketType == marker.SocketType)
+                    {
+                        if (bucketMarker.Transform.Equals(marker.Transform))
+                        {
+                            shouldInsert = false;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (shouldInsert)
+            {
+                base.Add(marker);
+                bucket.Add(marker);
+            }
         }
 
         public override void Remove(PropSocket marker)

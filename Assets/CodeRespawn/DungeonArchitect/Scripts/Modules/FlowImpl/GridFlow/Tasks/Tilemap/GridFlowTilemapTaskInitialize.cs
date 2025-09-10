@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using System.Linq;
 using DungeonArchitect.Flow.Domains.Layout;
@@ -95,15 +95,16 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                 tileNode.node = node;
             }
 
-            PerturbRoomSizes(graph, tileNodes, random);
-            FixCorridorSizes(tileNodes, graph);
+            var graphQuery = new FlowLayoutGraphQuery(graph);
+            PerturbRoomSizes(graphQuery, tileNodes, random);
+            FixCorridorSizes(tileNodes, graphQuery);
 
             RasterizeRoomCorridors(tileNodes, tilemap);
-            RasterizeBaseCaveBlocks(tileNodes, tilemap, graph);
+            RasterizeBaseCaveBlocks(tileNodes, tilemap, graphQuery);
 
-            GenerateMainPath(tileNodes, tilemap, graph);
-            BuildCaves(tileNodes, tilemap, graph, random);
-            BuildDoors(tileNodes, tilemap, graph);
+            GenerateMainPath(tileNodes, tilemap, graphQuery);
+            BuildCaves(tileNodes, tilemap, graphQuery, random);
+            BuildDoors(tileNodes, tilemap, graphQuery);
 
             tilemap = CropTilemap(tilemap);
 
@@ -208,7 +209,7 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
         }
 
         #region Room / Corridor Generation Functions
-        void PerturbRoomSizes(FlowLayoutGraph graph, TilemapFlowNodeInfo[,] tileNodes, System.Random random)
+        void PerturbRoomSizes(FlowLayoutGraphQuery graphQuery, TilemapFlowNodeInfo[,] tileNodes, System.Random random)
         {
             // Perturb horizontally
             {
@@ -244,9 +245,9 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                         }
                         
                         bool connected = false;
-                        if (nodeA != null && nodeB != null)
+                        if (nodeA != null && nodeB != null && nodeA.node != null && nodeB.node != null)
                         {
-                            var link = graph.GetLink(nodeA.node, nodeB.node, true);
+                            var link = graphQuery.GetConnectedLink(nodeA.node.nodeId, nodeB.node.nodeId, true);
                             connected = (link != null && link.state.type != FlowLayoutGraphLinkType.Unconnected);
                         }
 
@@ -309,9 +310,9 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                         }
                         
                         bool connected = false;
-                        if (nodeA != null && nodeB != null)
+                        if (nodeA != null && nodeB != null && nodeA.node != null && nodeB.node != null)
                         {
-                            var link = graph.GetLink(nodeA.node, nodeB.node, true);
+                            var link = graphQuery.GetConnectedLink(nodeA.node.nodeId, nodeB.node.nodeId, true);
                             connected = (link != null && link.state.type != FlowLayoutGraphLinkType.Unconnected);
                         }
 
@@ -368,21 +369,21 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
             return domainData.RoomType;
         }
         
-        void FixCorridorSizes(TilemapFlowNodeInfo[,] tileNodes, FlowLayoutGraph graph)
+        void FixCorridorSizes(TilemapFlowNodeInfo[,] tileNodes, FlowLayoutGraphQuery graphQuery)
         {
             foreach (var tileNode in tileNodes)
             {
                 var node = tileNode.node;
                 if (GetRoomType(node) == GridFlowLayoutNodeRoomType.Corridor)
                 {
-                    var incomingNodes = graph.GetIncomingNodes(node);
-                    var outgoingNodes = graph.GetOutgoingNodes(node);
+                    var incomingNodes = graphQuery.GetIncomingNodes(node.nodeId);
+                    var outgoingNodes = graphQuery.GetOutgoingNodes(node.nodeId);
                     if (incomingNodes.Length == 0 || outgoingNodes.Length == 0) continue;
 
                     var incomingNode = incomingNodes[0];
                     var outgoingNode = outgoingNodes[0];
-                    var inCoord = GetNodeCoord(incomingNode);
-                    var outCoord = GetNodeCoord(outgoingNode);
+                    var inCoord = GetNodeCoord(graphQuery.GetNode(incomingNode));
+                    var outCoord = GetNodeCoord(graphQuery.GetNode(outgoingNode));
                     var vertical = inCoord.x == outCoord.x;
                     if (vertical)
                     {
@@ -404,7 +405,12 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                 if (!tileNode.node.active) continue;
                 bool wallsAsTiles = wallGenerationMethod == TilemapFlowNodeWallGenerationMethod.WallAsTiles;
                 var b = NodeTilemapBounds.Build(tileNode, tilemap.Width, tilemap.Height, wallsAsTiles);
-
+                if (!wallsAsTiles)
+                {
+                    b.x1--;
+                    b.y1--;
+                }
+                
                 if (GetRoomType(tileNode.node) == GridFlowLayoutNodeRoomType.Cave)
                 {
                     // Render the caves in another pass
@@ -430,7 +436,7 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                         }
                         else
                         {
-                            if (x < b.x1 && y < b.y1)
+                            if (x <= b.x1 && y <= b.y1)
                             {
                                 cell.CellType = FlowTilemapCellType.Floor;
                             }
@@ -461,17 +467,17 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                 // Rasterize the edges
                 if (!wallsAsTiles)
                 {
-                    for (int y = b.y0; y < b.y1; y++)
+                    for (int y = b.y0; y <= b.y1; y++)
                     {
                         var edge1 = tilemap.Edges.GetVertical(b.x0, y);
-                        var edge2 = tilemap.Edges.GetVertical(b.x1, y);
+                        var edge2 = tilemap.Edges.GetVertical(b.x1 + 1, y);
                         edge1.EdgeType = FlowTilemapEdgeType.Wall;
                         edge2.EdgeType = FlowTilemapEdgeType.Wall;
                     }
-                    for (int x = b.x0; x < b.x1; x++)
+                    for (int x = b.x0; x <= b.x1; x++)
                     {
                         var edge1 = tilemap.Edges.GetHorizontal(x, b.y0);
-                        var edge2 = tilemap.Edges.GetHorizontal(x, b.y1);
+                        var edge2 = tilemap.Edges.GetHorizontal(x, b.y1 + 1);
                         edge1.EdgeType = FlowTilemapEdgeType.Wall;
                         edge2.EdgeType = FlowTilemapEdgeType.Wall;
                     }
@@ -481,13 +487,18 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
         #endregion
 
         #region Cave Generation Functions
-        private void RasterizeBaseCaveBlocks(TilemapFlowNodeInfo[,] tileNodes, FlowTilemap tilemap, FlowLayoutGraph graph)
+        private void RasterizeBaseCaveBlocks(TilemapFlowNodeInfo[,] tileNodes, FlowTilemap tilemap, FlowLayoutGraphQuery graphQuery)
         {
             foreach (var tileNode in tileNodes)
             {
                 if (!tileNode.node.active) continue;
                 bool wallsAsTiles = wallGenerationMethod == TilemapFlowNodeWallGenerationMethod.WallAsTiles;
                 var b = NodeTilemapBounds.Build(tileNode, tilemap.Width, tilemap.Height, wallsAsTiles);
+                if (!wallsAsTiles)
+                {
+                    b.x1--;
+                    b.y1--;
+                }
 
                 if (GetRoomType(tileNode.node) != GridFlowLayoutNodeRoomType.Cave)
                 {
@@ -495,12 +506,13 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                     continue;
                 }
 
+                
                 var nodeCoord = GetNodeCoord(tileNode.node);
                 var caveNode = tileNode.node;
-                var blockLeft = ShouldBlockCaveBoundary(graph, caveNode, -1, 0);
-                var blockRight = ShouldBlockCaveBoundary(graph, caveNode, 1, 0);
-                var blockTop = ShouldBlockCaveBoundary(graph, caveNode, 0, -1);
-                var blockBottom = ShouldBlockCaveBoundary(graph, caveNode, 0, 1);
+                var blockLeft = ShouldBlockCaveBoundary(graphQuery, caveNode, -1, 0);
+                var blockRight = ShouldBlockCaveBoundary(graphQuery, caveNode, 1, 0);
+                var blockTop = ShouldBlockCaveBoundary(graphQuery, caveNode, 0, -1);
+                var blockBottom = ShouldBlockCaveBoundary(graphQuery, caveNode, 0, 1);
                 for (int y = b.y0; y <= b.y1; y++)
                 {
                     for (int x = b.x0; x <= b.x1; x++)
@@ -514,20 +526,14 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                             if (wallsAsTiles)
                             {
                                 if (blockLeft && x == b.x0) makeFloor = false;
-                                if (blockRight && x == b.x1) makeFloor = false;
                                 if (blockTop && y == b.y0) makeFloor = false;
+                                if (blockRight && x == b.x1) makeFloor = false;
                                 if (blockBottom && y == b.y1) makeFloor = false;
                             }
                             else
-                            {
-                                if (blockRight && x == b.x1) makeFloor = false;
-                                if (blockBottom && y == b.y1) makeFloor = false;
-
-                                if (blockLeft && x == b.x0 && y == b.y0) makeFloor = false;
-                                if (blockLeft && x == b.x0 && y == b.y1) makeFloor = false;
-                                
-                                if (blockTop && x == b.x0 && y == b.y1) makeFloor = false;
-                                if (blockTop && x == b.x1 && y == b.y1) makeFloor = false;
+                            {   
+                                if (blockLeft && x == b.x0) makeFloor = false;
+                                if (blockTop && y == b.y0) makeFloor = false;
                             }
 
                             if (makeFloor)
@@ -541,18 +547,66 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                         }
                     }
                 }
+                
+                
+                // Discard tiles adjacent to non-connected cave chunks
+                {
+                    var tileNodeCoord = GetNodeCoord(tileNode.node);
+                    var tilesToDiscard = new List<FlowTilemapCell>();
+                    
+                    System.Action<int, int, int, int> fnDiscard = (x, y, dx, dy) =>
+                    {
+                        var cell = tilemap.Cells.GetCell(x, y);
+                        if (cell != null && cell.CellType == FlowTilemapCellType.Floor)
+                        {
+                            var ncell = tilemap.Cells.GetCell(x + dx, y + dy);
+                            var tileNodeNeighborCoord = tileNodeCoord + new IntVector2(dx, dy);
+                            if (ncell != null && ncell.CellType == FlowTilemapCellType.Floor && ncell.NodeCoord != tileNodeNeighborCoord)
+                            {
+                                bool neighborIsCave = false;
+                                {
+                                    var neighborNodeCoord = new Vector3(ncell.NodeCoord.x, ncell.NodeCoord.y, 0);
+                                    var neighborNodeId = graphQuery.GetNodeAtCoord(neighborNodeCoord);
+                                    var neighborNode = graphQuery.GetNode(neighborNodeId);
+                                    neighborIsCave = (neighborNode != null && GetRoomType(neighborNode) == GridFlowLayoutNodeRoomType.Cave);
+                                }
+                                
+                                if (neighborIsCave)
+                                {
+                                    tilesToDiscard.Add(cell);
+                                }
+                            }
+                        }
+                    };
+                    
+                    for (int y = b.y0; y <= b.y1; y++)
+                    {
+                        fnDiscard(b.x0, y, -1, 0);
+                        fnDiscard(b.x1, y, 1, 0);
+                    }
+                    for (int x = b.x0; x <= b.x1; x++)
+                    {
+                        fnDiscard(x, b.y0, 0, -1);
+                        fnDiscard(x, b.y1, 0, 1);
+                    }
+                    
+                    foreach (var tileToDiscard in tilesToDiscard)
+                    {
+                        tileToDiscard.Clear();
+                    }
+                }
             }
         }
-        private void BuildCaves(TilemapFlowNodeInfo[,] tileNodes, FlowTilemap tilemap, FlowLayoutGraph graph, System.Random random)
+        private void BuildCaves(TilemapFlowNodeInfo[,] tileNodes, FlowTilemap tilemap, FlowLayoutGraphQuery graphQuery, System.Random random)
         {
             CalculateDistanceFromMainPath(tileNodes, tilemap, new GridFlowLayoutNodeRoomType[] { GridFlowLayoutNodeRoomType.Cave });
-            var caveMap = GenerateCaveBuildMap(tileNodes, tilemap, graph);
+            var caveMap = GenerateCaveBuildMap(tileNodes, tilemap);
             BuildCaveStep_BuildRocks(caveMap, tilemap, random);
             BuildCaveStep_SimulateGrowth(caveMap, tilemap, random);
             BuildCaveStep_Cleanup(caveMap, tileNodes, tilemap);
             BuildCaveStep_UpdateEdges(caveMap, tileNodes, tilemap);
         }
-        private CaveCellBuildTile[,] GenerateCaveBuildMap(TilemapFlowNodeInfo[,] tileNodes, FlowTilemap tilemap, FlowLayoutGraph graph)
+        private CaveCellBuildTile[,] GenerateCaveBuildMap(TilemapFlowNodeInfo[,] tileNodes, FlowTilemap tilemap)
         {
             var caveMap = new CaveCellBuildTile[tilemap.Width, tilemap.Height];
 
@@ -860,8 +914,9 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                 }
             }
         }
-        bool ShouldBlockCaveBoundary(FlowLayoutGraph graph, FlowLayoutGraphNode caveNode, int dx, int dy)
+        bool ShouldBlockCaveBoundary(FlowLayoutGraphQuery graphQuery, FlowLayoutGraphNode caveNode, int dx, int dy)
         {
+            /*
             var coord = GetNodeCoord(caveNode);
             var otherCoord = coord + new IntVector2(dx, dy);
             FlowLayoutGraphNode otherNode = null;
@@ -874,6 +929,11 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                     break;
                 }
             }
+            */
+
+            var otherNodeId = graphQuery.GetNodeAtCoord(caveNode.coord + new Vector3(dx, dy, 0));
+            var otherNode = graphQuery.GetNode(otherNodeId);
+            
             if (otherNode == null || !otherNode.active)
             {
                 // a node in this location doesn't exist
@@ -881,7 +941,7 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
             }
 
             // Check if we have a link between these nodes. If we don't, then block it
-            var link = graph.GetLink(caveNode, otherNode);
+            var link = graphQuery.GetConnectedLink(caveNode.nodeId, otherNode.nodeId, true);
             if (link == null)
             {
                 // No link exists. we should block this
@@ -889,17 +949,18 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
             }
 
             // We have a link to the other node.   block only if they it is a non-cave nodes
-            return GetRoomType(otherNode) != GridFlowLayoutNodeRoomType.Cave;
+            return false; //GetRoomType(otherNode) != GridFlowLayoutNodeRoomType.Cave;
         }
         #endregion
 
         #region Common Functions
-        private void GenerateMainPath(TilemapFlowNodeInfo[,] tileNodes, FlowTilemap tilemap, FlowLayoutGraph graph)
+        private void GenerateMainPath(TilemapFlowNodeInfo[,] tileNodes, FlowTilemap tilemap, FlowLayoutGraphQuery graphQuery)
         {
+            var graph = graphQuery.Graph;
             foreach (var link in graph.Links)
             {
-                var nodeA = graph.GetNode(link.source);
-                var nodeB = graph.GetNode(link.destination);
+                var nodeA = graphQuery.GetNode(link.source);
+                var nodeB = graphQuery.GetNode(link.destination);
 
                 var tileCenterA = NodeCoordToTileCoord(GetNodeCoord(nodeA));
                 var tileCenterB = NodeCoordToTileCoord(GetNodeCoord(nodeB));
@@ -1079,7 +1140,7 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
             public bool HorizontalDoorEdge { get; set; }
         }
 
-        void BuildDoors(TilemapFlowNodeInfo[,] tileNodes, FlowTilemap tilemap, FlowLayoutGraph graph)
+        void BuildDoors(TilemapFlowNodeInfo[,] tileNodes, FlowTilemap tilemap, FlowLayoutGraphQuery graphQuery)
         {
             bool wallsAsTiles = (wallGenerationMethod == TilemapFlowNodeWallGenerationMethod.WallAsTiles);
 
@@ -1087,16 +1148,24 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
             var doorList = new List<DoorInfo>();
             foreach (var tileNode in tileNodes)
             {
+                if (tileNode == null || tileNode.node == null) continue;
                 if (!tileNode.node.active) continue;
                 var b = NodeTilemapBounds.Build(tileNode, tilemap.Width, tilemap.Height, wallsAsTiles);
 
                 var node = tileNode.node;
                 var nodeCoord = GetNodeCoord(node);
-                foreach (var link in graph.GetOutgoingLinks(tileNode.node))
+                var connectedLinks = graphQuery.GetConnectedLinks(tileNode.node.nodeId);
+                foreach (var link in connectedLinks)
                 {
+                    if (link.source != tileNode.node.nodeId)
+                    {
+                        // Not an outgoing link
+                        continue;
+                    }
+                    
                     if (link.state.type == FlowLayoutGraphLinkType.Unconnected) continue;
 
-                    var otherNode = graph.GetNode(link.destination);
+                    var otherNode = graphQuery.GetNode(link.destination);
                     if (GetRoomType(node) == GridFlowLayoutNodeRoomType.Cave && GetRoomType(otherNode) == GridFlowLayoutNodeRoomType.Cave)
                     {
                         // We don't need a door between two cave nodes
@@ -1129,8 +1198,8 @@ namespace DungeonArchitect.Flow.Impl.GridFlow.Tasks
                     {
                         var doorMeta = new FlowTilemapCellDoorInfo();
                         {
-                            var sourceNode = graph.GetNode(link.source);
-                            var destNode = graph.GetNode(link.destination);
+                            var sourceNode = graphQuery.GetNode(link.source);
+                            var destNode = graphQuery.GetNode(link.destination);
                             doorMeta.oneWay = (link.state.type == FlowLayoutGraphLinkType.OneWay);
                             doorMeta.nodeA = GetNodeCoord(sourceNode);
                             doorMeta.nodeB = GetNodeCoord(destNode);

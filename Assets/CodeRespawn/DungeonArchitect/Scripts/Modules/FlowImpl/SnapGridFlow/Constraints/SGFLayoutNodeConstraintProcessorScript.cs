@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using DungeonArchitect.Flow.Domains.Layout;
 using DungeonArchitect.Flow.Domains.Layout.Pathing;
 using DungeonArchitect.Utils;
@@ -10,11 +10,13 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow.Constraints
     {
         private readonly ISGFLayoutNodePositionConstraint scriptConstraint;
         private readonly Vector3Int gridSize;
+        private readonly System.Random random;
 
-        public SGFLayoutNodeConstraintProcessorScript(ISGFLayoutNodePositionConstraint scriptConstraint, Vector3Int gridSize)
+        public SGFLayoutNodeConstraintProcessorScript(ISGFLayoutNodePositionConstraint scriptConstraint, Vector3Int gridSize, System.Random random)
         {
             this.scriptConstraint = scriptConstraint;
             this.gridSize = gridSize;
+            this.random = random;
         }
         
         public bool CanCreateNodeAt(FlowLayoutGraphNode node, int totalPathLength, int currentPathPosition)
@@ -26,7 +28,15 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow.Constraints
             }
 
             var nodeCoord = MathUtils.RoundToVector3Int(node.coord);
-            return scriptConstraint.CanCreateNodeAt(currentPathPosition, totalPathLength, nodeCoord, gridSize);
+            var settings = new SGFLayoutNodePositionConstraintSettings
+            {
+                CurrentPathPosition = currentPathPosition,
+                TotalPathLength = totalPathLength,
+                NodeCoord = nodeCoord,
+                GridSize = gridSize,
+                Random = random
+            };
+            return scriptConstraint.CanCreateNodeAt(settings);
         }
     }
     

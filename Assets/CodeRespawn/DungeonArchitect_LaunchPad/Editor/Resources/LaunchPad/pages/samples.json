@@ -41,6 +41,12 @@
           "desc": "Sample game with procedural dungeon, AI and more",
           "image": "samples/thumbs/sample_thumb_game_ss_candy_01",
           "link": "samples/game_ss_candy_01"
+        },
+		{
+          "title": "Large Ground Tiles",
+          "desc": "Insert larger ground tiles using the pattern matcher",
+          "image": "samples/thumbs/sample_thumb_pattern_match_ground",
+          "link": "samples/pattern_match_ground"
         }
       ]
     },
@@ -247,6 +253,17 @@
           "desc": "Create symmetric dungeons using Mirror Volumes",
           "image": "samples/thumbs/sample_thumb_mirror_01",
           "link": "samples/mirror_grid_01"
+        }
+      ]
+    },
+    {
+      "category": "Pattern Matcher",
+      "cards": [
+        {
+          "title": "Large Ground Tiles",
+          "desc": "Insert larger ground tiles using the pattern matcher",
+          "image": "samples/thumbs/sample_thumb_pattern_match_ground",
+          "link": "samples/pattern_match_ground"
         }
       ]
     },

@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEditor;
 using UnityEngine;
 
@@ -15,7 +15,7 @@ namespace DungeonArchitect.RoomDesigner.Editors
             var snap = room.gridSize;
             float size = HandleUtility.GetHandleSize(center) * 0.25f;
             Handles.color = Color.green;
-            var fmh_18_60_638927151455830334 = Quaternion.identity; var newCenter = Handles.FreeMoveHandle(center, size, snap, Handles.SphereHandleCap);
+            var fmh_18_60_638684544973473290 = Quaternion.identity; var newCenter = Handles.FreeMoveHandle(center, size, snap, Handles.SphereHandleCap);
             var diffF = newCenter - center;
             var diff = new IntVector(
                 Mathf.RoundToInt(diffF.x / room.gridSize.x),

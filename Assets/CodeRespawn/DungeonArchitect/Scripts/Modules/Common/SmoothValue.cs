@@ -1,17 +1,18 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 
 namespace DungeonArchitect.Utils
 {
-    public class SmoothValue
+    public abstract class SmoothValue<T>
     {
-        private float targetValue = 0;
-        private float currentValue = 0;
-        private float t = 0;
+        protected T targetValue;
+        protected T currentValue;
+        protected float t = 0;
 
-        public float TimeToArrive = 0.1f;
+        public float TimeToArrive = 0.4f;
+        public bool HasArrived => t >= 1;
         
-        public float Value
+        public T Value
         {
             get => currentValue;
             set
@@ -21,17 +22,14 @@ namespace DungeonArchitect.Utils
             }
         }
 
-        public float TargetValue
-        {
-            get => targetValue;
-        }
+        public T TargetValue => targetValue;
 
-        public SmoothValue(float value)
+        protected SmoothValue(T value)
         {
             Set(value);
         }
 
-        public void Set(float value)
+        public void Set(T value)
         {
             currentValue = value;
             targetValue = value;
@@ -45,8 +43,37 @@ namespace DungeonArchitect.Utils
                 t += deltaTime / TimeToArrive;
                 t = Mathf.Clamp01(t);
 
-                currentValue = Mathf.Lerp(currentValue, targetValue, t);
+                PerformLerp();
             }
+        }
+
+        protected abstract void PerformLerp();
+    }
+
+    public class SmoothValueFloat : SmoothValue<float>
+    {
+        public SmoothValueFloat(float value) : base(value) { }
+        protected override void PerformLerp()
+        {
+            currentValue = Mathf.Lerp(currentValue, targetValue, t);
+        }
+    }
+    
+    public class SmoothValueVector3 : SmoothValue<Vector3>
+    {
+        public SmoothValueVector3(Vector3 value) : base(value) { }
+        protected override void PerformLerp()
+        {
+            currentValue = Vector3.Lerp(currentValue, targetValue, t);
+        }
+    }
+    
+    public class SmoothValueVector2 : SmoothValue<Vector2>
+    {
+        public SmoothValueVector2(Vector2 value) : base(value) { }
+        protected override void PerformLerp()
+        {
+            currentValue = Vector2.Lerp(currentValue, targetValue, t);
         }
     }
 }

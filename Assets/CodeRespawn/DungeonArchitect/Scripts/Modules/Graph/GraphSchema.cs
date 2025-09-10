@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 namespace DungeonArchitect.Graphs
 {
     /// <summary>
@@ -52,7 +52,18 @@ namespace DungeonArchitect.Graphs
             return true;
         }
 
+        public virtual bool CanDestroyNode(GraphNode node)
+        {
+            return true;
+        }
 
+        public virtual T TryCreateLink<T>(Graph graph, GraphPin output, GraphPin input) where T : GraphLink
+        {
+            T link = graph._CreateLinkInstance<T>();
+            link.Input = input;
+            link.Output = output;
+            return link;
+        }
 
     }
 }

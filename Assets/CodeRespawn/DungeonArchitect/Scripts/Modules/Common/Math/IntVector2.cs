@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 
 namespace DungeonArchitect
@@ -120,6 +120,16 @@ namespace DungeonArchitect
             result.x = a.x / b;
             result.y = a.y / b;
             return result;
+        }
+
+        public static bool operator ==(IntVector2 a, IntVector2 b)
+        {
+            return a.x == b.x && a.y == b.y;
+        }
+        
+        public static bool operator !=(IntVector2 a, IntVector2 b)
+        {
+            return !(a == b);
         }
 
         public override bool Equals(System.Object obj)

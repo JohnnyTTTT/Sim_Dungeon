@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System;
 using UnityEngine;
 using System.Collections.Generic;
@@ -12,6 +12,8 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
     public class GraphNodeRenderer
     {
 
+        public bool GraphStateChanged { get; set; }
+        
         protected virtual Color getBackgroundColor(GraphNode node)
         {
             return node.Selected ? GraphEditorConstants.NODE_COLOR_SELECTED : GraphEditorConstants.NODE_COLOR;
@@ -36,6 +38,14 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
             }
         }
 
+        public virtual void BeginFrame(Graph graph)
+        {
+        }
+
+        public virtual void EndFrame()
+        {
+        }
+        
         public virtual void Release() { }
 
 		protected virtual void DrawTextCentered(UIRenderer renderer, GraphRendererContext rendererContext, GraphNode node, GraphCamera camera, string text) {
@@ -110,6 +120,17 @@ namespace DungeonArchitect.UI.Widgets.GraphEditors
             {
                 return renderers[nodeType];
             }
+            
+            // Try to get a base class renderer
+            foreach (var entry in renderers)
+            {
+                var rendererType = entry.Key;
+                if (nodeType.IsSubclassOf(rendererType))
+                {
+                    return entry.Value;
+                }
+            }
+            
             return defaultRenderer;
         }
 

@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 using UnityEditor;
 
@@ -72,7 +72,7 @@ namespace DungeonArchitect.Editors
                 var dungeon = volume.dungeon;
                 if (onlyReapplyTheme)
                 {
-                    dungeon.ReapplyTheme(new EditorDungeonSceneObjectInstantiator());
+                    dungeon.ApplyTheme(new EditorDungeonSceneObjectInstantiator());
                 }
                 else
                 {
@@ -107,7 +107,11 @@ namespace DungeonArchitect.Editors
 
         void OnGridTransformModified()
         {
-            requestRebuild = true;
+            var volume = target as Volume;
+            if (volume != null && volume.autoBuildOnMove)
+            {
+                requestRebuild = true;
+            }
         }
     }
 }

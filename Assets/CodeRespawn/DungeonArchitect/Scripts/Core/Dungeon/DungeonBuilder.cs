@@ -1,4 +1,7 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+
+using System;
+using DungeonArchitect.MarkerGenerator.Processor;
 using UnityEngine;
 using DungeonArchitect.Utils;
 
@@ -12,9 +15,13 @@ namespace DungeonArchitect
 	[ExecuteInEditMode]
     public abstract class DungeonBuilder : MonoBehaviour
     {
-        protected DungeonConfig config;
+        [SerializeField]
         protected PMRandom nrandom;
+        
+        [SerializeField]
         protected PMRandom random;
+        
+        protected DungeonConfig config;
         protected DungeonModel model;
         protected LevelMarkerList markers = new LevelMarkerList();
         protected Blackboard blackboard = new Blackboard();
@@ -23,7 +30,9 @@ namespace DungeonArchitect
         public long maxBuildTimePerFrame = 32;
         public Transform asyncBuildStartPosition;
 
-        private bool isLayoutBuilt = false;
+        [SerializeField]
+        private bool isLayoutBuilt;
+        
         public bool IsLayoutBuilt
         {
             get
@@ -85,7 +94,12 @@ namespace DungeonArchitect
         public virtual bool DestroyDungeonOnRebuild() { return false; }
         
         // This is called by the builders that do not support theming
-        public virtual void BuildNonThemedDungeon(DungeonSceneProvider sceneProvider, IDungeonSceneObjectInstantiator objectInstantiator) { }
+        //public virtual void BuildNonThemedDungeon(DungeonSceneProvider sceneProvider, IDungeonSceneObjectInstantiator objectInstantiator) { }
+
+        public virtual GameObject[] SpawnManagedObjects(DungeonSceneProvider sceneProvider, IDungeonSceneObjectInstantiator objectInstantiator)
+        {
+            return Array.Empty<GameObject>();
+        }
         
         public virtual void DebugDraw()
         {
@@ -174,6 +188,11 @@ namespace DungeonArchitect
 					}
 				}
             }
+        }
+
+        public virtual IMarkerGenProcessor CreateMarkerGenProcessor()
+        {
+            return null;
         }
     }
 }

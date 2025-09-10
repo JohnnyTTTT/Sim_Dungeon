@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using DungeonArchitect.Flow.Domains.Layout.Pathing;
 using DungeonArchitect.Flow.Exec;
 using DungeonArchitect.Flow.Items;
@@ -120,9 +120,9 @@ namespace DungeonArchitect.Flow.Domains.Layout.Tasks
             staticState.MaxPathSize = pathSize;
             staticState.NodeColor = nodeColor;
             staticState.PathName = pathName;
-            staticState.NodeGroupGenerator = CreateNodeGroupGenerator(context.DomainExtensions, graph);
-            staticState.GraphConstraint = CreateGraphConstraint(context.DomainExtensions, graph);
-            staticState.NodeCreationConstraint = CreateNodeCreationConstraint(context.DomainExtensions, graph);
+            staticState.NodeGroupGenerator = CreateNodeGroupGenerator(context.DomainExtensions, graph, context.Random);
+            staticState.GraphConstraint = CreateGraphConstraint(context.DomainExtensions, graph, context.Random);
+            staticState.NodeCreationConstraint = CreateNodeCreationConstraint(context.DomainExtensions, graph, context.Random);
 
             int[] shuffledEntranceIndices = MathUtils.GetShuffledIndices(graph.Nodes.Count, context.Random);
             var pathingSystem = new FFlowAgPathingSystem(maxFramesToProcess);

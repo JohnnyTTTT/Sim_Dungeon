@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 using System;
 using System.Collections.Generic;
@@ -143,6 +143,14 @@ namespace DungeonArchitect.Builders.Grid
             }
         }
 
+        private bool heightClamped = false;
+
+        public bool HeightClamped
+        {
+            get => heightClamped;
+            set => heightClamped = value;
+        }
+        
         public IntVector Center
         {
             get
@@ -351,7 +359,11 @@ namespace DungeonArchitect.Builders.Grid
             }
             return false;
         }
-
+        public bool ContainsDoor(Vector2Int a, Vector2Int b)
+        {
+            return ContainsDoor(a.x, a.y, b.x, b.y);
+        }
+        
 		public bool ContainsDoor(int x1, int z1, int x2, int z2) {
 			foreach (var door in doors) {
                 if (!door.Enabled) { continue; }

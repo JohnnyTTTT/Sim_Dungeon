@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,22 +6,22 @@ using UnityEngine;
 
 namespace DungeonArchitect.Builders.Grid
 {
-    public class GridDungeonQuery : DungeonEventListener
+    public class GridDungeonQuery : DungeonQuery
     {
         [HideInInspector]
         public Dictionary<int, GameObject[]> DoorObjectsByCellId = new Dictionary<int, GameObject[]>();
 
-        public override void OnPostDungeonBuild(Dungeon dungeon, DungeonModel model)
+        public override void OnPostDungeonBuild()
         {
             GenerateQuery();
         }
 
-        public override void OnPreDungeonDestroy(Dungeon dungeon)
+        public override void Release()
         {
             DoorObjectsByCellId.Clear();
         }
 
-        public void GenerateQuery()
+        private void GenerateQuery()
         {
             DoorObjectsByCellId.Clear();
 

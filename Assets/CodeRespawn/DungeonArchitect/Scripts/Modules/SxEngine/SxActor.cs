@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using DungeonArchitect.SxEngine.Utils;
 using UnityEngine;
@@ -41,7 +41,8 @@ namespace DungeonArchitect.SxEngine
         {
             foreach (var component in components)
             {
-                component.Draw(context, accumWorldTransform, renderCommandList);
+                var componentWorldTransform = accumWorldTransform * component.RelativeTransform;
+                component.Draw(context, componentWorldTransform, renderCommandList);
             }
         }
         
@@ -49,7 +50,10 @@ namespace DungeonArchitect.SxEngine
         {
             foreach (var component in components)
             {
-                component.Tick(context, deltaTime);
+                if (component.RequiresTick)
+                {
+                    component.Tick(context, deltaTime);
+                }
             }
         }
 
@@ -98,7 +102,19 @@ namespace DungeonArchitect.SxEngine
 
     public abstract class SxActorComponent
     {
-        public virtual void Draw(SxRenderContext context, Matrix4x4 accumWorldTransform, SxRenderCommandList renderCommandList)
+        public bool RequiresTick = true;
+        public bool Visible = true;
+        public Matrix4x4 RelativeTransform = Matrix4x4.identity;
+            
+        public void Draw(SxRenderContext context, Matrix4x4 accumWorldTransform, SxRenderCommandList renderCommandList)
+        {
+            if (Visible)
+            {
+                DrawImpl(context, accumWorldTransform, renderCommandList);
+            }
+        }
+
+        protected virtual void DrawImpl(SxRenderContext context, Matrix4x4 accumWorldTransform, SxRenderCommandList renderCommandList)
         {
             
         }

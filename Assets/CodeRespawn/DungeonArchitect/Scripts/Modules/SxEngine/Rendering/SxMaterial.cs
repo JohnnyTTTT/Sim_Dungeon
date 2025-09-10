@@ -1,6 +1,7 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -10,7 +11,7 @@ namespace DungeonArchitect.SxEngine
     {
         protected Material unityMaterial;
         
-        public Material UnityMaterial { get => unityMaterial; }
+        public virtual Material UnityMaterial { get => unityMaterial; }
 
         public float DepthBias = 0.0f;
         public int RenderQueue
@@ -22,14 +23,6 @@ namespace DungeonArchitect.SxEngine
                     return unityMaterial.renderQueue;
                 }
                 return 0;
-            }
-        }
-
-        public void Assign()
-        {
-            if (unityMaterial != null)
-            {
-                unityMaterial.SetPass(0);
             }
         }
 
@@ -68,13 +61,72 @@ namespace DungeonArchitect.SxEngine
         }
     }
     
-    public abstract class SxUnityResourceMaterial : SxMaterial {
+    public abstract class SxUnityResourceMaterial : SxMaterial
+    {
+        private string materialPath;
+        private bool materialValid = false;
+
+        public override Material UnityMaterial
+        {
+            get
+            {
+                if (materialValid && unityMaterial == null)
+                {
+                    LoadMaterial(); 
+                }
+
+                return unityMaterial;
+            }
+        }
+
         public SxUnityResourceMaterial(string resourceName)
         {
-            unityMaterial = Resources.Load<Material>(resourceName);
+            materialPath = resourceName;
+            LoadMaterial();
+            materialValid = (unityMaterial != null);
         }
+
+        void LoadMaterial()
+        {
+            unityMaterial = Resources.Load<Material>(materialPath);
+        }
+        
     }
     
+    
+    public abstract class SxUnityResourceCopyMaterial : SxMaterial {
+        private string materialPath;
+        private bool materialValid = false;
+        
+        public override Material UnityMaterial
+        {
+            get
+            {
+                if (materialValid && unityMaterial == null)
+                {
+                    LoadMaterial(); 
+                }
+
+                return unityMaterial;
+            }
+        }
+
+        public SxUnityResourceCopyMaterial(string resourceName)
+        {
+            materialPath = resourceName;
+            LoadMaterial();
+            materialValid = (unityMaterial != null);
+        }
+        
+        void LoadMaterial()
+        {
+            var template = Resources.Load<Material>(materialPath);
+            if (template != null)
+            {
+                unityMaterial = new Material(template);
+            }
+        }
+    }
     
     public class SxMaterialRegistry
     {

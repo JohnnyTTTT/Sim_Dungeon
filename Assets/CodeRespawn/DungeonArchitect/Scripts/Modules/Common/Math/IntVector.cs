@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 
 namespace DungeonArchitect
@@ -151,6 +151,18 @@ namespace DungeonArchitect
             return string.Format("({0}, {1}, {2})", x, y, z);
         }
 
+        // Implicit conversion from IntVector to Vector3Int
+        public static implicit operator Vector3Int(IntVector v)
+        {
+	        return new Vector3Int(v.x, v.y, v.z);
+        }
+
+        // Implicit conversion from Vector3Int to IntVector
+        public static implicit operator IntVector(Vector3Int v)
+        {
+	        return new IntVector(v.x, v.y, v.z);
+        }
+        
         public static readonly IntVector Zero = new IntVector(0, 0, 0);
 	}
 }

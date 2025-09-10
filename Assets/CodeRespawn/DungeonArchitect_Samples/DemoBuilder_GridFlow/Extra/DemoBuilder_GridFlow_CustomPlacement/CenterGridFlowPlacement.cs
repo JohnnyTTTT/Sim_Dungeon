@@ -1,4 +1,6 @@
-﻿using DungeonArchitect.Flow.Domains.Tilemap;
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+
+using DungeonArchitect.Flow.Domains.Tilemap;
 using DungeonArchitect.Flow.Impl.GridFlow;
 using DungeonArchitect.Flow.Items;
 using UnityEngine;
@@ -9,18 +11,19 @@ public class CenterGridFlowPlacement : ScriptableObject, ITilemapItemPlacementSt
     public bool PlaceItems(FlowItem item, FlowTilemapCell[] freeCells, TilemapItemPlacementSettings settings, TilemapItemPlacementStrategyContext context,
         ref int outFreeTileIndex, ref string errorMessage)
     {
-        if (freeCells.Length == 0)
+        var chunkTiles = context.chunkTiles;
+        if (freeCells.Length == 0 || chunkTiles.Length == 0)
         {
             outFreeTileIndex = -1;
             errorMessage = "No free tiles";
             return false;
         }
 
-        var min = freeCells[0].TileCoord;
-        var max =  freeCells[0].TileCoord;
+        var min = chunkTiles[0].TileCoord;
+        var max =  chunkTiles[0].TileCoord;
         
         // find the bounds of the free cells
-        foreach (var cell in freeCells)
+        foreach (var cell in chunkTiles)
         {
             min.x = Mathf.Min(cell.TileCoord.x, min.x);
             min.y = Mathf.Min(cell.TileCoord.y, min.y);

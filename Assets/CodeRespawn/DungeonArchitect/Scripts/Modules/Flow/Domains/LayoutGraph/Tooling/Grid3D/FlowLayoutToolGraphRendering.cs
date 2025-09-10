@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using DungeonArchitect.Flow.Items;
 using DungeonArchitect.SxEngine;
@@ -523,7 +523,7 @@ namespace DungeonArchitect.Flow.Domains.Layout.Tooling.Graph3D
                 };
                 
                 textActor.TextComponent.Initialize(textSettings);
-                textActor.TextComponent.Text = settings.Text;
+                textActor.TextComponent.SetText(settings.Text);
 
                 textActor.Position = new Vector3(0, 0, 0.1f);
                 textActor.Rotation = Quaternion.AngleAxis(180, Vector3.up);

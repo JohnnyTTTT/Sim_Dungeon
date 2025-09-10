@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -30,6 +30,16 @@ namespace DungeonArchitect.UI.Impl.UnityEditor
             return GUI.Button(bounds, text);
         }
 
+        public bool Toggle(Rect bounds, bool value, string text)
+        {
+            return GUI.Toggle(bounds, value, text);
+        }
+
+        public bool Toggle(Rect bounds, bool value, string text, GUIStyle style)
+        {
+            return GUI.Toggle(bounds, value, text, style);
+        }
+        
         public void Box(Rect bounds, string text)
         {
             GUI.Box(bounds, text);
@@ -102,6 +112,12 @@ namespace DungeonArchitect.UI.Impl.UnityEditor
             Handles.DrawLine(v0, v1);
         }
 
+        public void DrawLines(Color color, Vector3[] lineSegments)
+        {
+            Handles.color = color;
+            Handles.DrawLines(lineSegments);
+        }
+        
         public void DrawPolyLine(params Vector3[] points)
         {
             Handles.DrawPolyLine(points);

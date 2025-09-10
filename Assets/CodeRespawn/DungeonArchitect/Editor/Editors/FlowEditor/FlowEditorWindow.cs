@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using DungeonArchitect.Editors.Flow.DomainEditors;
 using DungeonArchitect.Flow.Domains;
 using DungeonArchitect.Flow.Exec;
@@ -14,10 +14,6 @@ using UnityEngine;
 
 namespace DungeonArchitect.Editors.Flow
 {
-    public interface IFlowEditorWindow
-    {
-        
-    }
     public abstract class FlowEditorWindow : EditorWindow
     {
         protected UISystem uiSystem;

@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
 using System.Linq;
 using DungeonArchitect.Flow.Items;
@@ -241,14 +241,7 @@ namespace DungeonArchitect.Flow.Domains.Layout
 
         public FlowLayoutGraphNode GetNodeObjAtCoord(Vector3Int nodeCoord)
         {
-            if (nodeCoord.x >= 0 && nodeCoord.x < nodeArray3D.GetLength(0)
-                && nodeCoord.y >= 0 && nodeCoord.y < nodeArray3D.GetLength(1)
-                && nodeCoord.z >= 0 && nodeCoord.z < nodeArray3D.GetLength(2))
-            {
-                return nodeArray3D[nodeCoord.x, nodeCoord.y, nodeCoord.z];
-            }
-
-            return null;
+            return nodeArray3D.TryGetValue(nodeCoord, out var value) ? value : null;
         }
 
         public DungeonUID[] GetConnectedNodes(DungeonUID nodeId)
@@ -290,11 +283,85 @@ namespace DungeonArchitect.Flow.Domains.Layout
 
             return targetLink;
         }
+
+        public FlowLayoutGraphLink GetConnectedLink(DungeonUID nodeA, DungeonUID nodeB, bool ignoreDirection)
+        {
+            var link = GetConnectedLink(nodeA, nodeB);
+            if (link == null)
+            {
+                link = GetConnectedLink(nodeB, nodeA);
+            }
+
+            return link;
+        }
         
         public void GetConnectedNodes(DungeonUID nodeId, out DungeonUID[] outConnectedNodeIds, out FlowLayoutGraphLink[] outConnectedLinks)
         {
             outConnectedNodeIds = GetConnectedNodes(nodeId);
             outConnectedLinks = GetConnectedLinks(nodeId);
+        }
+        
+        struct SearchQueueFrame
+        {
+            public DungeonUID NodeId;
+            public int Distance;
+        }
+        
+        public bool GetDistanceBetweenNodes(FlowLayoutGraphNode startNode, FlowLayoutGraphNode endNode, bool followOneWayDoors, out int distance)
+        {
+            if (startNode == endNode)
+            {
+                distance = 0;
+                return true;
+            }
+            
+            // Start a BFS from the start room
+            var queue = new Queue<SearchQueueFrame>();
+            queue.Enqueue(new SearchQueueFrame { NodeId = startNode.nodeId, Distance = 0 });
+            var visitedNodes = new HashSet<DungeonUID>();
+            
+            while (queue.Count > 0)
+            {
+                var frame = queue.Dequeue();
+                visitedNodes.Add(frame.NodeId);
+                if (frame.NodeId == endNode.nodeId)
+                {
+                    distance = frame.Distance;
+                    return true;
+                }
+                
+                // Traverse the children
+                var connectedLinks = GetConnectedLinks(frame.NodeId);
+                foreach (var link in connectedLinks)
+                {
+                    if (link.state.type == FlowLayoutGraphLinkType.Unconnected)
+                    {
+                        continue;
+                    }
+
+                    var destNodeId = (link.source == frame.NodeId) ? link.destination : link.source;
+                    if (visitedNodes.Contains(destNodeId))
+                    {
+                        // Already visited. 
+                        continue;
+                    }
+
+                    if (link.state.type == FlowLayoutGraphLinkType.OneWay && followOneWayDoors)
+                    {
+                        // We need to follow the one-way door constraint.  make sure the source and destination match
+                        if (link.source != frame.NodeId)
+                        {
+                            continue;
+                        }
+                    }
+                    
+                    // Go through the link, on to the next node
+                    queue.Enqueue(new SearchQueueFrame { NodeId = destNodeId, Distance = frame.Distance + 1 });
+                }
+            }
+
+            distance = 0;
+            return false;
         }
 
         public void Rebuild()
@@ -312,6 +379,11 @@ namespace DungeonArchitect.Flow.Domains.Layout
             subNodeMap.Clear();
             coordToNodeMap.Clear();
             parentNodes.Clear();
+
+            if (graph == null)
+            {
+                return;
+            }
             
             foreach (var node in graph.Nodes)
             {
@@ -333,12 +405,12 @@ namespace DungeonArchitect.Flow.Domains.Layout
                     graphGridSize.y = Mathf.Max(graphGridSize.y, nodeCoord.y + 1);
                     graphGridSize.z = Mathf.Max(graphGridSize.z, nodeCoord.z + 1);
                 }
-                
-                nodeArray3D = new FlowLayoutGraphNode[graphGridSize.x, graphGridSize.y, graphGridSize.z];
+
+                nodeArray3D = new Dictionary<Vector3Int, FlowLayoutGraphNode>();
                 foreach (var node in graph.Nodes)
                 {
                     var nodeCoord = MathUtils.RoundToVector3Int(node.coord);
-                    nodeArray3D[nodeCoord.x, nodeCoord.y, nodeCoord.z] = node;
+                    nodeArray3D[nodeCoord] = node;
                 }
             }
 
@@ -427,6 +499,7 @@ namespace DungeonArchitect.Flow.Domains.Layout
         private Dictionary<DungeonUID, FlowLayoutGraphNode> subNodeMap = new Dictionary<DungeonUID, FlowLayoutGraphNode>();
         private Dictionary<Vector3, DungeonUID> coordToNodeMap = new Dictionary<Vector3, DungeonUID>();
         private IntVector graphGridSize;
-        private FlowLayoutGraphNode[,,] nodeArray3D = new FlowLayoutGraphNode[0,0,0];
+        private Dictionary<Vector3Int, FlowLayoutGraphNode> nodeArray3D = new Dictionary<Vector3Int, FlowLayoutGraphNode>();
+
     }
 }

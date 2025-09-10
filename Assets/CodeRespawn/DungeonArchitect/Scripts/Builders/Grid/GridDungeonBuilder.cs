@@ -1,16 +1,18 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using DungeonArchitect.Builders.Grid.Mirroring;
+using DungeonArchitect.Builders.Grid.Stairs.Impl;
+using DungeonArchitect.MarkerGenerator;
+using DungeonArchitect.MarkerGenerator.Grid;
+using DungeonArchitect.MarkerGenerator.Processor;
+using DungeonArchitect.MarkerGenerator.Processor.Grid;
 using DungeonArchitect.Utils;
 using DungeonArchitect.Themeing;
 
 namespace DungeonArchitect.Builders.Grid
 {
-    using PropBySocketType_t = Dictionary<string, List<DungeonThemeItem>>;
-    using PropBySocketTypeByTheme_t = Dictionary<DungeonThemeData, Dictionary<string, List<DungeonThemeItem>>>;
-
     /// <summary>
     /// Contains meta data about the cells.  This structure is used for caching cell
     /// information for faster lookup during and after generation of the dungeon
@@ -127,7 +129,7 @@ namespace DungeonArchitect.Builders.Grid
         {
             get { return gridModel.GridCellInfoLookup; }
         }
-        GridCellInfo GetGridCellLookup(int x, int z)
+        public GridCellInfo GetGridCellLookup(int x, int z)
         {
             return gridModel.GetGridCellLookup(x, z);
         }
@@ -213,6 +215,8 @@ namespace DungeonArchitect.Builders.Grid
             // Add cells defined by platform volumes in the world
             AddUserDefinedPlatforms();
 
+            ApplyNegationVolumes();
+            
             ClipForMirroring();
             
             // Connect the rooms with delaunay triangulation to have nice evenly spaced triangles
@@ -229,14 +233,8 @@ namespace DungeonArchitect.Builders.Grid
 
             // Build a lookup of adjacent tiles for later use with height and stair creation
             GenerateAdjacencyLookup();
-            
-            GenerateDungeonHeights();
-            
-			ConnectStairs(100);
-			//ConnectStairs(60);
-			ConnectStairs(50);
-			ConnectStairs(0);
-			ConnectStairs(-100);
+
+            ProcessStairSystem();
             
             MirrorDungeon();
             
@@ -244,6 +242,14 @@ namespace DungeonArchitect.Builders.Grid
 
         }
 
+        private void ProcessStairSystem()
+        {
+            var stairSystem = GetComponent<GridStairSystemBase>();
+            if (stairSystem != null)
+            {
+                stairSystem.Generate(gridModel, this, gridConfig);
+            }
+        }
 
         void Initialize()
         {
@@ -293,11 +299,11 @@ namespace DungeonArchitect.Builders.Grid
 
         public void BuildCellsWithDistribution()
         {
-            int sx = -gridConfig.CellDistributionWidth / 2;
-            int ex = gridConfig.CellDistributionWidth / 2;
+            int sx = -gridConfig.CellDistributionWidth / 2 - 1;
+            int ex = sx + gridConfig.CellDistributionWidth - 1;
 
-            int sz = -gridConfig.CellDistributionLength / 2;
-            int ez = gridConfig.CellDistributionLength / 2;
+            int sz = -gridConfig.CellDistributionLength / 2 - 1;
+            int ez = sz + gridConfig.CellDistributionLength - 1;
 
             int FitnessTries = 10;
             var Occupied = new HashSet<IntVector>();
@@ -417,11 +423,30 @@ namespace DungeonArchitect.Builders.Grid
             return _CellIdCounter;
         }
 
-        void ApplyBaseOffset()
+        IntVector GetBaseOffset()
         {
             var dungeonPosition = gameObject.transform.position;
             var dungeonGridPosF = MathUtils.Divide(dungeonPosition, gridConfig.GridCellSize);
-            var dungeonGridPos = MathUtils.RoundToIntVector(dungeonGridPosF);
+            return MathUtils.RoundToIntVector(dungeonGridPosF);
+        }
+
+        Matrix4x4 GetBaseTransform()
+        {
+            var position = MathUtils.ToVector3(GetBaseOffset());
+            return Matrix4x4.TRS(position, Quaternion.identity, Vector3.one);
+        }
+
+        public override IMarkerGenProcessor CreateMarkerGenProcessor()
+        {
+            var query = GetComponent<DungeonQuery>();
+            var processor = new GridMarkerGenProcessor(GetBaseTransform(), gridConfig.GridCellSize, this, model, config, query);
+            processor.Settings.TransformCoordsToDungeonSpace = false;
+            return processor;
+        }
+
+        void ApplyBaseOffset()
+        {
+            var dungeonGridPos = GetBaseOffset();
             foreach (var cell in gridModel.Cells)
             {
                 var bounds = cell.Bounds;
@@ -537,6 +562,7 @@ namespace DungeonArchitect.Builders.Grid
             bounds.Size = scale;
             cell.Bounds = bounds;
             cell.CellType = platform.cellType;
+            cell.HeightClamped = platform.lockHeight;
             cell.UserDefined = true;
 
             // Remove any cells that intersect with this cell
@@ -1744,165 +1770,7 @@ namespace DungeonArchitect.Builders.Grid
             return (a < b) ? -1 : 1;
         }
 
-        void GenerateDungeonHeights()
-        {
-            // build the adjacency graph in memory
-            if (gridModel.Cells.Count == 0) return;
-            Dictionary<int, CellHeightNode> CellHeightNodes = new Dictionary<int, CellHeightNode>();
-
-            HashSet<int> visited = new HashSet<int>();
-            Stack<CellHeightFrameInfo> stack = new Stack<CellHeightFrameInfo>(); ;
-            var initialCell = gridModel.Cells[0];
-            stack.Push(new CellHeightFrameInfo(initialCell.Id, initialCell.Bounds.Location.y));
-            var srandom = new PMRandom(gridConfig.Seed);
-
-            while (stack.Count > 0)
-            {
-                CellHeightFrameInfo top = stack.Pop();
-                if (visited.Contains(top.CellId)) continue;
-                visited.Add(top.CellId);
-
-                Cell cell = gridModel.GetCell(top.CellId);
-                if (cell == null) continue;
-
-                bool applyHeightVariation = (cell.Bounds.Size.x > 1 && cell.Bounds.Size.z > 1);
-                applyHeightVariation &= (cell.CellType != CellType.Room);
-                applyHeightVariation &= (cell.CellType != CellType.CorridorPadding);
-                applyHeightVariation &= !cell.UserDefined;
-
-                if (applyHeightVariation)
-                {
-                    float rand = srandom.GetNextUniformFloat();
-                    if (rand < gridConfig.HeightVariationProbability / 2.0f)
-                    {
-                        top.CurrentHeight--;
-                    }
-                    else if (rand < gridConfig.HeightVariationProbability)
-                    {
-                        top.CurrentHeight++;
-                    }
-                }
-                if (cell.UserDefined)
-                {
-                    top.CurrentHeight = cell.Bounds.Location.y;
-                }
-
-                CellHeightNode node = new CellHeightNode();
-                node.CellId = cell.Id;
-                node.Height = top.CurrentHeight;
-                node.MarkForIncrease = false;
-                node.MarkForDecrease = false;
-                CellHeightNodes.Add(node.CellId, node);
-
-                // Add the child nodes
-                foreach (int childId in cell.AdjacentCells)
-                {
-                    if (visited.Contains(childId)) continue;
-                    stack.Push(new CellHeightFrameInfo(childId, top.CurrentHeight));
-                }
-            }
-
-            // Fix the dungeon heights
-            const int FIX_MAX_TRIES = 50;	// TODO: Move to config
-            int fixIterations = 0;
-            while (fixIterations < FIX_MAX_TRIES && FixDungeonCellHeights(CellHeightNodes))
-            {
-                fixIterations++;
-            }
-
-            // Assign the calculated heights
-            foreach (Cell cell in gridModel.Cells)
-            {
-                if (CellHeightNodes.ContainsKey(cell.Id))
-                {
-                    CellHeightNode node = CellHeightNodes[cell.Id];
-                    var bounds = cell.Bounds;
-                    var location = cell.Bounds.Location;
-                    location.y = node.Height;
-                    bounds.Location = location;
-                    cell.Bounds = bounds;
-                }
-            }
-        }
-
-
-        bool FixDungeonCellHeights(Dictionary<int, CellHeightNode> CellHeightNodes)
-        {
-            bool bContinueIteration = false;
-            if (gridModel.Cells.Count == 0) return bContinueIteration;
-
-            HashSet<int> visited = new HashSet<int>();
-            Stack<int> stack = new Stack<int>();
-            Cell rootCell = gridModel.Cells[0];
-            stack.Push(rootCell.Id);
-            while (stack.Count > 0)
-            {
-                int cellId = stack.Pop();
-                if (visited.Contains(cellId)) continue;
-                visited.Add(cellId);
-
-                Cell cell = gridModel.GetCell(cellId);
-                if (cell == null) continue;
-
-                if (!CellHeightNodes.ContainsKey(cellId)) continue;
-                CellHeightNode heightNode = CellHeightNodes[cellId];
-
-                heightNode.MarkForIncrease = false;
-                heightNode.MarkForDecrease = false;
-
-                // Check if the adjacent cells have unreachable heights
-                foreach (int childId in cell.AdjacentCells)
-                {
-                    Cell childCell = gridModel.GetCell(childId);
-                    if (childCell == null || !CellHeightNodes.ContainsKey(childId)) continue;
-                    CellHeightNode childHeightNode = CellHeightNodes[childId];
-                    int heightDifference = Mathf.Abs(childHeightNode.Height - heightNode.Height);
-                    if (heightDifference > gridConfig.MaxAllowedStairHeight)
-                    {
-                        if (heightNode.Height > childHeightNode.Height)
-                        {
-                            heightNode.MarkForDecrease = true;
-                        }
-                        else
-                        {
-                            heightNode.MarkForIncrease = true;
-                        }
-                        break;
-                    }
-                }
-
-                // Add the child nodes
-                foreach (int childId in cell.AdjacentCells)
-                {
-                    if (visited.Contains(childId)) continue;
-                    stack.Push(childId);
-                }
-            }
-
-
-            bool bHeightChanged = false;
-            foreach (int cellId in CellHeightNodes.Keys)
-            {
-                CellHeightNode heightNode = CellHeightNodes[cellId];
-                if (heightNode.MarkForDecrease)
-                {
-                    heightNode.Height--;
-                    bHeightChanged = true;
-                }
-                else if (heightNode.MarkForIncrease)
-                {
-                    heightNode.Height++;
-                    bHeightChanged = true;
-                }
-            }
-
-            // Iterate this function again if the height was changed in this step
-            bContinueIteration = bHeightChanged;
-            return bContinueIteration;
-        }
-
-
-        int HASH(int a, int b)
+        public int HASH(int a, int b)
         {
             return (a << 16) + b;
         }
@@ -1919,7 +1787,7 @@ namespace DungeonArchitect.Builders.Grid
                 // Check if it is really required to have a door here. We do this by disabling the door and 
                 // check if the two adjacent cells (now with a wall instead of a door) can reach each other 
                 // within the specified steps
-                bool pathExists = ContainsAdjacencyPath(cellIdA, cellIdB, (int)gridConfig.DoorProximitySteps);
+                bool pathExists = ContainsAdjacencyPath(cellIdA, cellIdB, (int)gridConfig.DoorProximitySteps, false);
                 if (!pathExists)
                 {
                     // No path exists. We need a door here
@@ -1940,7 +1808,7 @@ namespace DungeonArchitect.Builders.Grid
 
         }
 
-        bool ContainsAdjacencyPath(int cellIdA, int cellIdB, int maxDepth)
+        public bool ContainsAdjacencyPath(int cellIdA, int cellIdB, int maxDepth, bool bForceRoomConnection)
         {
             Cell cellA = gridModel.GetCell(cellIdA);
             Cell cellB = gridModel.GetCell(cellIdB);
@@ -1948,10 +1816,10 @@ namespace DungeonArchitect.Builders.Grid
             {
                 return false;
             }
-            if (cellA.CellType == CellType.Room || cellB.CellType == CellType.Room)
+            if (bForceRoomConnection && (cellA.CellType == CellType.Room || cellB.CellType == CellType.Room))
             {
                 // Force a connection if any one is a room
-                //return false;
+                return false;
             }
 
             var queue = new Queue<StairAdjacencyQueueNode>();
@@ -2020,7 +1888,7 @@ namespace DungeonArchitect.Builders.Grid
         }
 
 
-		void AddCorridorPadding(int x, int y, int z) {
+		public void AddCorridorPadding(int x, int y, int z) {
 			Cell padding = new Cell();
 			padding.Id = GetNextCellId();
 			padding.UserDefined = false;
@@ -2032,511 +1900,6 @@ namespace DungeonArchitect.Builders.Grid
 			
 			gridModel.Cells.Add(padding);
 		}
-        
-        class StairConnectionWeight {
-	        public StairConnectionWeight(int position, int weight)  {
-                this.position = position;
-                this.weight = weight;
-            }
-	        public int position;
-            public int weight;
-
-        }
-
-        class StairConnectionWeightComparer : IComparer<StairConnectionWeight>
-        {
-            public int Compare(StairConnectionWeight x, StairConnectionWeight y)
-            {
-                if (x.weight == y.weight) return 0;
-                return (x.weight < y.weight) ? 1 : -1;
-            }
-        }
-
-        void ConnectStairs(int WeightThreshold)
-        {
-            if (gridModel.Cells.Count == 0) return;
-            Stack<StairEdgeInfo> stack = new Stack<StairEdgeInfo>();
-			HashSet<int> visited = new HashSet<int>();
-			HashSet<int> islandsVisited = new HashSet<int>();
-
-			for (int i = 0; i < gridModel.Cells.Count; i++) {
-				var startCell = gridModel.Cells[i];
-				if (islandsVisited.Contains (startCell.Id)) {
-					continue;
-				}
-				stack.Push(new StairEdgeInfo(-1, startCell.Id));
-	            while (stack.Count > 0)
-	            {
-	                StairEdgeInfo top = stack.Pop();
-	                if (top.CellIdA >= 0)
-	                {
-	                    int hash1 = HASH(top.CellIdA, top.CellIdB);
-	                    int hash2 = HASH(top.CellIdB, top.CellIdA);
-	                    if (visited.Contains(hash1) || visited.Contains(hash2))
-	                    {
-	                        // Already processed
-	                        continue;
-						}
-						// Mark as processed
-						visited.Add(hash1);
-						visited.Add(hash2);
-
-						// Mark the island as processed
-						islandsVisited.Add(top.CellIdA);
-						islandsVisited.Add(top.CellIdB);
-
-	                    // Check if it is really required to place a stair here.  There might be other paths nearby to this cell
-	                    bool pathExists = ContainsAdjacencyPath(top.CellIdA, top.CellIdB, (int)gridConfig.StairConnectionTollerance);
-                        bool stairConnectsToDoor = gridModel.DoorManager.ContainsDoorBetweenCells(top.CellIdA, top.CellIdB);
-	                    if (!pathExists || stairConnectsToDoor)
-	                    {
-	                        // Process the edge
-	                        Cell cellA = gridModel.GetCell(top.CellIdA);
-	                        Cell cellB = gridModel.GetCell(top.CellIdB);
-	                        if (cellA == null || cellB == null) continue;
-	                        if (cellA.Bounds.Location.y != cellB.Bounds.Location.y)
-	                        {
-	                            // Find the adjacent line
-	                            Rectangle intersection = Rectangle.Intersect(cellA.Bounds, cellB.Bounds);
-	                            if (intersection.Size.x > 0)
-	                            {
-	                                bool cellAAbove = (cellA.Bounds.Location.y > cellB.Bounds.Location.y);
-	                                Cell stairOwner = (cellAAbove ? cellB : cellA);
-	                                Cell stairConnectedTo = (!cellAAbove ? cellB : cellA);
-
-	                                if (ContainsStair(stairOwner.Id, stairConnectedTo.Id))
-	                                {
-	                                    // Stair already exists here. Move to the next one
-	                                    continue;
-	                                }
-
-	                                bool cellOwnerOnLeft = (stairOwner.Bounds.Center().z < intersection.Location.z);
-	                                int validX = intersection.Location.x;
-									//int preferedLocation = MathUtils.INVALID_LOCATION;
-
-	                                int validZ = intersection.Location.z;
-	                                if (cellOwnerOnLeft) validZ--;
-
-	                                var StairConnectionCandidates = new List<StairConnectionWeight>();
-	                                for (validX = intersection.Location.x; validX < intersection.Location.x + intersection.Size.x; validX++)
-	                                {
-	                                    var currentPointInfo = gridModel.GetGridCellLookup(validX, validZ);
-									    if (stairOwner.CellType == CellType.Room || stairConnectedTo.CellType == CellType.Room) {
-										    // Make sure the stair is on a door cell
-										    GridCellInfo stairCellInfo = gridModel.GetGridCellLookup(validX, validZ);
-										    if (!stairCellInfo.ContainsDoor) {
-											    // Stair not connected to a door. Probably trying to attach itself to a room wall. ignore
-											    continue;
-										    }
-
-										    // We have a door here.  A stair case is a must, but first make sure we have a door between these two cells 
-										    bool hasDoor = gridModel.DoorManager.ContainsDoorBetweenCells(stairOwner.Id, stairConnectedTo.Id);
-										    if (!hasDoor) continue;
-
-										    // Check again in more detail
-										    var tz1 = validZ;
-										    var tz2 = validZ - 1;
-										    if (cellOwnerOnLeft) {
-											    tz2 = validZ + 1;
-										    }
-
-										    hasDoor = gridModel.DoorManager.ContainsDoor(validX, tz1, validX, tz2);
-										    if (hasDoor) {
-											    StairConnectionCandidates.Add(new StairConnectionWeight(validX, 100));
-											    break;
-										    }
-									    }
-									    else {	// Both the cells are non-rooms (corridors)
-										    int weight = 0;
-
-										    GridCellInfo cellInfo0 = gridModel.GetGridCellLookup(validX, validZ - 1);
-										    GridCellInfo cellInfo1 = gridModel.GetGridCellLookup(validX, validZ + 1);
-										    weight += (cellInfo0.CellType != CellType.Unknown) ? 10 : 0;
-										    weight += (cellInfo1.CellType != CellType.Unknown) ? 10 : 0;
-
-											int adjacentOwnerZ = cellOwnerOnLeft ? (validZ - 1) : (validZ + 1);
-											int adjacentConnectedToZ = !cellOwnerOnLeft ? (validZ - 1) : (validZ + 1);
-										    if (currentPointInfo.ContainsDoor) {
-											    // Increase the weight if we connect into a door
-											    int adjacentZ = cellOwnerOnLeft ? (validZ - 1) : (validZ + 1);
-											    bool ownerOnDoor = gridModel.DoorManager.ContainsDoor(validX, validZ, validX, adjacentZ);
-											    if (ownerOnDoor) {
-												    // Connect to this
-												    weight += 100;
-											    }
-											    else {
-												    // Add a penalty if we are creating a stair blocking a door entry/exit
-												    weight -= 100;
-											    }
-										    }
-										    else {
-											    // Make sure we don't connect to a wall
-												GridCellInfo adjacentOwnerCellInfo = gridModel.GetGridCellLookup(validX, adjacentOwnerZ);
-											    if (adjacentOwnerCellInfo.CellType == CellType.Room) {
-												    // We are connecting to a wall. Add a penalty
-												    weight -= 100;
-											    }
-										    }
-
-										    // Check the side of the stairs to see if we are not blocking a stair entry / exit
-										    if (gridModel.ContainsStairAtLocation(validX - 1, validZ)) {
-											    weight -= 60;
-										    }
-	                                        if (gridModel.ContainsStairAtLocation(validX + 1, validZ))
-	                                        {
-											    weight -= 60;
-										    }
-
-											for (int dx = -1; dx <= 1; dx++) {
-												var adjacentStair = gridModel.GetStairAtLocation(validX + dx, adjacentOwnerZ);
-												if (adjacentStair != null) {
-													var currentRotation = Quaternion.AngleAxis(cellOwnerOnLeft ? -90 : 90, new Vector3(0, 1, 0));
-													var angle = Quaternion.Angle(adjacentStair.Rotation, currentRotation);
-													if (dx == 0) {
-														// If we have a stair case in a perpendicular direction right near the owner, add a penalty
-														var angleDelta = Mathf.Abs (Mathf.Abs(angle) - 90);
-														if (angleDelta < 2) {
-															weight -= 100;
-														}
-													} else {
-														var angleDelta = Mathf.Abs (Mathf.Abs(angle) - 180);
-														if (angleDelta < 2) {
-															weight -= 60;
-														}
-													}
-												}
-											}
-											
-											// If we connect to another stair with the same angle, then increase the weight
-											if (gridModel.ContainsStairAtLocation(validX, adjacentConnectedToZ)) {
-												var adjacentStair = gridModel.GetStairAtLocation(validX, adjacentConnectedToZ);
-												if (adjacentStair != null) {
-													var currentRotation = Quaternion.AngleAxis(cellOwnerOnLeft ? -90 : 90, new Vector3(0, 1, 0));
-													var angle = Quaternion.Angle(adjacentStair.Rotation, currentRotation);
-													var angleDelta = Mathf.Abs(angle) % 360;
-													if (angleDelta < 2) {
-														weight += 50;
-													}
-													else {
-														weight -= 50;
-													}
-												}
-											}
-											
-
-											// check if the entry of the stair is not in a different height
-											{
-												var adjacentEntryCellInfo = gridModel.GetGridCellLookup(validX, adjacentOwnerZ);
-												if (adjacentEntryCellInfo.CellType != CellType.Unknown) {
-													var adjacentEntryCell = gridModel.GetCell(adjacentEntryCellInfo.CellId);
-													if (stairOwner.Bounds.Location.y != adjacentEntryCell.Bounds.Location.y) {
-														// The entry is in a different height. Check if we have a stair here
-														if (!gridModel.ContainsStair(validX, adjacentOwnerZ)) {
-															//Add a penalty
-															weight -= 10;
-														}
-													}
-												}
-											}
-
-										    StairConnectionCandidates.Add(new StairConnectionWeight(validX, weight));
-									    }
-	                                }
-
-
-	                                // Create a stair if necessary
-	                                if (StairConnectionCandidates.Count > 0)
-	                                {
-	                                    StairConnectionCandidates.Sort(new StairConnectionWeightComparer());
-	                                    var candidate = StairConnectionCandidates[0];
-	                                    if (candidate.weight < WeightThreshold)
-	                                    {
-	                                        continue;
-	                                    }
-	                                    validX = candidate.position;
-
-										int stairY = stairOwner.Bounds.Location.y;
-										var paddingOffset = (stairOwner.Bounds.Z > stairConnectedTo.Bounds.Z) ? 1 : -1;
-										// Add a corridor padding here
-										//AddCorridorPadding(validX, stairY, validZ - 1);
-										for (int dx = -1; dx <= 1; dx++) {
-											bool requiresPadding = false;
-											if (dx == 0) {
-												requiresPadding = true;
-											} else {
-												var cellInfo = GetGridCellLookup(validX + dx, validZ);
-												if (cellInfo.CellType != CellType.Unknown) {
-													requiresPadding = true;
-												}
-											}
-											
-											if (requiresPadding) {
-												var paddingInfo = GetGridCellLookup(validX + dx, validZ + paddingOffset);
-												if (paddingInfo.CellType == CellType.Unknown) {
-													AddCorridorPadding(validX + dx, stairY, validZ + paddingOffset);
-												}
-											}
-										}
-										gridModel.BuildCellLookup();
-										gridModel.BuildSpatialCellLookup();
-										GenerateAdjacencyLookup();
-									}
-	                                else
-	                                {
-	                                    continue;
-	                                }
-
-	                                float validY = stairOwner.Bounds.Location.y;
-	                                Vector3 StairLocation = new Vector3(validX, validY, validZ);
-	                                StairLocation += new Vector3(0.5f, 0, 0.5f);
-	                                StairLocation = Vector3.Scale(StairLocation, GridToMeshScale);
-
-	                                Quaternion StairRotation = Quaternion.AngleAxis(cellOwnerOnLeft ? -90 : 90, new Vector3(0, 1, 0));
-
-	                                if (!CellStairs.ContainsKey(stairOwner.Id))
-	                                {
-	                                    CellStairs.Add(stairOwner.Id, new List<StairInfo>());
-	                                }
-	                                StairInfo Stair = new StairInfo();
-	                                Stair.OwnerCell = stairOwner.Id;
-	                                Stair.ConnectedToCell = stairConnectedTo.Id;
-	                                Stair.Position = StairLocation;
-	                                Stair.IPosition = new IntVector(validX, (int)validY, validZ);
-	                                Stair.Rotation = StairRotation;
-	                                if (!gridModel.ContainsStairAtLocation(validX, validZ))
-	                                {
-	                                    CellStairs[stairOwner.Id].Add(Stair);
-	                                }
-	                            }
-	                            else if (intersection.Size.z > 0)
-	                            {
-	                                bool cellAAbove = (cellA.Bounds.Location.y > cellB.Bounds.Location.y);
-
-	                                Cell stairOwner = (cellAAbove ? cellB : cellA);
-	                                Cell stairConnectedTo = (!cellAAbove ? cellB : cellA);
-
-	                                if (ContainsStair(stairOwner.Id, stairConnectedTo.Id))
-	                                {
-	                                    // Stair already exists here. Move to the next one
-	                                    continue;
-	                                }
-
-	                                bool cellOwnerOnLeft = (stairOwner.Bounds.Center().x < intersection.Location.x);
-
-	                                int validX = intersection.Location.x;
-	                                if (cellOwnerOnLeft) validX--;
-
-									int validZ = intersection.Location.z;
-
-	                                var StairConnectionCandidates = new List<StairConnectionWeight>();
-	                                for (validZ = intersection.Location.z; validZ < intersection.Location.z + intersection.Size.z; validZ++)
-	                                {
-	                                    var currentPointInfo = gridModel.GetGridCellLookup(validX, validZ);
-									    if (stairOwner.CellType == CellType.Room || stairConnectedTo.CellType == CellType.Room) {
-										    // Make sure the stair is on a door cell
-										    GridCellInfo stairCellInfo = gridModel.GetGridCellLookup(validX, validZ);
-										    if (!stairCellInfo.ContainsDoor) {
-											    // Stair not connected to a door. Probably trying to attach itself to a room wall. ignore
-											    continue;
-										    }
-
-										    // We have a door here.  A stair case is a must, but first make sure we have a door between these two cells 
-										    bool hasDoor = gridModel.DoorManager.ContainsDoorBetweenCells(stairOwner.Id, stairConnectedTo.Id);
-										    if (!hasDoor) continue;
-
-										    // Check again in more detail
-										    var tx1 = validX;
-										    var tx2 = validX - 1;
-										    if (cellOwnerOnLeft) {
-											    tx2 = validX + 1;
-										    }
-
-										    hasDoor = gridModel.DoorManager.ContainsDoor(tx1, validZ, tx2, validZ);
-										    if (hasDoor) {
-											    StairConnectionCandidates.Add(new StairConnectionWeight(validZ, 100));
-											    break;
-										    }
-									    }
-									    else {	// Both the cells are non-rooms (corridors)
-										    int weight = 0;
-                                            
-										    GridCellInfo cellInfo0 = gridModel.GetGridCellLookup(validX - 1, validZ);
-										    GridCellInfo cellInfo1 = gridModel.GetGridCellLookup(validX + 1, validZ);
-										    weight += (cellInfo0.CellType != CellType.Unknown) ? 10 : 0;
-										    weight += (cellInfo1.CellType != CellType.Unknown) ? 10 : 0;
-											
-											int adjacentOwnerX = cellOwnerOnLeft ? (validX - 1) : (validX + 1);
-											int adjacentConnectedToX = !cellOwnerOnLeft ? (validX - 1) : (validX + 1);
-											if (currentPointInfo.ContainsDoor) {
-											    // Increase the weight if we connect into a door
-												bool ownerOnDoor = gridModel.DoorManager.ContainsDoor(validX, validZ, adjacentOwnerX, validZ);
-											    if (ownerOnDoor) {
-												    // Connect to this
-												    weight += 100;
-											    }
-											    else {
-												    // Add a penalty if we are creating a stair blocking a door entry/exit
-												    weight -= 100;
-											    }
-										    }
-										    else {
-											    // Make sure we don't connect to a wall
-											    int adjacentX = cellOwnerOnLeft ? (validX - 1) : (validX + 1);
-											    GridCellInfo adjacentOwnerCellInfo = gridModel.GetGridCellLookup(adjacentX, validZ);
-											    if (adjacentOwnerCellInfo.CellType == CellType.Room) {
-												    // We are connecting to a wall. Add a penalty
-												    weight -= 100;
-											    }
-										    }
-
-										    // Check the side of the stairs to see if we are not blocking a stair entry / exit
-										    if (gridModel.ContainsStairAtLocation(validX, validZ - 1)) {
-											    weight -= 60;
-										    }
-										    if (gridModel.ContainsStairAtLocation(validX, validZ + 1)) {
-											    weight -= 60;
-										    }
-
-											// If we have a stair coming out in the opposite direction, near the entry of the stair, add a penalty
-											for (int dz = -1; dz <= 1; dz++) {
-												var adjacentStair = gridModel.GetStairAtLocation(adjacentOwnerX, validZ + dz);
-												if (adjacentStair != null) {
-													var currentRotation = Quaternion.AngleAxis(cellOwnerOnLeft ? 0 : 180, new Vector3(0, 1, 0));
-													var angle = Quaternion.Angle(adjacentStair.Rotation, currentRotation);
-													if (dz == 0) {
-														// If we have a stair case in a perpendicular direction right near the owner, add a penalty
-														var angleDelta = Mathf.Abs (Mathf.Abs(angle) - 90);
-														if (angleDelta < 2) {
-															weight -= 100;
-														}
-													} else {
-														var angleDelta = Mathf.Abs (Mathf.Abs(angle) - 180);
-														if (angleDelta < 2) {
-															weight -= 60;
-														}
-													}
-												}
-											}
-
-											// If we connect to another stair with the same angle, the increase the weight
-											if (gridModel.ContainsStairAtLocation(adjacentConnectedToX, validZ)) {
-												var adjacentStair = gridModel.GetStairAtLocation(adjacentConnectedToX, validZ);
-												if (adjacentStair != null) {
-													var currentRotation = Quaternion.AngleAxis(cellOwnerOnLeft ? 0 : 180, new Vector3(0, 1, 0));
-													var angle = Quaternion.Angle(adjacentStair.Rotation, currentRotation);
-													var angleDelta = Mathf.Abs(angle) % 360;
-													if (angleDelta < 2) {
-														weight += 50;
-													}
-													else {
-														weight -= 50;
-													}
-												}
-											}
-
-
-											// check if the entry of the stair is not in a different height
-											{
-												var adjacentEntryCellInfo = gridModel.GetGridCellLookup(adjacentOwnerX, validZ);
-												if (adjacentEntryCellInfo.CellType != CellType.Unknown) {
-													var adjacentEntryCell = gridModel.GetCell(adjacentEntryCellInfo.CellId);
-													if (stairOwner.Bounds.Location.y != adjacentEntryCell.Bounds.Location.y) {
-														// The entry is in a different height. Check if we have a stair here
-														if (!gridModel.ContainsStair(adjacentOwnerX, validZ)) {
-															//Add a penalty
-															weight -= 10;
-														}
-													}
-												}
-											}
-
-										    StairConnectionCandidates.Add(new StairConnectionWeight(validZ, weight));
-									    }
-	                                }
-
-	                                // Connect the stairs if necessary
-	                                if (StairConnectionCandidates.Count > 0)
-	                                {
-	                                    StairConnectionCandidates.Sort(new StairConnectionWeightComparer());
-	                                    StairConnectionWeight candidate = StairConnectionCandidates[0];
-	                                    if (candidate.weight < WeightThreshold)
-	                                    {
-	                                        continue;
-	                                    }
-	                                    validZ = candidate.position;
-
-										int stairY = stairOwner.Bounds.Location.y;
-										var paddingOffset = (stairOwner.Bounds.X > stairConnectedTo.Bounds.X) ? 1 : -1;
-										// Add a corridor padding here
-										for (int dz = -1; dz <= 1; dz++) {
-											bool requiresPadding = false;
-											if (dz == 0) {
-												requiresPadding = true;
-											} else {
-												var cellInfo = GetGridCellLookup(validX, validZ + dz);
-												if (cellInfo.CellType != CellType.Unknown) {
-													requiresPadding = true;
-												}
-											}
-											
-											if (requiresPadding) {
-												var paddingInfo = GetGridCellLookup(validX + paddingOffset, validZ + dz);
-												if (paddingInfo.CellType == CellType.Unknown) {
-													AddCorridorPadding(validX + paddingOffset, stairY, validZ + dz);
-												}
-											}
-										}
-										gridModel.BuildCellLookup();
-										gridModel.BuildSpatialCellLookup();
-										GenerateAdjacencyLookup();
-									}
-	                                else
-	                                {
-	                                    continue;
-	                                }
-
-	                                float validY = stairOwner.Bounds.Location.y;
-	                                Vector3 StairLocation = new Vector3(validX, validY, validZ);
-	                                StairLocation += new Vector3(0.5f, 0, 0.5f);
-	                                StairLocation = Vector3.Scale(StairLocation, GridToMeshScale);
-
-	                                Quaternion StairRotation = Quaternion.AngleAxis(cellOwnerOnLeft ? 0 : 180, new Vector3(0, 1, 0));
-
-	                                if (!CellStairs.ContainsKey(stairOwner.Id))
-	                                {
-	                                    CellStairs.Add(stairOwner.Id, new List<StairInfo>());
-	                                }
-	                                StairInfo Stair = new StairInfo();
-	                                Stair.OwnerCell = stairOwner.Id;
-	                                Stair.ConnectedToCell = stairConnectedTo.Id;
-	                                Stair.Position = StairLocation;
-	                                Stair.IPosition = new IntVector(validX, (int)validY, validZ);
-	                                Stair.Rotation = StairRotation;
-	                                if (!gridModel.ContainsStairAtLocation(validX, validZ))
-	                                {
-	                                    CellStairs[stairOwner.Id].Add(Stair);
-	                                }
-	                            }
-	                        }
-	                    }
-	                }
-
-	                // Move to the next adjacent nodes
-	                {
-	                    Cell cellB = gridModel.GetCell(top.CellIdB);
-	                    if (cellB == null) continue;
-	                    foreach (int adjacentCell in cellB.AdjacentCells)
-	                    {
-	                        int hash1 = HASH(cellB.Id, adjacentCell);
-	                        int hash2 = HASH(adjacentCell, cellB.Id);
-	                        if (visited.Contains(hash1) || visited.Contains(hash2)) continue;
-	                        StairEdgeInfo edge = new StairEdgeInfo(top.CellIdB, adjacentCell);
-	                        stack.Push(edge);
-	                    }
-	                }
-	            }
-			}
-        }
 
         public override void OnVolumePositionModified(Volume volume, out IntVector newPositionOnGrid, out IntVector newSizeOnGrid)
         {
@@ -2678,7 +2041,7 @@ namespace DungeonArchitect.Builders.Grid
             return false;
         }
 
-        bool ContainsStair(int ownerCellId, int connectedToCellId)
+        public bool ContainsStair(int ownerCellId, int connectedToCellId)
         {
             if (!gridModel.CellStairs.ContainsKey(ownerCellId))
             {
@@ -2695,7 +2058,7 @@ namespace DungeonArchitect.Builders.Grid
             return false;
         }
 
-        bool ContainsStair(Cell baseCell, int x, int z)
+        public bool ContainsStair(Cell baseCell, int x, int z)
         {
             GridCellInfo info = GetGridCellLookup(x, z);
             if (info.CellType == CellType.Unknown) return false;
@@ -2763,6 +2126,46 @@ namespace DungeonArchitect.Builders.Grid
             return makeDoor;
         }
 
+        void BuildMesh_RoomDecoration(Cell cell)
+        {
+        }
+
+
+        void BuildMesh_Corridor_BlockWalls(Cell cell)
+        {
+            BuildMesh_Floor(cell);
+            var fencePositions = new HashSet<IntVector>();
+
+            var border = Rectangle.ExpandBounds(cell.Bounds, 1);
+            var borderPoints = border.GetBorderPoints();
+            foreach (var p in borderPoints)
+            {
+                if (fencePositions.Contains(p))
+                {
+                    continue;
+                }
+
+                var cellInfo = GetGridCellLookup(p.x, p.z);
+                if (cellInfo.CellType == CellType.Unknown)
+                {
+                    fencePositions.Add(p);
+                }
+            }
+
+            foreach (var p in fencePositions)
+            {
+                var gridPosition = p;
+
+                Vector3 position = p.ToVector3();
+                position += new Vector3(0.5f, 0, 0.5f);
+                position = Vector3.Scale(position, GridToMeshScale);
+                var rotation = Quaternion.AngleAxis(0, new Vector3(0, 1, 0));
+                var transform = Matrix4x4.TRS(position, rotation, Vector3.one);
+
+                EmitMarker(GridDungeonMarkerNames.Fence, transform, gridPosition, cell.Id);
+            }
+        }
+
         void BuildMesh_Room(Cell cell)
         {
             BuildMesh_Floor(cell);
@@ -2777,6 +2180,10 @@ namespace DungeonArchitect.Builders.Grid
             object markerMetadata = null;
 
             var gridPosition = new IntVector();
+            
+            // x, y, z, new Vector3(0.5f, 0, 0), new Vector3(0, 0, 0), 180
+            System.Action<int, int, int, int, int, Vector3, Vector3, float> funcDrawFence = (x, y, z, dx, dz, fenceOffset, pillarOffset, angle) => { };
+            
             // build walls along the width
             for (int dx = 0; dx < cell.Bounds.Size.x; dx++)
             {
@@ -2946,54 +2353,73 @@ namespace DungeonArchitect.Builders.Grid
             }
         }
 
-        void BuildMesh_RoomDecoration(Cell cell)
-        {
-        }
-
-
-        void BuildMesh_Corridor_BlockWalls(Cell cell)
-        {
-            BuildMesh_Floor(cell);
-            var fencePositions = new HashSet<IntVector>();
-
-            var border = Rectangle.ExpandBounds(cell.Bounds, 1);
-            var borderPoints = border.GetBorderPoints();
-            foreach (var p in borderPoints)
-            {
-                if (fencePositions.Contains(p))
-                {
-                    continue;
-                }
-
-                var cellInfo = GetGridCellLookup(p.x, p.z);
-                if (cellInfo.CellType == CellType.Unknown)
-                {
-                    fencePositions.Add(p);
-                }
-            }
-
-            foreach (var p in fencePositions)
-            {
-                var gridPosition = p;
-
-                Vector3 position = p.ToVector3();
-                position += new Vector3(0.5f, 0, 0.5f);
-                position = Vector3.Scale(position, GridToMeshScale);
-                var rotation = Quaternion.AngleAxis(0, new Vector3(0, 1, 0));
-                var transform = Matrix4x4.TRS(position, rotation, Vector3.one);
-
-                EmitMarker(GridDungeonMarkerNames.Fence, transform, gridPosition, cell.Id);
-            }
-        }
-
         void BuildMesh_Corridor(Cell cell)
         {
             BuildMesh_Floor(cell);
 
-
             Vector3 HalfWallOffset = Vector3.Scale(GridToMeshScale, new Vector3(0, -1, 0));
             IntVector basePosition = cell.Bounds.Location;
             var gridPosition = new IntVector();
+
+            // x, y, z, 0, 0, new Vector3(0.5f, 0, 0), new Vector3(0, 0, 0), 180
+            System.Action<int, int, int, int, int, float, Vector3, Vector3, Vector3[]> funcDrawFence = (x, y, z, dx, dz, angle, fenceOffset, pillarOffset, extraWallHalfOffsets) =>
+            {
+                int elevationHeight;
+                bool isElevatedFence, drawPillar;
+                bool drawFence = CanDrawFence(cell, x + dx, z + dz, out isElevatedFence, out drawPillar, out elevationHeight);
+               if (drawFence || isElevatedFence)
+                {
+                    var position = new Vector3(x, y, z);
+                    position += fenceOffset;
+                    position = Vector3.Scale(position, GridToMeshScale);
+                    var rotation = Quaternion.AngleAxis(angle, new Vector3(0, 1, 0));
+                    var transform = Matrix4x4.TRS(position, rotation, Vector3.one);
+                    if (drawFence)
+                    {
+                        EmitMarker(GridDungeonMarkerNames.Fence, transform, gridPosition, cell.Id);
+                    }
+
+                    if (isElevatedFence)
+                    {
+                        EmitMarker(GridDungeonMarkerNames.WallHalf, transform, elevationHeight, HalfWallOffset, gridPosition, cell.Id, GridToMeshScale);
+                    }
+                }
+
+                if (drawFence || drawPillar)
+                {
+                    var position = new Vector3(x, y, z) + pillarOffset;
+                    position = Vector3.Scale(position, GridToMeshScale);
+                    var rotation = Quaternion.AngleAxis(angle, new Vector3(0, 1, 0));
+                    var transform = Matrix4x4.TRS(position, rotation, Vector3.one);
+                    EmitMarker(GridDungeonMarkerNames.FenceSeparator, transform, gridPosition, cell.Id);
+
+                    if (isElevatedFence)
+                    {
+                        var offsets = new List<KeyValuePair<Vector3, float>>();
+                        offsets.Add(new KeyValuePair<Vector3, float>(pillarOffset, angle));
+                        foreach (var extraWallHalfOffset in extraWallHalfOffsets)
+                        {
+                            offsets.Add(new KeyValuePair<Vector3, float>(extraWallHalfOffset, angle - 90));
+                        }
+
+                        var oldDuplicateState = markers.AllowDuplicateMarkers;
+                        markers.AllowDuplicateMarkers = false;
+                        
+                        foreach (var entry in offsets)
+                        {
+                            position = new Vector3(x, y, z) + entry.Key;
+                            position = Vector3.Scale(position, GridToMeshScale);
+                            var pillarAngle = entry.Value;
+                            rotation = Quaternion.AngleAxis(pillarAngle, new Vector3(0, 1, 0));
+                            transform = Matrix4x4.TRS(position, rotation, Vector3.one);
+                            
+                            EmitMarker(GridDungeonMarkerNames.WallHalfSeparator, transform, elevationHeight, HalfWallOffset, gridPosition, cell.Id, GridToMeshScale);
+                        }
+
+                        markers.AllowDuplicateMarkers = oldDuplicateState;
+                    }
+                }
+            };
 
             // build fence along the width
             for (int dx = 0; dx < cell.Bounds.Size.x; dx++)
@@ -3002,70 +2428,21 @@ namespace DungeonArchitect.Builders.Grid
                 int y = basePosition.y;
                 int z = basePosition.z;
                 gridPosition.Set(x, y, z);
-
-                int elevationHeight;
-                bool isElevatedFence, drawPillar;
-                bool drawFence = CanDrawFence(cell, x, z - 1, out isElevatedFence, out drawPillar, out elevationHeight);
-                Matrix4x4 transform = Matrix4x4.identity;
-                if (drawFence || isElevatedFence)
+                var extraHalfPillarOffsets = new List<Vector3>();
+                if (dx == cell.Bounds.Size.x - 1)
                 {
-                    Vector3 position = new Vector3(x, y, z);
-                    position += new Vector3(0.5f, 0, 0);
-                    position = Vector3.Scale(position, GridToMeshScale);
-                    var rotation = Quaternion.AngleAxis(180, new Vector3(0, 1, 0));
-                    transform = Matrix4x4.TRS(position, rotation, Vector3.one);
-                    if (drawFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.Fence, transform, gridPosition, cell.Id);
-                    }
-                    if (isElevatedFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.WallHalf, transform, elevationHeight, HalfWallOffset, gridPosition, cell.Id, GridToMeshScale);
-                    }
+                    extraHalfPillarOffsets.Add(new Vector3(1, 0, 0));
                 }
-                if (drawFence || drawPillar)
-                {
-                    Matrix.SetTranslation(ref transform, Vector3.Scale(new Vector3(x, y, z), GridToMeshScale));
-                    EmitMarker(GridDungeonMarkerNames.FenceSeparator, transform, gridPosition, cell.Id);
-                    if (isElevatedFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.WallHalfSeparator, transform, elevationHeight, HalfWallOffset, gridPosition, cell.Id, GridToMeshScale);
-                    }
-                }
-
-
+                funcDrawFence(x, y, z, 0, -1, 180, new Vector3(0.5f, 0, 0), new Vector3(0, 0, 0), extraHalfPillarOffsets.ToArray());
+                
                 z += cell.Bounds.Size.z;
                 gridPosition.Set(x, y, z);
-
-                drawFence = CanDrawFence(cell, x, z, out isElevatedFence, out drawPillar, out elevationHeight);
-                transform = Matrix4x4.identity;
-                if (drawFence || isElevatedFence)
+                extraHalfPillarOffsets = new List<Vector3>();
+                if (dx == 0)
                 {
-                    Vector3 position = new Vector3(x, y, z);
-                    position += new Vector3(0.5f, 0, 0);
-                    position = Vector3.Scale(position, GridToMeshScale);
-                    var rotation = Quaternion.AngleAxis(0, new Vector3(0, 1, 0));
-                    transform = Matrix4x4.TRS(position, rotation, Vector3.one);
-                    if (drawFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.Fence, transform, gridPosition, cell.Id);
-                    }
-                    if (isElevatedFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.WallHalf, transform, elevationHeight, HalfWallOffset, gridPosition, cell.Id, GridToMeshScale);
-                    }
+                    extraHalfPillarOffsets.Add(new Vector3(0, 0, 0));
                 }
-                if (drawFence || drawPillar)
-                {
-                    Matrix.SetTranslation(ref transform, Vector3.Scale(new Vector3(x + 1, y, z), GridToMeshScale));
-                    gridPosition.x++;
-                    EmitMarker(GridDungeonMarkerNames.FenceSeparator, transform, gridPosition, cell.Id);
-                    if (isElevatedFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.WallHalfSeparator, transform, elevationHeight, HalfWallOffset, gridPosition, cell.Id, GridToMeshScale);
-                    }
-                }
-
+                funcDrawFence(x, y, z, 0, 0, 0, new Vector3(0.5f, 0, 0), new Vector3(1, 0, 0), extraHalfPillarOffsets.ToArray());
             }
 
             // build fence along the length
@@ -3075,67 +2452,21 @@ namespace DungeonArchitect.Builders.Grid
                 int y = basePosition.y;
                 int z = basePosition.z + dz;
                 gridPosition.Set(x, y, z);
-
-                int elevationHeight;
-                bool isElevatedFence, drawPillar;
-                bool drawFence = CanDrawFence(cell, x - 1, z, out isElevatedFence, out drawPillar, out elevationHeight);
-                Matrix4x4 transform = Matrix4x4.identity;
-                if (drawFence || isElevatedFence)
+                var extraHalfPillarOffsets = new List<Vector3>();
+                if (dz == 0)
                 {
-                    Vector3 position = new Vector3(x, y, z);
-                    position += new Vector3(0, 0, 0.5f);
-                    position = Vector3.Scale(position, GridToMeshScale);
-                    var rotation = Quaternion.AngleAxis(-90, new Vector3(0, 1, 0));
-                    transform = Matrix4x4.TRS(position, rotation, Vector3.one);
-                    if (drawFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.Fence, transform, gridPosition, cell.Id);
-                    }
-                    if (isElevatedFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.WallHalf, transform, elevationHeight, HalfWallOffset, gridPosition, cell.Id, GridToMeshScale);
-                    }
+                    extraHalfPillarOffsets.Add(new Vector3(0, 0, 0));
                 }
-                if (drawFence || drawPillar)
-                {
-                    Matrix.SetTranslation(ref transform, Vector3.Scale(new Vector3(x, y, z + 1), GridToMeshScale));
-                    gridPosition.z++;
-                    EmitMarker(GridDungeonMarkerNames.FenceSeparator, transform, gridPosition, cell.Id);
-                    if (isElevatedFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.WallHalfSeparator, transform, elevationHeight, HalfWallOffset, gridPosition, cell.Id, GridToMeshScale);
-                    }
-                }
-
+                funcDrawFence(x, y, z, -1, 0, -90, new Vector3(0, 0, 0.5f), new Vector3(0, 0, 1), extraHalfPillarOffsets.ToArray());
+                
                 x += cell.Bounds.Size.x;
                 gridPosition.Set(x, y, z);
-                drawFence = CanDrawFence(cell, x, z, out isElevatedFence, out drawPillar, out elevationHeight);
-                transform = Matrix4x4.identity;
-                if (drawFence || isElevatedFence)
+                extraHalfPillarOffsets = new List<Vector3>();
+                if (dz == cell.Bounds.Size.z - 1)
                 {
-                    Vector3 position = new Vector3(x, y, z);
-                    position += new Vector3(0, 0, 0.5f);
-                    position = Vector3.Scale(position, GridToMeshScale);
-                    var rotation = Quaternion.AngleAxis(90, new Vector3(0, 1, 0));
-                    transform = Matrix4x4.TRS(position, rotation, Vector3.one);
-                    if (drawFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.Fence, transform, gridPosition, cell.Id);
-                    }
-                    if (isElevatedFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.WallHalf, transform, elevationHeight, HalfWallOffset, gridPosition, cell.Id, GridToMeshScale);
-                    }
+                    extraHalfPillarOffsets.Add(new Vector3(0, 0, 1));
                 }
-                if (drawFence || drawPillar)
-                {
-                    Matrix.SetTranslation(ref transform, Vector3.Scale(new Vector3(x, y, z), GridToMeshScale));
-                    EmitMarker(GridDungeonMarkerNames.FenceSeparator, transform, gridPosition, cell.Id);
-                    if (isElevatedFence)
-                    {
-                        EmitMarker(GridDungeonMarkerNames.WallHalfSeparator, transform, elevationHeight, HalfWallOffset, gridPosition, cell.Id, GridToMeshScale);
-                    }
-                }
+                funcDrawFence(x, y, z, 0, 0, 90, new Vector3(0, 0, 0.5f), new Vector3(0, 0, 0), extraHalfPillarOffsets.ToArray());
             }
         }
 
@@ -3233,7 +2564,7 @@ namespace DungeonArchitect.Builders.Grid
                 }
             }
         }
-
+        
         public override void DebugDraw()
         {
             if (!gridModel) return;
@@ -3241,9 +2572,10 @@ namespace DungeonArchitect.Builders.Grid
             {
                 GridDebugDrawUtils.DrawCell(cell, Color.white, gridConfig.GridCellSize, gridConfig.Mode2D);
                 GridDebugDrawUtils.DrawAdjacentCells(cell, gridModel, Color.green, gridConfig.Mode2D);
-                GridDebugDrawUtils.DrawCellConnectionPoints(cell, gridModel, Color.red, gridConfig.Mode2D);
+                //GridDebugDrawUtils.DrawCellConnectionPoints(cell, gridModel, Color.red, gridConfig.Mode2D);
             }
 
+            /*
             foreach (var door in gridModel.DoorManager.Doors)
             {
                 var start = door.AdjacentTiles[0];
@@ -3261,6 +2593,7 @@ namespace DungeonArchitect.Builders.Grid
                 DebugDrawUtils.DrawBounds(boundsStart, Color.yellow, gridConfig.GridCellSize, gridConfig.Mode2D);
                 DebugDrawUtils.DrawBounds(boundsEnd, Color.yellow, gridConfig.GridCellSize, gridConfig.Mode2D);
             }
+            */
 
         }
 

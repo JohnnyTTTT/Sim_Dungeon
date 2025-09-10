@@ -1,4 +1,6 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+
+using System;
 using System.Collections.Generic;
 using DungeonArchitect.Flow.Domains;
 using DungeonArchitect.Flow.Domains.Layout;
@@ -16,22 +18,21 @@ namespace DungeonArchitect.Builders.SnapGridFlow
     public class SnapGridFlowBuilder : DungeonBuilder
     {
         new System.Random random;
+        bool buildSuccess = false;
         
         public override bool IsThemingSupported()
         {
-            return false;
+            return true;
         }
 
         public override bool DestroyDungeonOnRebuild()
         {
             return true;
         }
-        
-        public override void BuildNonThemedDungeon(DungeonSceneProvider sceneProvider, IDungeonSceneObjectInstantiator objectInstantiator)
+
+        public override void BuildDungeon(DungeonConfig config, DungeonModel model)
         {
-            base.BuildNonThemedDungeon(sceneProvider, objectInstantiator);
-            
-            
+            base.BuildDungeon(config, model);
             random = new System.Random((int)config.Seed);
             markers.Clear();
 
@@ -64,7 +65,7 @@ namespace DungeonArchitect.Builders.SnapGridFlow
             SgfModuleNode[] snapModules = null;
             FlowLayoutGraph layoutGraph = null;
             var numRetriesLeft = sgfConfig.numGraphRetries;
-            bool buildSuccess = false;
+            buildSuccess = false;
             while (!buildSuccess && numRetriesLeft > 0) {
                 var domainExtensions = new FlowDomainExtensions();
                 var snapDomainExtension = domainExtensions.GetExtension<SnapGridFlowDomainExtension>();
@@ -122,9 +123,27 @@ namespace DungeonArchitect.Builders.SnapGridFlow
                 sgfModel.snapModules = new SgfModuleNode[0];
 
                 buildSuccess = SgfLayoutModuleResolver.Resolve(settings, out snapModules);
+                if (buildSuccess)
+                {
+                    sgfModel.snapModules = snapModules;
+                }
+            }
+        }
+
+        public override GameObject[] SpawnManagedObjects(DungeonSceneProvider sceneProvider, IDungeonSceneObjectInstantiator objectInstantiator)
+        {
+            var sgfModel = model as SnapGridFlowModel;
+            if (sgfModel == null)
+            {
+                return Array.Empty<GameObject>();
             }
 
-            if (buildSuccess && snapModules != null)
+            var spawnedObjects = new List<GameObject>();
+            
+            var snapModules = sgfModel.snapModules;
+            var layoutGraph = sgfModel.layoutGraph;
+            
+            if (buildSuccess && snapModules != null && layoutGraph != null)
             {
                 // Spawn the module prefabs
                 sceneProvider.OnDungeonBuildStart();
@@ -141,11 +160,13 @@ namespace DungeonArchitect.Builders.SnapGridFlow
                     templateInfo.Template = moduleInfo.ModuleDBItem.ModulePrefab.gameObject;
                     templateInfo.NodeId = moduleInfo.ModuleInstanceId.ToString();
                     templateInfo.Offset = Matrix4x4.identity;
+                    templateInfo.affectsNavigation = true;
                     templateInfo.StaticState = DungeonThemeItemStaticMode.Unchanged;
                     templateInfo.externallyManaged = true;
 
                     var moduleGameObject = sceneProvider.AddGameObject(templateInfo, moduleInfo.WorldTransform, objectInstantiator);
                     moduleInfo.SpawnedModule = moduleGameObject.GetComponent<SnapGridFlowModule>();
+                    spawnedObjects.Add(moduleGameObject);
 
                     var spawnedConnections = moduleInfo.SpawnedModule.GetComponentsInChildren<SnapConnection>();
 
@@ -164,9 +185,7 @@ namespace DungeonArchitect.Builders.SnapGridFlow
 
                 FixupDoorStates(snapModules, layoutGraph);
 
-                SpawnItems(snapModules, sceneProvider, objectInstantiator);
-
-                sgfModel.snapModules = snapModules;
+                //SpawnItems(snapModules, sceneProvider, objectInstantiator);
             }
             else
             {
@@ -174,23 +193,22 @@ namespace DungeonArchitect.Builders.SnapGridFlow
             }
 
             Cleanup(snapModules);
+
+            return spawnedObjects.ToArray();
         }
 
-        public override void OnDestroyed()
+        public override void EmitMarkers()
         {
-            base.OnDestroyed();
+            base.EmitMarkers();
             
-            var sgfModel = GetComponent<SnapGridFlowModel>();
-            if (sgfModel != null)
-            {
-                sgfModel.layoutGraph = new FlowLayoutGraph();
-                sgfModel.snapModules = new SgfModuleNode[0];
-            }
+            var sgfModel = model as SnapGridFlowModel;
+            var snapModules = sgfModel != null ? sgfModel.snapModules : null;
+            SpawnItems(snapModules);
         }
 
-        private void SpawnItems(SgfModuleNode[] modules, DungeonSceneProvider sceneProvider, IDungeonSceneObjectInstantiator objectInstantiator)
+        private void SpawnItems(SgfModuleNode[] modules)
         {
-            var levelMarkers = new LevelMarkerList();
+            //var levelMarkers = new LevelMarkerList();
             var sgfConfig = config as SnapGridFlowConfig;
             if (sgfConfig == null)
             {
@@ -198,19 +216,22 @@ namespace DungeonArchitect.Builders.SnapGridFlow
                 return;
             }
             
+            Markers.Clear();
+            random = new System.Random((int)sgfConfig.Seed);
+            
             foreach (var module in modules)
             {
                 if (module == null || module.SpawnedModule == null) continue;
                 
-                var markers = new List<PlaceableMarker>(module.SpawnedModule.GetComponentsInChildren<PlaceableMarker>());
-                MathUtils.Shuffle(markers, random);
+                var placeableMarkers = new List<PlaceableMarker>(module.SpawnedModule.GetComponentsInChildren<PlaceableMarker>());
+                MathUtils.Shuffle(placeableMarkers, random);
                 
                 foreach (var item in module.LayoutNode.items)
                 {
                     if (item == null) continue;
                     
                     PlaceableMarker bestMarker = null;
-                    foreach (var markerInfo in markers)
+                    foreach (var markerInfo in placeableMarkers)
                     {
                         if (markerInfo.supportedMarkers == null) continue;
                         
@@ -224,58 +245,44 @@ namespace DungeonArchitect.Builders.SnapGridFlow
 
                     if (bestMarker != null)
                     {
-                        markers.Remove(bestMarker);
+                        placeableMarkers.Remove(bestMarker);
 
-                        var flowItemMetadata = new FlowItemMetadata();
-                        flowItemMetadata.itemId = item.itemId;
-                        flowItemMetadata.itemType = item.type;
-                        flowItemMetadata.referencedItems = item.referencedItemIds.ToArray();
-                        flowItemMetadata.parentTransform = sgfConfig.spawnItemsUnderRoomPrefabs ? bestMarker.transform.parent : null;
-                        
-                        var themeMarkerEntry = new PropSocket();
-                        themeMarkerEntry.SocketType = item.markerName;
-                        themeMarkerEntry.Transform = bestMarker.transform.localToWorldMatrix;
-                        themeMarkerEntry.metadata = flowItemMetadata;
-                        levelMarkers.Add(themeMarkerEntry);
+                        var flowItemMetadata = new FlowItemMetadata
+                        {
+                            itemId = item.itemId,
+                            itemType = item.type,
+                            referencedItems = item.referencedItemIds.ToArray(),
+                            parentTransform = sgfConfig.spawnItemsUnderRoomPrefabs ? bestMarker.transform.parent : null
+                        };
+
+                        var themeMarkerEntry = new PropSocket
+                        {
+                            SocketType = item.markerName,
+                            Transform = bestMarker.transform.localToWorldMatrix,
+                            metadata = flowItemMetadata
+                        };
+                        Markers.Add(themeMarkerEntry);
                     }
                     else
                     {
-                        Debug.LogWarning(string.Format("Cannot spawn item: {0}. Make sure you have a placeable marker in the module prefab", item.markerName));
+                        //Debug.LogWarning($"Cannot spawn item: {item.markerName}. Make sure you have a placeable marker in the module prefab");
                     }
-                }
-            }
-            
-            // Run the theme engine
-            if (levelMarkers.Count > 0)
-            {
-                var dungeon = GetComponent<Dungeon>();
-                if (dungeon != null)
-                {
-                    var itemSpawnListeners = new List<DungeonItemSpawnListener>();
-                    itemSpawnListeners.Add(GetComponent<FlowItemMetadataHandler>());
-                    itemSpawnListeners.AddRange(GetComponents<DungeonItemSpawnListener>());
-                    
-                    var context = new DungeonThemeExecutionContext();
-                    context.builder = this;
-                    context.config = config;
-                    context.model = model;
-                    context.spatialConstraintProcessor = null;
-                    context.themeOverrideVolumes = new ThemeOverrideVolume[0];
-                    context.sceneProvider = sceneProvider;
-                    context.objectSpawner = new SyncDungeonSceneObjectSpawner();
-                    context.objectInstantiator = objectInstantiator;
-                    context.spawnListeners = itemSpawnListeners.ToArray();
-
-                    var themeEngine = new DungeonThemeEngine(context);
-                    themeEngine.ApplyTheme(levelMarkers, dungeon.GetThemeAssets());
-                }
-                else
-                {
-                    Debug.LogError("Invalid dungeon reference");
                 }
             }
         }
         
+        public override void OnDestroyed()
+        {
+            base.OnDestroyed();
+            
+            var sgfModel = GetComponent<SnapGridFlowModel>();
+            if (sgfModel != null)
+            {
+                sgfModel.layoutGraph = new FlowLayoutGraph();
+                sgfModel.snapModules = new SgfModuleNode[0];
+            }
+        }
+
         private void Cleanup(SgfModuleNode[] modules)
         {
             // Disable Bounds rendering

@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System;
 using System.Linq;
 using UnityEngine;
@@ -141,7 +141,21 @@ namespace DungeonArchitect.Graphs
             }
             return targetNodes.ToArray();
         }
-                
+
+        public T _CreateLinkInstance<T>() where T : GraphLink
+        {
+            T link = ScriptableObject.CreateInstance<T>();
+            link.Id = IndexCounter.GetNext();
+            link.Graph = this;
+            Links.Add(link);
+            return link;
+        }
+
+        public void Sanitize()
+        {
+            links = links.Where(link => link != null).ToList();
+            nodes = nodes.Where(node => node != null).ToList();
+        }
     }
 
 }

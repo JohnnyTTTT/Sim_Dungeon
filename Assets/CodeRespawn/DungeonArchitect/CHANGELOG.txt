@@ -1,5 +1,51 @@
 CHANGE LOG: Dungeon Architect
 =============================
+
+Version 1.22.0
+==============
+* New: Complete overhaul of stair generation system, producing high-quality procedural stairs fully integrated with Grid Builder. Eliminates visual artifacts present in previous versions.
+* New: SGF Chunks can have a nested dungeon within them to create procedural chunks.    A new setup wizard is available to help create and setup the procedural chunks
+* New: Procedural SGF City Demo (with nested city dungeon inside each chunk): `Assets/CodeRespawn/DungeonArchitect_Samples/DemoBuilder_SnapGridFlow_ProceduralChunks/Nested_City_SGF`
+* New: Procedural SGF Grid builder Demo (with nested grid dungeon inside each chunk): `Assets/CodeRespawn/DungeonArchitect_Samples/DemoBuilder_SnapGridFlow_ProceduralChunks/Nested_Grid_SGF`
+* New: Rebuilt city wall system to ensure proper door alignment and placement
+* New: Added improved city theme with updated art assets
+* New: Added "Fixed Height" option for platform volumes. When enabled, platforms will use the volume's exact height instead of auto-adjusting
+* New: Enhanced platform volume alignment for smoother snapping to grid positions. Fixes jumpy movement when placing volumes
+* New: Added a Randomize helper button to Dungeon actors, located beside the build/destroy controls, enabling quick randomization of dungeon layouts
+* New: Negation volumes now utilize a dual-pass system for improved volume exclusion results 
+* New: Dungeon game objects display an icon in the viewport for easier selection
+* Fix: Corrected height alignment issues in Grid Builder's pattern matcher when dungeons are placed away from world origin coordinates. This ensures consistent vertical positioning regardless of dungeon placement location
+
+Version 1.21.0
+==============
+* New: SGF builder supports 2D mode
+* New: SGF spawned items can override their navigation status
+* Fix: Grid Flow Mirror task was not working on negative axes
+* Fix: SGF builder supports navigation
+* Fix: Fixed compiler warning on complete builds
+* New: Added a scene item metadata component. Add this to your game objects to affect their navigation status
+* Fix: GraphEditor stability improvements on
+* New: SGF Query has new functions to query the distance between any two nodes.  E.g. You may use this to query the distance to the entrance / goal nodes while spawning your enemies.  Check `SnapGridFlowQuery.GetDistanceFromStartRoom` and `SnapGridFlowQuery.GetDistanceToGoalRoom`
+* New: Sample for SGF Room Distance Query. `Assets/CodeRespawn/DungeonArchitect_Samples/DemoBuilder_SnapGridFlow_QueryEnemy` 
+* New: SGF Landscape Transformer Sample - Blend a terrain around your SGF dungeons. `Assets/CodeRespawn/DungeonArchitect_S amples/DemoBuilder_SnapGridFlow_Terrain`
+* New: SimpleCity builder supports pattern matcher
+* New: SimpleCity Sample that demos larger houses (that always face the road) generated using the pattern matcher.  `Assets/CodeRespawn/DungeonArchitect_Samples/DemoBuilder_SimpleCity_PatternMatcher/City_PatternMatcher_StrongholdMedieval.unity`
+* New: SimpleCity builder supports rotation and is no longer fixed to the XZ axis.  Rotate the dungeon game object and rebuild the dungeon
+* New: SnapConnection script's UpdateState function is made virtual.  This allows you to extend the snap connection component with you own logic
+* New: Add decorative modules around your SGF dungeons using the `Add Padding` node. This adds new layout nodes around the edge of your dungeon, where you can place decorative background modules 
+
+Version 1.20.0
+==============
+* New: Major new feature called Pattern Matcher.    Capture patterns in your dungeon layout and add or remove markers around this pattern. This is a powerful system for decorating your themes, as you are no longer restricted to a single tile level decoration and can decorate across multiple tiles using your own patterns. [Docs](https://docs.dungeonarchitect.dev/unity/pattern-matcher/getting-started)
+* Fix: Grid Flow chunk tiles were leaking over to unconnected nearby chunk tiles, bypassing key-locks
+* New: Navigation support to runtime generated SnapFlow dungeons
+* New: Improvement to item placement strategy scripts for grid flow.  It gives you more information while placing your items in the chunks
+* New: Grid Flow Tilemap generation performance optimizations
+* New: Define custom gridflow exec nodes using simple scripts
+* Fix: Wall Half Separators were missing in certain cases
+* Fix: The editor doesn't allow the Result node to be deleted
+* Fix: SGF graph visualizer renders correctly for dungeons placed away from the origin
+
 Version 1.19.0
 ==============
 * New: Major improvements to the Snap Grid Flow builder algorithm. The performance no longer degrades considerably when using a larger graph (more than 1000+ nodes)

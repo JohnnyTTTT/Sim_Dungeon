@@ -1,4 +1,4 @@
-//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 
 using System;
 using System.Collections.Generic;
@@ -104,6 +104,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
             public int ConnectionWeight = 0;
             public int ModuleLastUsedDepth = int.MaxValue;
             public float ModuleWeight = 0;
+            public float ModuleWeightInstance = 0;
         };
 
         class NodeGroupData
@@ -114,13 +115,13 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
 
         class ResolveState
         {
-            public FlowLayoutGraphQuery graphQuery;
-            public System.Random random;
-            public Dictionary<DungeonUID, SgfModuleNode> moduleNodesById = new Dictionary<DungeonUID, SgfModuleNode>();
-            public Dictionary<DungeonUID, SgfModuleAssemblySideCell[]> activeModuleDoorIndices = new Dictionary<DungeonUID, SgfModuleAssemblySideCell[]>();
-            public Dictionary<FlowLayoutGraphNode, NodeGroupData> nodeGroups = new Dictionary<FlowLayoutGraphNode, NodeGroupData>();
-            public Dictionary<SgfModuleDatabaseItem, Stack<int>> moduleLastUsedDepth = new Dictionary<SgfModuleDatabaseItem, Stack<int>>();
-            public int frameIndex = 0;
+            public FlowLayoutGraphQuery GraphQuery;
+            public System.Random Random;
+            public Dictionary<DungeonUID, SgfModuleNode> ModuleNodesById = new Dictionary<DungeonUID, SgfModuleNode>();
+            public Dictionary<DungeonUID, SgfModuleAssemblySideCell[]> ActiveModuleDoorIndices = new Dictionary<DungeonUID, SgfModuleAssemblySideCell[]>();
+            public Dictionary<FlowLayoutGraphNode, NodeGroupData> NodeGroups = new Dictionary<FlowLayoutGraphNode, NodeGroupData>();
+            public Dictionary<SgfModuleDatabaseItem, Stack<int>> ModuleLastUsedDepth = new Dictionary<SgfModuleDatabaseItem, Stack<int>>();
+            public int FrameIndex = 0;
         }
         
         public static bool Resolve(SgfLayoutModuleResolverSettings settings, out SgfModuleNode[] outModuleNodes)
@@ -134,8 +135,8 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
             var graph = settings.LayoutGraph;
             var resolveState = new ResolveState
             {
-                graphQuery = new FlowLayoutGraphQuery(graph),
-                random = new System.Random(settings.Seed)
+                GraphQuery = new FlowLayoutGraphQuery(graph),
+                Random = new System.Random(settings.Seed)
             };
             
             foreach (var node in graph.Nodes)
@@ -143,8 +144,8 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                 if (node.active)
                 {
                     var nodeGroupData = new NodeGroupData();
-                    SnapFlowLayoutGraphConstraints.BuildNodeGroup(resolveState.graphQuery, node, new FlowLayoutGraphNode[] { }, out nodeGroupData.Group, out nodeGroupData.ConstraintLinks);
-                    resolveState.nodeGroups.Add(node, nodeGroupData);
+                    SnapFlowLayoutGraphConstraints.BuildNodeGroup(resolveState.GraphQuery, node, new FlowLayoutGraphNode[] { }, out nodeGroupData.Group, out nodeGroupData.ConstraintLinks);
+                    resolveState.NodeGroups.Add(node, nodeGroupData);
                 }
             }
 
@@ -154,7 +155,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                 return false;
             }
             
-            foreach (var entry in resolveState.activeModuleDoorIndices) {
+            foreach (var entry in resolveState.ActiveModuleDoorIndices) {
                 var moduleId = entry.Key;
                 var doorSideCells = entry.Value;
                 for (var i = 0; i < doorSideCells.Length; i++)
@@ -177,17 +178,17 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                 }
             }
 
-            foreach (var entry in resolveState.activeModuleDoorIndices)
+            foreach (var entry in resolveState.ActiveModuleDoorIndices)
             {
                 var nodeId = entry.Key;
                 var moduleDoorCells = entry.Value;
                 
-                if (!resolveState.moduleNodesById.ContainsKey(nodeId))
+                if (!resolveState.ModuleNodesById.ContainsKey(nodeId))
                 {
                     continue;
                 }
 
-                var moduleInfo = resolveState.moduleNodesById[nodeId];
+                var moduleInfo = resolveState.ModuleNodesById[nodeId];
                 foreach (var doorInfo in moduleInfo.Doors)
                 {
                     doorInfo.CellInfo = SgfModuleAssemblySideCell.Empty;
@@ -213,9 +214,9 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                 bool foundDstCell = false;
                 
                 {
-                    if (resolveState.activeModuleDoorIndices.ContainsKey(sourceId))
+                    if (resolveState.ActiveModuleDoorIndices.ContainsKey(sourceId))
                     {
-                        var sourceDoorCells = resolveState.activeModuleDoorIndices[sourceId];
+                        var sourceDoorCells = resolveState.ActiveModuleDoorIndices[sourceId];
                         foreach (var sourceDoorCell in sourceDoorCells)
                         {
                             if (sourceDoorCell.linkId == graphLink.linkId)
@@ -227,9 +228,9 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                         }
                     }
 
-                    if (resolveState.activeModuleDoorIndices.ContainsKey(destId))
+                    if (resolveState.ActiveModuleDoorIndices.ContainsKey(destId))
                     {
-                        var destDoorCells = resolveState.activeModuleDoorIndices[destId];
+                        var destDoorCells = resolveState.ActiveModuleDoorIndices[destId];
                         foreach (var destDoorCell in destDoorCells)
                         {
                             if (destDoorCell.linkId == graphLink.linkId)
@@ -247,13 +248,13 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                     return false;
                 }
                 
-                if (!resolveState.moduleNodesById.ContainsKey(sourceId) || !resolveState.moduleNodesById.ContainsKey(destId)) {
+                if (!resolveState.ModuleNodesById.ContainsKey(sourceId) || !resolveState.ModuleNodesById.ContainsKey(destId)) {
                     outModuleNodes = new SgfModuleNode[]{};
                     return false;
                 }
 
-                var srcModule = resolveState.moduleNodesById[sourceId];
-                var dstModule = resolveState.moduleNodesById[destId];
+                var srcModule = resolveState.ModuleNodesById[sourceId];
+                var dstModule = resolveState.ModuleNodesById[destId];
                 var srcDoor = srcModule.Doors[srcCell.connectionIdx];
                 var dstDoor = dstModule.Doors[dstCell.connectionIdx];
 
@@ -264,7 +265,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                 dstModule.Incoming.Add(dstDoor);
             }
 
-            outModuleNodes = resolveState.moduleNodesById.Values.ToArray();
+            outModuleNodes = resolveState.ModuleNodesById.Values.ToArray();
             return true;
         }
 
@@ -291,7 +292,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
         private static bool ResolveNodes(SgfLayoutModuleResolverSettings settings, ResolveState resolveState)
         {
             return ResolveNodesRecursive(settings, resolveState);
-            //return ResolveNodesLinear(settings, resolveState);
+            ////return ResolveNodesLinear(settings, resolveState);
         }
 
         private static bool ResolveNodesRecursive(SgfLayoutModuleResolverSettings settings, ResolveState resolveState)
@@ -321,17 +322,36 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
             }
             
             var visited = new HashSet<FlowLayoutGraphNode>();
-            return ResolveNodeRecursive(startNode, 0, settings, resolveState, visited);
+            bool bSuccess = ResolveNodeRecursive(startNode, 0, settings, resolveState, visited);
+            if (!bSuccess)
+            {
+                return false;
+            }
+            
+            // Run through all the other active nodes (usually added as padding decorations)
+            foreach (var node in graph.Nodes)
+            {
+                if (node.active && !visited.Contains(node))
+                {
+                    bSuccess = ResolveNodeRecursive(node, 0, settings, resolveState, visited);
+                    if (!bSuccess)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         private static bool ResolveNodeRecursive(FlowLayoutGraphNode node, int depth, SgfLayoutModuleResolverSettings settings, 
             ResolveState resolveState, HashSet<FlowLayoutGraphNode> visited)
         {
-            if (resolveState.frameIndex > settings.MaxResolveFrames)
+            if (resolveState.FrameIndex > settings.MaxResolveFrames)
             {
                 return false;
             }
-            resolveState.frameIndex++;
+            resolveState.FrameIndex++;
             
             if (visited.Contains(node))
             {
@@ -339,9 +359,9 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                 return true;
             }
 
-            var nodeGroupData = resolveState.nodeGroups[node];
+            var nodeGroupData = resolveState.NodeGroups[node];
             SgfModuleAssembly nodeAssembly;
-            SGFModuleAssemblyBuilder.Build(resolveState.graphQuery, nodeGroupData.Group, nodeGroupData.ConstraintLinks, out nodeAssembly);
+            SGFModuleAssemblyBuilder.Build(resolveState.GraphQuery, nodeGroupData.Group, nodeGroupData.ConstraintLinks, out nodeAssembly);
             
             var candidates = GetCandidates(node, depth, settings, resolveState, nodeAssembly);
             if (candidates.Length == 0) return false;
@@ -358,10 +378,10 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                 // Recursively resolve all outgoing nodes
                 var outgoingNodes = new List<FlowLayoutGraphNode>();
                 {
-                    var outgoingNodeIds = resolveState.graphQuery.GetOutgoingNodes(node.nodeId);
+                    var outgoingNodeIds = resolveState.GraphQuery.GetOutgoingNodes(node.nodeId);
                     foreach (var outgoingNodeId in outgoingNodeIds)
                     {
-                        var outgoingNode = resolveState.graphQuery.GetNode(outgoingNodeId);
+                        var outgoingNode = resolveState.GraphQuery.GetNode(outgoingNodeId);
                         if (outgoingNode != null && outgoingNode.active)
                         {
                             outgoingNodes.Add(outgoingNode);
@@ -404,26 +424,26 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
 
         private static void PushModuleLastUsedDepth(ResolveState resolveState, SgfModuleDatabaseItem module, int depth)
         {
-            if (!resolveState.moduleLastUsedDepth.ContainsKey(module))
+            if (!resolveState.ModuleLastUsedDepth.ContainsKey(module))
             {
-                resolveState.moduleLastUsedDepth.Add(module, new Stack<int>());
+                resolveState.ModuleLastUsedDepth.Add(module, new Stack<int>());
             }
-            resolveState.moduleLastUsedDepth[module].Push(depth);
+            resolveState.ModuleLastUsedDepth[module].Push(depth);
         }
 
         private static void PopModuleLastUsedDepth(ResolveState resolveState, SgfModuleDatabaseItem module)
         {
-            resolveState.moduleLastUsedDepth[module].Pop();
+            resolveState.ModuleLastUsedDepth[module].Pop();
         }
         
         private static int GetModuleLastUsedDepth(ResolveState resolveState, SgfModuleDatabaseItem module, int currentDepth, int maxNonRepeatingDepth)
         {
-            if (!resolveState.moduleLastUsedDepth.ContainsKey(module) || resolveState.moduleLastUsedDepth[module].Count == 0)
+            if (!resolveState.ModuleLastUsedDepth.ContainsKey(module) || resolveState.ModuleLastUsedDepth[module].Count == 0)
             {
                 return int.MaxValue;
             }
 
-            var moduleDepthFromCurrentNode = currentDepth - resolveState.moduleLastUsedDepth[module].Peek();
+            var moduleDepthFromCurrentNode = currentDepth - resolveState.ModuleLastUsedDepth[module].Peek();
             return moduleDepthFromCurrentNode < maxNonRepeatingDepth + 1 ? moduleDepthFromCurrentNode : int.MaxValue;
         }
         
@@ -457,17 +477,17 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                 }
             }
 
-            bool bChooseModulesWithMinDoors = state.random.NextFloat() < settings.ModulesWithMinimumDoorsProbability;
+            bool bChooseModulesWithMinDoors = state.Random.NextFloat() < settings.ModulesWithMinimumDoorsProbability;
 
             var candidates = new List<FModuleFitCandidate>();
-            var moduleIndices = MathUtils.GetShuffledIndices(possibleModules.Count, state.random);
+            var moduleIndices = MathUtils.GetShuffledIndices(possibleModules.Count, state.Random);
             foreach (var moduleIdx in moduleIndices)
             {
                 var moduleInfo = possibleModules[moduleIdx];
                 if (moduleInfo == null) continue;
 
                 var numAssemblies = moduleInfo.RotatedAssemblies.Length;
-                var shuffledAsmIndices = MathUtils.GetShuffledIndices(numAssemblies, state.random);
+                var shuffledAsmIndices = MathUtils.GetShuffledIndices(numAssemblies, state.Random);
                 foreach (var asmIdx in shuffledAsmIndices)
                 {
                     var moduleAssembly = moduleInfo.RotatedAssemblies[asmIdx];
@@ -481,32 +501,32 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                             var nodeConnection = moduleInfo.Connections[doorInfo.connectionIdx];
                             Debug.Assert(nodeConnection != null, "SGF Resolve: Invalid node connection");
                             DungeonUID doorNodeId;
-                            if (!state.graphQuery.GetParentNode(doorInfo.nodeId, out doorNodeId))
+                            if (!state.GraphQuery.GetParentNode(doorInfo.nodeId, out doorNodeId))
                             {
                                 doorNodeId = doorInfo.nodeId;
                             }
                             
                             Debug.Assert(doorNodeId == node.nodeId, "Invalid door link node data");
                             DungeonUID otherNodeId;
-                            if (!state.graphQuery.GetParentNode(doorInfo.linkedNodeId, out otherNodeId))
+                            if (!state.GraphQuery.GetParentNode(doorInfo.linkedNodeId, out otherNodeId))
                             {
                                 otherNodeId = doorInfo.linkedNodeId;
                             }
                             
-                            if (state.activeModuleDoorIndices.ContainsKey(otherNodeId))
+                            if (state.ActiveModuleDoorIndices.ContainsKey(otherNodeId))
                             {
-                                var otherNodeDoors = state.activeModuleDoorIndices[otherNodeId];
+                                var otherNodeDoors = state.ActiveModuleDoorIndices[otherNodeId];
                                 foreach (var otherNodeDoor in otherNodeDoors)
                                 {
                                     DungeonUID otherDoorLinkedNodeId;
-                                    if (!state.graphQuery.GetParentNode(otherNodeDoor.linkedNodeId, out otherDoorLinkedNodeId))
+                                    if (!state.GraphQuery.GetParentNode(otherNodeDoor.linkedNodeId, out otherDoorLinkedNodeId))
                                     {
                                         otherDoorLinkedNodeId = otherNodeDoor.linkedNodeId;
                                     }
 
                                     if (otherDoorLinkedNodeId == node.nodeId)
                                     {
-                                        var otherNodeModule = state.moduleNodesById[otherNodeId];
+                                        var otherNodeModule = state.ModuleNodesById[otherNodeId];
                                         var otherNodeConnection = otherNodeModule.ModuleDBItem.Connections[otherNodeDoor.connectionIdx];
                                         Debug.Assert(otherNodeConnection != null, "SGF Resolve: Invalid remote node connection");
 
@@ -563,6 +583,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                 candidate.ItemFitness = itemFitness;
                 candidate.ConnectionWeight = connectionWeight;
                 candidate.ModuleWeight = moduleWeight;
+                candidate.ModuleWeightInstance = state.Random.NextFloat() * moduleWeight;
                 candidate.ModuleLastUsedDepth = GetModuleLastUsedDepth(state, moduleInfo, depth, settings.NonRepeatingRooms);
             }
             
@@ -590,7 +611,7 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
                     }
                     else
                     {
-                        return a.ModuleWeight < b.ModuleWeight ? 1 : -1;
+                        return a.ModuleWeightInstance < b.ModuleWeightInstance ? 1 : -1;
                     }
                 }
                 else
@@ -604,10 +625,10 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
         
         private static void DeregisterNodeModule(FlowLayoutGraphNode node, ResolveState resolveState)
         {
-            resolveState.activeModuleDoorIndices.Remove(node.nodeId);
+            resolveState.ActiveModuleDoorIndices.Remove(node.nodeId);
             
             // Register in lookup
-            resolveState.moduleNodesById.Remove(node.nodeId);
+            resolveState.ModuleNodesById.Remove(node.nodeId);
         }
         
         private static void RegisterNodeModule(FlowLayoutGraphNode node, FModuleFitCandidate candidate, SgfLayoutModuleResolverSettings settings, ResolveState resolveState)
@@ -631,10 +652,10 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow
             }
 
             // Add the doors
-            resolveState.activeModuleDoorIndices[node.nodeId] = candidate.DoorIndices;
+            resolveState.ActiveModuleDoorIndices[node.nodeId] = candidate.DoorIndices;
             
             // Register in lookup
-            resolveState.moduleNodesById[node.nodeId] = moduleNode;
+            resolveState.ModuleNodesById[node.nodeId] = moduleNode;
         }
     }
 }

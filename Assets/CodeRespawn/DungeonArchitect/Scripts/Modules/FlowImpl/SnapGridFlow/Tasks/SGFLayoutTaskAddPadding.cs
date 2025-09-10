@@ -1,6 +1,9 @@
-﻿//$ Copyright 2015-22, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
+﻿//$ Copyright 2015-25, Code Respawn Technologies Pvt Ltd - All Rights Reserved $//
 using System.Collections.Generic;
+using System.Linq;
+using DungeonArchitect.Flow.Domains;
 using DungeonArchitect.Flow.Domains.Layout;
+using DungeonArchitect.Flow.Domains.Layout.Pathing;
 using DungeonArchitect.Flow.Exec;
 using DungeonArchitect.Utils;
 using UnityEngine;
@@ -74,20 +77,62 @@ namespace DungeonArchitect.Flow.Impl.SnapGridFlow.Tasks
                     }
                 }
             }
-            
+
+
             foreach (var node in paddingNodes)
             {
                 node.active = true;
                 node.color = color;
-                
+
                 var snapNodeData = node.GetDomainData<FlowLayoutNodeSnapDomainData>();
                 snapNodeData.Categories = categories;
+            }
+            
+            var moduleDatabase = GetModuleDatabase(context.DomainExtensions);
+            if (moduleDatabase != null)
+            {
+                var validItems = new List<SgfModuleDatabaseItem>();
+                foreach (var item in moduleDatabase.Modules)
+                {
+                    if (item.NumChunks == new Vector3Int(1, 1, 1))
+                    {
+                        validItems.Add(item);
+                    }
+                }
+
+                if (validItems.Count > 0)
+                {
+                    foreach (var node in paddingNodes)
+                    {
+                        var item = validItems[context.Random.Next() % validItems.Count];
+                        if (item != null)
+                        {
+                            var asmIdx = context.Random.Next() % item.RotatedAssemblies.Length;
+                            var groupUserdata = node.GetDomainData<SGFNodeGroupUserData>();
+                            groupUserdata.Module = item;
+                            groupUserdata.ModuleAssemblyIdx = asmIdx;
+                        }
+                    }
+                }
+                else
+                {
+                    output.ExecutionResult = FlowTaskExecutionResult.FailHalt;
+                    output.ErrorMessage = "Invalid category";
+                    return output;
+                }
             }
             
             output.ExecutionResult = FlowTaskExecutionResult.Success;
             return output;
         }
 
+        private SnapGridFlowModuleDatabase GetModuleDatabase(FlowDomainExtensions domainExtensions)
+        {
+            var extension = domainExtensions.GetExtension<SnapGridFlowDomainExtension>();
+            return extension.ModuleDatabase;
+        }
+
+        
         bool HasNeighbour(Vector3Int coord, Dictionary<Vector3Int, FlowLayoutGraphNode> activeNodes)
         {
             if (paddingAlongX)
