@@ -122,7 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7051785446661161192}
   m_Layer: 0
-  m_Name: Air
+  m_Name: Dirt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

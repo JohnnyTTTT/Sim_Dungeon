@@ -122,7 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3407519850946740615}
   m_Layer: 0
-  m_Name: Wall_001
+  m_Name: Wall_001 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -205,10 +205,6 @@ PrefabInstance:
     - target: {fileID: 4199046437780792046, guid: b2e45dd6af1b1874582506c085ff8e5c, type: 3}
       propertyPath: m_Name
       value: P_MOD_Wall_01_O_straight_large (2)
-      objectReference: {fileID: 0}
-    - target: {fileID: 4199046437780792046, guid: b2e45dd6af1b1874582506c085ff8e5c, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
