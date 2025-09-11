@@ -15,8 +15,10 @@ namespace Johnny.SimDungeon
     public class BuildingItemSpawnListener : DungeonItemSpawnListener
     {
         [SerializeField] private DungeonController m_DungeonController;
+        [SerializeField] private Transform m_CellEntityParent;
         // private Dictionary<IntVector, GameObject> cells = new Dictionary<IntVector, GameObject>();
         private Dictionary<FlowTilemapCell, CellEntity> cells = new Dictionary<FlowTilemapCell, CellEntity>();
+
 
         private void Start()
         {
@@ -28,13 +30,29 @@ namespace Johnny.SimDungeon
             if (!cells.TryGetValue(cell, out var info))
             {
                 var name = $"{cell.TileCoord.x},{cell.TileCoord.y}";
-                var a = new GameObject(name);
-                a.transform.parent = m_DungeonController.pooledDungeonSceneProvider.itemParent.transform;
-                info = a.AddComponent<CellEntity>();
+                var entity = new GameObject(name);
+                entity.transform.position = m_DungeonController.gridFlowDungeonQuery.TileCoordToWorldCoord(cell.TileCoord);
+                entity.transform.parent = m_CellEntityParent;
+                info = entity.AddComponent<CellEntity>();
                 //info = new SimDungeonCellInfo();
                 cells[cell] = info;
             }
             return info;
+        }
+
+        public  void DestroyCellEntites()
+        {
+            foreach (var item in cells)
+            {
+                if (Application.isPlaying)
+                {
+                    Destroy(item.Value.gameObject);
+                }
+                else
+                {
+                    DestroyImmediate(item.Value.gameObject);
+                }
+            }
         }
 
         public override void SetMetadata(GameObject dungeonItem, DungeonNodeSpawnData spawnData)

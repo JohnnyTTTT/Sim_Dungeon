@@ -5,7 +5,6 @@ namespace Johnny.SimDungeon
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private float m_PanSpeed = 0.5f;
         [SerializeField] private float m_ZoomSpeed = 10f;
         [SerializeField] private float m_MinDistance = 5f;
         [SerializeField] private float m_MaxDistance = 50f;
@@ -47,7 +46,7 @@ namespace Johnny.SimDungeon
 
         private Vector3 GetMousePlaneIntersection()
         {
-            Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+            var ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
             if (Physics.Raycast(ray, out RaycastHit hit, 1000f, m_PanPlaneLayer))
             {
                 return hit.point;

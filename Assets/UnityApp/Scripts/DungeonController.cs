@@ -189,22 +189,7 @@ namespace Johnny.SimDungeon
 
         public override void OnDungeonDestroyed(Dungeon dungeon)
         {
-            var itemList = new List<GameObject>();
-            for (int i = 0; i < pooledDungeonSceneProvider.itemParent.transform.childCount; i++)
-            {
-                itemList.Add(pooledDungeonSceneProvider.itemParent.transform.GetChild(i).gameObject);
-            }
-            foreach (var item in itemList)
-            {
-                if (Application.isPlaying)
-                {
-                    Destroy(item);
-                }
-                else
-                {
-                    DestroyImmediate(item);
-                }
-            }
+            buildingItemSpawnListener.DestroyCellEntites();
         }
 
         private Vector3 SnapToGrid(Vector3 value)

@@ -14,6 +14,46 @@ MonoBehaviour:
   m_EditorClassIdentifier: DungeonArchitect.Modules.Flow.Implementations::DungeonArchitect.Flow.Impl.GridFlow.Tasks.GridFlowTilemapTaskOptimize
   description: 
   discardDistanceFromLayout: 1
+--- !u!114 &-8870890412091725986
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06f969e17269ce14784d6212535211b2, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Flow::DungeonArchitect.Flow.Exec.FlowExecGraphNodePin
+  pinType: 1
+  node: {fileID: -6324331147177617232}
+  position: {x: 59.015, y: 23.265}
+  boundsOffset:
+    serializedVersion: 2
+    x: -59.015
+    y: -23.265
+    width: 118.03
+    height: 46.53
+  tangent: {x: 0, y: -1}
+  tangentStrength: 50
+  Padding: {x: 12, y: 12}
+--- !u!114 &-8801086258905662428
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_54
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 54
+  input: {fileID: -3714599617951125491}
+  output: {fileID: -7349764196719922238}
+  graph: {fileID: -4118271269209598089}
 --- !u!114 &-7926514541112211282
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -54,15 +94,15 @@ MonoBehaviour:
   caption: 
   bounds:
     serializedVersion: 2
-    x: -561.5
-    y: 11.5
+    x: -580.5
+    y: 9.5
     width: 147.19
     height: 46.53
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 233
+  zIndex: 292
   inputPins:
   - {fileID: 4303505362918073460}
   outputPins:
@@ -117,6 +157,37 @@ MonoBehaviour:
   tangent: {x: 0, y: -1}
   tangentStrength: 50
   Padding: {x: 12, y: 12}
+--- !u!114 &-6324331147177617232
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fb360f4db0e05142a400eb1627b50fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Flow::DungeonArchitect.Flow.Exec.FlowExecRuleGraphNode
+  id: f43e04ee-299d-4acd-84ad-ad1e06035bb5
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: -326.25513
+    y: 107.39293
+    width: 118.03
+    height: 46.53
+  canBeDeleted: 1
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 296
+  inputPins:
+  - {fileID: -5224532238628886586}
+  outputPins:
+  - {fileID: -8870890412091725986}
+  graph: {fileID: -4118271269209598089}
+  task: {fileID: -5171617597927025021}
 --- !u!114 &-6138014376561441225
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -149,6 +220,105 @@ MonoBehaviour:
   input: {fileID: -7213317117470202708}
   output: {fileID: 5614814609766042422}
   graph: {fileID: -4118271269209598089}
+--- !u!114 &-5501232963845743812
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_52
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 52
+  input: {fileID: -7349764196719922238}
+  output: {fileID: 4979509120596618209}
+  graph: {fileID: -4118271269209598089}
+--- !u!114 &-5224532238628886586
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06f969e17269ce14784d6212535211b2, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Flow::DungeonArchitect.Flow.Exec.FlowExecGraphNodePin
+  pinType: 0
+  node: {fileID: -6324331147177617232}
+  position: {x: 59.015, y: 23.265}
+  boundsOffset:
+    serializedVersion: 2
+    x: -59.015
+    y: -23.265
+    width: 118.03
+    height: 46.53
+  tangent: {x: 0, y: -1}
+  tangentStrength: 50
+  Padding: {x: 10, y: 10}
+--- !u!114 &-5171617597927025021
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ed2ad0c734ff494db76c21403dc6ff2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Flow.Implementations::DungeonArchitect.Flow.Impl.GridFlow.Tasks.GridFlowLayoutTaskSpawnItems
+  description: 
+  paths:
+  - main
+  itemType: 6
+  markerName: MiscEdge
+  customItemInfo:
+    itemType: custom
+    text: 
+    textColor: {r: 1, g: 1, b: 1, a: 1}
+    backgroundColor: {r: 0, g: 0, b: 0, a: 1}
+  minCount: 1
+  maxCount: 4
+  spawnMethod: 1
+  spawnDistributionCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 1
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spawnDistributionVariance: 0.2
+  minSpawnDifficulty: 0
+  spawnProbability: 1
+  showDifficulty: 0
+  difficultyInfoColor: {r: 0, g: 0, b: 0.5, a: 1}
+  placementSettings:
+    placementMethod: 1
+    avoidPlacingNextToDoors: 1
+    placementScriptClass: 
+    fallbackToRandomPlacement: 1
 --- !u!114 &-4964040871851852716
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -216,9 +386,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DungeonArchitect.Modules.Flow::DungeonArchitect.Flow.Exec.FlowExecGraph
   indexCounter:
-    index: 47
+    index: 54
   topZIndex:
-    index: 277
+    index: 297
   nodes:
   - {fileID: 9181654878815998289}
   - {fileID: 8901431847947355109}
@@ -229,15 +399,16 @@ MonoBehaviour:
   - {fileID: -2023963667675858566}
   - {fileID: -1957402593560217840}
   - {fileID: 2712094123414140811}
+  - {fileID: -6324331147177617232}
   links:
   - {fileID: -5962508458294066617}
-  - {fileID: -2604204914895922067}
-  - {fileID: 979625781919678744}
-  - {fileID: 8867415788009422250}
   - {fileID: -6138014376561441225}
-  - {fileID: 2820098946708323195}
   - {fileID: -4964040871851852716}
   - {fileID: 2495594940871019383}
+  - {fileID: 2388686573703731381}
+  - {fileID: -5501232963845743812}
+  - {fileID: 4559556646937274949}
+  - {fileID: -8801086258905662428}
   resultNode: {fileID: 9181654878815998289}
 --- !u!114 &-3714599617951125491
 MonoBehaviour:
@@ -320,22 +491,6 @@ MonoBehaviour:
   tangent: {x: 0, y: -1}
   tangentStrength: 50
   Padding: {x: 12, y: 12}
---- !u!114 &-2604204914895922067
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
-  m_Name: Link_5
-  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
-  id: 5
-  input: {fileID: 4979509120596618209}
-  output: {fileID: -7213317117470202708}
-  graph: {fileID: -4118271269209598089}
 --- !u!114 &-2023963667675858566
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -446,7 +601,7 @@ MonoBehaviour:
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 268
+  zIndex: 293
   inputPins:
   - {fileID: -7926514541112211282}
   outputPins:
@@ -573,22 +728,6 @@ MonoBehaviour:
   nodePositionConstraintScriptClassName: 
   fixedStartRoomSize: 0
   fixedEndRoomSize: 0
---- !u!114 &979625781919678744
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
-  m_Name: Link_17
-  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
-  id: 17
-  input: {fileID: -7349764196719922238}
-  output: {fileID: 4979509120596618209}
-  graph: {fileID: -4118271269209598089}
 --- !u!114 &1155555901691104303
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -661,6 +800,22 @@ MonoBehaviour:
   tangent: {x: 0, y: -1}
   tangentStrength: 50
   Padding: {x: 12, y: 12}
+--- !u!114 &2388686573703731381
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_51
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 51
+  input: {fileID: 4979509120596618209}
+  output: {fileID: -7213317117470202708}
+  graph: {fileID: -4118271269209598089}
 --- !u!114 &2482619483254560396
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -763,22 +918,6 @@ MonoBehaviour:
   - {fileID: 1619568400546528824}
   graph: {fileID: -4118271269209598089}
   task: {fileID: -4373536688137664020}
---- !u!114 &2820098946708323195
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
-  m_Name: Link_41
-  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
-  id: 41
-  input: {fileID: 1353201630591149181}
-  output: {fileID: -7349764196719922238}
-  graph: {fileID: -4118271269209598089}
 --- !u!114 &2992256381845014664
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -901,6 +1040,22 @@ MonoBehaviour:
   tangent: {x: 0, y: -1}
   tangentStrength: 50
   Padding: {x: 10, y: 10}
+--- !u!114 &4559556646937274949
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_53
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 53
+  input: {fileID: 1353201630591149181}
+  output: {fileID: -7349764196719922238}
+  graph: {fileID: -4118271269209598089}
 --- !u!114 &4979509120596618209
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1015,7 +1170,7 @@ MonoBehaviour:
   canBeSelected: 1
   canBeMoved: 1
   selected: 1
-  zIndex: 277
+  zIndex: 297
   inputPins:
   - {fileID: -1913232198300251827}
   outputPins:
@@ -1046,22 +1201,6 @@ MonoBehaviour:
   tangent: {x: 0, y: -1}
   tangentStrength: 50
   Padding: {x: 10, y: 10}
---- !u!114 &8867415788009422250
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
-  m_Name: Link_28
-  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
-  id: 28
-  input: {fileID: -3714599617951125491}
-  output: {fileID: -7349764196719922238}
-  graph: {fileID: -4118271269209598089}
 --- !u!114 &8901431847947355109
 MonoBehaviour:
   m_ObjectHideFlags: 1

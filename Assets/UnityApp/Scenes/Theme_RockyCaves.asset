@@ -1047,7 +1047,7 @@ MonoBehaviour:
   indexCounter:
     index: 18
   topZIndex:
-    index: 160
+    index: 171
   nodes:
   - {fileID: -8347578876326339745}
   - {fileID: 1631571545126723458}
@@ -1101,7 +1101,7 @@ MonoBehaviour:
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 82
+  zIndex: 170
   inputPins:
   - {fileID: 8061479560818357753}
   outputPins:
@@ -1659,15 +1659,15 @@ MonoBehaviour:
   caption: Game Object Array Node
   bounds:
     serializedVersion: 2
-    x: -260
+    x: -261
     y: 120
     width: 120
     height: 120
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
-  selected: 0
-  zIndex: 83
+  selected: 1
+  zIndex: 171
   inputPins:
   - {fileID: -8189753829177129925}
   outputPins:

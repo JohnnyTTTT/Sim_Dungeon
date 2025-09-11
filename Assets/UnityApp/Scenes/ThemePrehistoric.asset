@@ -1342,8 +1342,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 1155.5728
     y: 392.07068
-    width: 328.66
-    height: 49.05
+    width: 356.6159
+    height: 51.410225
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
@@ -2068,8 +2068,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 1785.7375
     y: 698.134
-    width: 442
-    height: 48
+    width: 481.73807
+    height: 51.410225
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
@@ -3199,8 +3199,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 1590.1335
     y: 786.7798
-    width: 268.71002
-    height: 49.05
+    width: 291.82425
+    height: 51.410225
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
@@ -5274,8 +5274,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 1599.2083
     y: 395.1467
-    width: 301.41
-    height: 49.05
+    width: 327.151
+    height: 51.410225
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
@@ -6257,8 +6257,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 402.25018
     y: 385.75574
-    width: 473.65
-    height: 49.05
+    width: 513.3039
+    height: 51.410225
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
