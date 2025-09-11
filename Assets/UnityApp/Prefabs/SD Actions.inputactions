@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "SD Actions",
+    "maps": [
+        {
+            "name": "Building",
+            "id": "811e9f75-d011-41aa-b774-7f1bc561b36c",
+            "actions": [
+                {
+                    "name": "Area",
+                    "type": "Button",
+                    "id": "4babac71-e498-4184-986f-61c17e3190c0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "30e39a68-9c24-4f02-92ed-14c799d80846",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Area",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
