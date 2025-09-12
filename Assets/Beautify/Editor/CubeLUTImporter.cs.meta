@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: a81c8b28cca954bc3a51c5c4d490bffb
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Editor/CubeLUTImporter.cs
+  uploadId: 776774

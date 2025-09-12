@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 0d2518ab3034a410ca1860e12e6342f2
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Runtime/Resources/BeautifyBlur.hlsl
+  uploadId: 776774

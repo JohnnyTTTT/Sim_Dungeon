@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3c5c113fb78fc46ab92472ad8a856cbf
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Runtime/Resources/BeautifyAGX.hlsl
+  uploadId: 776774

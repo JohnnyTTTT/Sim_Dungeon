@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b325dcaba5b5b4d3b976de41eedc78a7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Demo/DemoSources/Materials/StonePath.mat
+  uploadId: 776774

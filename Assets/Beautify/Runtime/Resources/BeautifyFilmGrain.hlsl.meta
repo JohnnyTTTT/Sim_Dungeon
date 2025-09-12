@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 84925ce7b086d4b129ce5477a9d29112
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Runtime/Resources/BeautifyFilmGrain.hlsl
+  uploadId: 776774

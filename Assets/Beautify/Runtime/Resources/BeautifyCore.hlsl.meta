@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f437de8bdaf224bbcaab80280b0e3742
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Runtime/Resources/BeautifyCore.hlsl
+  uploadId: 776774

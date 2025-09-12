@@ -52,11 +52,17 @@ namespace SoulGames.EasyGridBuilderPro
         private void HandleGridAreaEnablerDisabled(GridAreaEnabler gridAreaEnabler)
         {
             CalculateEnabledCellsColors(gridAreaEnabler, true);
+            RemoveGridAreaEnablerData(gridAreaEnabler);
         }
 
         private void InitializeGridAreaEnablerData(GridAreaEnabler gridAreaEnabler, GridAreaEnablerData gridAreaEnablerData)
         {
             if (!gridAreaEnablerDataDictionary.ContainsKey(gridAreaEnabler)) gridAreaEnablerDataDictionary[gridAreaEnabler] = gridAreaEnablerData;
+        }
+
+        private void RemoveGridAreaEnablerData(GridAreaEnabler gridAreaEnabler)
+        {
+            if (gridAreaEnablerDataDictionary.ContainsKey(gridAreaEnabler)) gridAreaEnablerDataDictionary.Remove(gridAreaEnabler);
         }
 
         private void UpdateGridAreaEnablerData(GridAreaEnabler gridAreaEnabler)
@@ -143,6 +149,7 @@ namespace SoulGames.EasyGridBuilderPro
             foreach (Vector2Int cellPosition in blockedCellPositions)
             {
                 currentEasyGridBuilderPro.SetRuntimeObjectGridGeneratedTextureCellToDefault(cellPosition, blockAllVerticalGrids, grid);
+                if (currentOccupiedGridAreaEnablersCellPositionList.Contains(cellPosition)) currentOccupiedGridAreaEnablersCellPositionList.Remove(cellPosition);
             }
         }
 

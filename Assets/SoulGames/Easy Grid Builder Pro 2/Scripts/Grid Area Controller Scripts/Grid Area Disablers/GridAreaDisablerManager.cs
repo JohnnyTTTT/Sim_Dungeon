@@ -16,7 +16,7 @@ namespace SoulGames.EasyGridBuilderPro
         {
             gridAreaDisablerDataDictionary = new Dictionary<GridAreaDisabler, GridAreaDisablerData>();
             currentOccupiedGridAreaDisablersCellPositionList = new List<Vector2Int>();
-            
+
             BasicGridAreaTrigger.OnGhostObjectEnterBasicGridAreaDisabler += OnGhostObjectEnterBasicGridAreaDisabler;
             BasicGridAreaTrigger.OnGhostObjectExitBasicGridAreaDisabler += OnGhostObjectExitBasicGridAreaDisabler;
 
@@ -53,11 +53,17 @@ namespace SoulGames.EasyGridBuilderPro
         private void HandleGridAreaDisablerDisabled(GridAreaDisabler gridAreaDisabler)
         {
             CalculateBlockedCellsColors(gridAreaDisabler, true);
+            RemoveGridAreaDisablerData(gridAreaDisabler);
         }
 
         private void InitializeGridAreaDisablerData(GridAreaDisabler gridAreaDisabler, GridAreaDisablerData gridAreaDisablerData)
         {
             if (!gridAreaDisablerDataDictionary.ContainsKey(gridAreaDisabler)) gridAreaDisablerDataDictionary[gridAreaDisabler] = gridAreaDisablerData;
+        }
+
+        private void RemoveGridAreaDisablerData(GridAreaDisabler gridAreaDisabler)
+        {
+            if (gridAreaDisablerDataDictionary.ContainsKey(gridAreaDisabler)) gridAreaDisablerDataDictionary.Remove(gridAreaDisabler);
         }
 
         private void UpdateGridAreaDisablerData(GridAreaDisabler gridAreaDisabler)
@@ -73,7 +79,7 @@ namespace SoulGames.EasyGridBuilderPro
                 {
                     GridAreaData data = gridAreaData.Value;
                     if (data.currentOccupiedEasyGridBuilderPro == null) continue;
-                    
+
                     if (gridAreaDisablerData.changeBlockedCellColor)
                     {
                         if (isCalledFromOnDisable)
@@ -164,11 +170,13 @@ namespace SoulGames.EasyGridBuilderPro
                     if (gridAreaEnablerManager.GetCurrentOccupiedGridAreaEnablersCellPositionList().Contains(cellPosition)) continue;
                 }
                 currentEasyGridBuilderPro.SetRuntimeObjectGridGeneratedTextureCellToDefault(cellPosition, blockAllVerticalGrids, grid);
+                if (currentOccupiedGridAreaDisablersCellPositionList.Contains(cellPosition)) currentOccupiedGridAreaDisablersCellPositionList.Remove(cellPosition);
             }
         }
 
         public bool IsBuildableGridObjectBlockedByGridAreaDisablers(EasyGridBuilderPro easyGridBuilderPro, Grid grid, BuildableGridObjectSO buildableGridObjectSO, Vector2Int cellPosition)
         {
+
             BuildableGridObjectCategorySO buildableGridObjectCategorySO = buildableGridObjectSO.buildableGridObjectCategorySO;
 
             foreach (KeyValuePair<GridAreaDisabler, GridAreaDisablerData> gridAreaDisablerData in gridAreaDisablerDataDictionary)

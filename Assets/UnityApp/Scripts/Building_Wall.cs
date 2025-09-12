@@ -2,8 +2,7 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public class Building_Wall : Building
+    public class Building_Wall : BuildingPart
     {
-        public GameObject[] walls;
     }
 }

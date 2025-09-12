@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 93faaf14d90c7454682bbe1f80a99a00
+timeCreated: 1466517585
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Demo/DemoSources/Materials/BluishEmissive.mat
+  uploadId: 776774

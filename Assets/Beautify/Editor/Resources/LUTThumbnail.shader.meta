@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 31c75afb4d5b34f6fb0c23be4eb330f7
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Editor/Resources/LUTThumbnail.shader
+  uploadId: 776774

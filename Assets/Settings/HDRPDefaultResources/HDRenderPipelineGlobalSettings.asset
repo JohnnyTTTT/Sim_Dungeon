@@ -563,7 +563,9 @@ MonoBehaviour:
         m_Version: 0
         m_BeforeTransparentCustomPostProcesses:
           m_InjectionPoint: 0
-          m_CustomPostProcessTypesAsString: []
+          m_CustomPostProcessTypesAsString:
+          - HorizonBasedAmbientOcclusion.HighDefinition.HBAO, HBAO.HighDefinition.Runtime,
+            Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
         m_BeforeTAACustomPostProcesses:
           m_InjectionPoint: 3
           m_CustomPostProcessTypesAsString: []
@@ -575,7 +577,9 @@ MonoBehaviour:
           m_CustomPostProcessTypesAsString: []
         m_AfterPostProcessCustomPostProcesses:
           m_InjectionPoint: 2
-          m_CustomPostProcessTypesAsString: []
+          m_CustomPostProcessTypesAsString:
+          - BeautifyHDRP.Beautify, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+            PublicKeyToken=null
     - rid: 4029099056464920590
       type: {class: HDRenderPipelineRuntimeMaterials, ns: UnityEngine.Rendering.HighDefinition, asm: Unity.RenderPipelines.HighDefinition.Runtime}
       data:

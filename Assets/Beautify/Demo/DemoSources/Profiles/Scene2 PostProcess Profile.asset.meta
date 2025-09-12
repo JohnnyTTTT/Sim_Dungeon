@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a3e268ff7067e471f9901ccbb3b144e9
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Demo/DemoSources/Profiles/Scene2 PostProcess Profile.asset
+  uploadId: 776774

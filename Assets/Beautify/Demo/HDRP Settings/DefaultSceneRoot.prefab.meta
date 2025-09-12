@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 5d362a829ab9c4ef3b009612b2a48c93
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Demo/HDRP Settings/DefaultSceneRoot.prefab
+  uploadId: 776774

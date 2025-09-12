@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 4d65b49ff0395410793aa52c3cb48e15
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Runtime/Misc.cs
+  uploadId: 776774

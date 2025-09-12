@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ec64a5c46b7b32c4c8d953edfaea62b1
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 54780
+  packageName: Horizon Based Ambient Occlusion
+  packageVersion: 3.6
+  assetPath: Assets/Horizon Based Ambient Occlusion/SRP/HDRP.unitypackage
+  uploadId: 663127

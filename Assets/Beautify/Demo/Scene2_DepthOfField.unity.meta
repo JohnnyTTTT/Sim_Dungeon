@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: b37ca8c4e3fc34c77bc365612b55f2ba
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Demo/Scene2_DepthOfField.unity
+  uploadId: 776774

@@ -6,6 +6,7 @@ namespace Johnny.SimDungeon
 {
     public class DungeonUI : MonoBehaviour
     {
+        [SerializeField] private EasyGridBuilderProController m_EasyGridBuilderProController;
         public Toggle buildingMode;
 
         private void OnEnable()
@@ -15,7 +16,7 @@ namespace Johnny.SimDungeon
 
         private void BuildingModeValueChanged(bool arg0)
         {
-
+            m_EasyGridBuilderProController.SetAllDisable(arg0);
         }
     }
 }

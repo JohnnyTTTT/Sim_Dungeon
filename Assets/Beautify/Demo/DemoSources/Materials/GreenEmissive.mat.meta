@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 317224c2eec4145f9b240ac244e08d02
+timeCreated: 1466517592
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Demo/DemoSources/Materials/GreenEmissive.mat
+  uploadId: 776774

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,6 +53,9 @@ namespace SoulGames.EasyGridBuilderPro
 
             GridArea.OnGridAreaInitialized += OnGridAreaInitialized;
             GridArea.OnGridAreaUpdated += OnGridAreaUpdated;
+
+            OnGridAreaEnablerDisabled += OnGridAreaEnablerDisabledFunction;
+            GridAreaDisabler.OnGridAreaDisablerDisabled += HandleGridAreaDisablerDisabled;
         }
 
         private void OnEnable()
@@ -70,9 +74,12 @@ namespace SoulGames.EasyGridBuilderPro
         private void OnDestroy()
         {
             if (isInstantiatedByGhostObject) return;
-            
+
             GridArea.OnGridAreaInitialized -= OnGridAreaInitialized;
             GridArea.OnGridAreaUpdated -= OnGridAreaUpdated;
+
+            OnGridAreaEnablerDisabled -= OnGridAreaEnablerDisabledFunction;
+            GridAreaDisabler.OnGridAreaDisablerDisabled -= HandleGridAreaDisablerDisabled;
         }
 
         private void OnDisable()
@@ -83,6 +90,7 @@ namespace SoulGames.EasyGridBuilderPro
 
         private void OnGridAreaInitialized(GridArea gridArea, GridAreaData gridAreaData)
         {
+            if (!gridAreaList.Contains(gridArea)) return;
             InitializeGridAreaEnablerData(gridArea, gridAreaData);
             PopulateGridAreaEnablerData();
             OnGridAreaEnablerInitialized?.Invoke(this, gridAreaEnablerData);
@@ -90,20 +98,47 @@ namespace SoulGames.EasyGridBuilderPro
 
         private void OnGridAreaUpdated(GridArea gridArea)
         {
-            UpdateGridAreaEnablerData(gridArea);
+            if (!gridAreaList.Contains(gridArea)) return;
+            UpdateGridAreaEnablerData();
+            PopulateGridAreaEnablerData();
+            OnGridAreaEnablerUpdated?.Invoke(this);
+        }
+
+        private void OnGridAreaEnablerDisabledFunction(GridAreaEnabler gridAreaEnabler)
+        {
+            if (gridAreaEnabler == this) return;
+            Invoke("LateHandleGridAreaEnablerDisabled", 0.01f);
+        }
+
+        private void LateHandleGridAreaEnablerDisabled()
+        {
+            UpdateGridAreaEnablerData();
+            PopulateGridAreaEnablerData();
+            OnGridAreaEnablerUpdated?.Invoke(this);
+        }
+
+        private void HandleGridAreaDisablerDisabled(GridAreaDisabler gridAreaDisabler)
+        {
+            if (!gameObject.activeInHierarchy) return;
+            StartCoroutine(LateHandleGridAreaDisablerDisabled());
+        }
+
+        private IEnumerator LateHandleGridAreaDisablerDisabled()
+        {
+            yield return new WaitForEndOfFrame();
+
+            UpdateGridAreaEnablerData();
             PopulateGridAreaEnablerData();
             OnGridAreaEnablerUpdated?.Invoke(this);
         }
 
         private void InitializeGridAreaEnablerData(GridArea gridArea, GridAreaData gridAreaData)
         {
-            if (!gridAreaList.Contains(gridArea)) return;
             if (!GridAreaDataDictionary.ContainsKey(gridArea)) GridAreaDataDictionary[gridArea] = gridAreaData;
         }
 
-        private void UpdateGridAreaEnablerData(GridArea gridArea)
+        private void UpdateGridAreaEnablerData()
         {
-            if (!gridAreaList.Contains(gridArea)) return;
             PopulateGridAreaEnablerData();
         }
 

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7ea8325db40c3428595a5ecfcb85b572
+timeCreated: 1466517585
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Demo/DemoSources/Materials/ReddishEmissive.mat
+  uploadId: 776774

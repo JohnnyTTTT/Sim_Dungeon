@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 599a356e26a484f60ad03cdf215f6160
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 165411
+  packageName: Beautify HDRP
+  packageVersion: 8.0
+  assetPath: Assets/Beautify/Demo/HDRP Settings/HDRPDefaultResources/HDRenderPipelineGlobalSettings.asset
+  uploadId: 776774

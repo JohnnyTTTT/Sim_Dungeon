@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -52,8 +53,11 @@ namespace SoulGames.EasyGridBuilderPro
 
             GridArea.OnGridAreaInitialized += OnGridAreaInitialized;
             GridArea.OnGridAreaUpdated += OnGridAreaUpdated;
+
+            OnGridAreaDisablerDisabled -= OnGridAreaDisablerDisabledFunction;
+            GridAreaEnabler.OnGridAreaEnablerDisabled += HandleGridAreaEnablerDisabled;
         }
-        
+
         private void OnEnable()
         {
             StartCoroutine(LateOnEnable());
@@ -73,6 +77,9 @@ namespace SoulGames.EasyGridBuilderPro
 
             GridArea.OnGridAreaInitialized -= OnGridAreaInitialized;
             GridArea.OnGridAreaUpdated -= OnGridAreaUpdated;
+
+            OnGridAreaDisablerDisabled -= OnGridAreaDisablerDisabledFunction;
+            GridAreaEnabler.OnGridAreaEnablerDisabled -= HandleGridAreaEnablerDisabled;
         }
 
         private void OnDisable()
@@ -83,6 +90,7 @@ namespace SoulGames.EasyGridBuilderPro
 
         private void OnGridAreaInitialized(GridArea gridArea, GridAreaData gridAreaData)
         {
+            if (!gridAreaList.Contains(gridArea)) return;
             InitializeGridAreaDisablerData(gridArea, gridAreaData);
             PopulateGridAreaDisablerData();
             OnGridAreaDisablerInitialized?.Invoke(this, gridAreaDisablerData);
@@ -90,20 +98,47 @@ namespace SoulGames.EasyGridBuilderPro
 
         private void OnGridAreaUpdated(GridArea gridArea)
         {
-            UpdateGridAreaDisablerData(gridArea);
+            if (!gridAreaList.Contains(gridArea)) return;
+            UpdateGridAreaDisablerData();
+            PopulateGridAreaDisablerData();
+            OnGridAreaDisablerUpdated?.Invoke(this);
+        }
+
+        private void OnGridAreaDisablerDisabledFunction(GridAreaDisabler gridAreaDisabler)
+        {
+            if (gridAreaDisabler == this) return;
+            Invoke("LateHandleGridAreaDisablerDisabled", 0.01f);
+        }
+
+        private void LateHandleGridAreaDisablerDisabled()
+        {
+            UpdateGridAreaDisablerData();
+            PopulateGridAreaDisablerData();
+            OnGridAreaDisablerUpdated?.Invoke(this);
+        }
+
+        private void HandleGridAreaEnablerDisabled(GridAreaEnabler gridAreaEnabler)
+        {
+            if (!gameObject.activeInHierarchy) return;
+            StartCoroutine(LateHandleGridAreaEnablerDisabled());
+        }
+
+        private IEnumerator LateHandleGridAreaEnablerDisabled()
+        {
+            yield return new WaitForEndOfFrame();
+
+            UpdateGridAreaDisablerData();
             PopulateGridAreaDisablerData();
             OnGridAreaDisablerUpdated?.Invoke(this);
         }
 
         private void InitializeGridAreaDisablerData(GridArea gridArea, GridAreaData gridAreaData)
         {
-            if (!gridAreaList.Contains(gridArea)) return;
             if (!GridAreaDataDictionary.ContainsKey(gridArea)) GridAreaDataDictionary[gridArea] = gridAreaData;
         }
 
-        private void UpdateGridAreaDisablerData(GridArea gridArea)
+        private void UpdateGridAreaDisablerData()
         {
-            if (!gridAreaList.Contains(gridArea)) return;
             PopulateGridAreaDisablerData();
         }
 

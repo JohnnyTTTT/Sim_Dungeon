@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f322ee7f8809e914b9ff960b53a2d90f
+timeCreated: 1582908230
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 54780
+  packageName: Horizon Based Ambient Occlusion
+  packageVersion: 3.6
+  assetPath: Assets/Horizon Based Ambient Occlusion/SRP/URP.unitypackage
+  uploadId: 663127
