@@ -7,11 +7,6 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public class SimDungeonCellInfo
-    {
-        public BuildingPart floor;
-        public List<BuildingPart> walls = new List<BuildingPart>();
-    }
     public class BuildingItemSpawnListener : DungeonItemSpawnListener
     {
         [SerializeField] private DungeonController m_DungeonController;
@@ -60,6 +55,7 @@ namespace Johnny.SimDungeon
             if (dungeonItem != null)
             {
                 var marker = spawnData.socket;
+                Debug.Log(marker.childMarkers);
                 //var gridPosition = marker.gridPosition;
                 //if (!cells.TryGetValue(gridPosition, out var cell))
                 //{
@@ -83,6 +79,7 @@ namespace Johnny.SimDungeon
                             info.floor = item;
                             break;
                         case FlowTilemapCellType.Wall:
+                            //m_DungeonController.dungeonModel.Tilemap.Edges.GetVertical
                             info.walls.Add(item);
                             break;
                         case FlowTilemapCellType.Door:

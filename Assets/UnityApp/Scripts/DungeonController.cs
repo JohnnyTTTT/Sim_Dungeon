@@ -1,7 +1,6 @@
 using DungeonArchitect;
 using DungeonArchitect.Builders.GridFlow;
 using DungeonArchitect.Flow.Domains.Tilemap;
-using EasyBuildSystem.Features.Runtime.Buildings.Placer;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,7 +18,6 @@ namespace Johnny.SimDungeon
         public PooledDungeonSceneProvider pooledDungeonSceneProvider;
         public GridFlowDungeonQuery gridFlowDungeonQuery;
         public GridFlowMinimap gridFlowMinimap;
-        public BuildingPlacer buildingPlacer;
         public BuildingItemSpawnListener buildingItemSpawnListener;
 
         [SerializeField] private Camera m_Camera;
@@ -158,24 +156,31 @@ namespace Johnny.SimDungeon
             }
             else if (Mouse.current.rightButton.wasPressedThisFrame)
             {
-                if (m_CurrentAreaHighlights.Any())
+                if (m_LastHitBuildingPart != null)
                 {
-                    for (int i = m_CurrentAreaHighlights.Count - 1; i >= 0; i--)
-                    {
-                        Destroy(m_CurrentAreaHighlights[i]);
-                    }
-                    m_CurrentAreaHighlights.Clear();
+                    var position = m_LastHitBuildingPart.transform.position;
+                    position = new Vector3(position.x, 0f, position.z);
+                    var cell = dungeonModel.GetTilemapCell(position);
+                    Debug.Log(cell.UseCustomColor);
                 }
-
-                //var cell = dungeonModel.GetTilemapCell(m_LastCellPosition);
-                //var cells = gridFlowDungeonQuery.GetLayoutNodeTile(cell.NodeCoord, false);
-                //foreach (var item in cells)
+                //if (m_CurrentAreaHighlights.Any())
                 //{
-                //    var position = gridFlowDungeonQuery.TileCoordToWorldCoord(item.TileCoord);
-                //    position += new Vector3(0f, 0.01f, 0f);
-                //    var current = Instantiate(m_HighlightPrefab, position, Quaternion.identity, m_SelectionRoot);
-                //    m_CurrentAreaHighlights.Add(current);
+                //    for (int i = m_CurrentAreaHighlights.Count - 1; i >= 0; i--)
+                //    {
+                //        Destroy(m_CurrentAreaHighlights[i]);
+                //    }
+                //    m_CurrentAreaHighlights.Clear();
                 //}
+
+                    //var cell = dungeonModel.GetTilemapCell(m_LastCellPosition);
+                    //var cells = gridFlowDungeonQuery.GetLayoutNodeTile(cell.NodeCoord, false);
+                    //foreach (var item in cells)
+                    //{
+                    //    var position = gridFlowDungeonQuery.TileCoordToWorldCoord(item.TileCoord);
+                    //    position += new Vector3(0f, 0.01f, 0f);
+                    //    var current = Instantiate(m_HighlightPrefab, position, Quaternion.identity, m_SelectionRoot);
+                    //    m_CurrentAreaHighlights.Add(current);
+                    //}
             }
 
         }

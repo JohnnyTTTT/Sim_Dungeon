@@ -1,11 +1,11 @@
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
+//using UnityEngine.Rendering.Universal;
 
 namespace Johnny.SimDungeon
 {
     public class LightController : MonoBehaviour
     {
-        UniversalAdditionalLightData universalAdditionalLightData;
+        //UniversalAdditionalLightData universalAdditionalLightData;
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {

@@ -1,4 +1,4 @@
-using EasyBuildSystem.Features.Runtime.Buildings.Placer;
+
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,7 +13,6 @@ namespace Johnny.SimDungeon
     public class BuildingPlacerController : MonoBehaviour
     {
         [SerializeField] private DungeonController m_DungeonController;
-        [SerializeField] private BuildingPlacer m_BuildingPlacer;
         [SerializeField] private InputActionReference m_AreaInputReference;
 
         private  PlaceMode m_PlaceMode;

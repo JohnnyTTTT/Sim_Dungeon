@@ -527,6 +527,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 53e0bed66c2787845a9ca5b01dd9cf5a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d5b9838ba5a9d534a82394999797c8a0, type: 2}
     - target: {fileID: 919132149155446097, guid: 53e0bed66c2787845a9ca5b01dd9cf5a, type: 3}
       propertyPath: m_Name
       value: BaseWall_001
@@ -983,6 +987,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 53e0bed66c2787845a9ca5b01dd9cf5a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d5b9838ba5a9d534a82394999797c8a0, type: 2}
     - target: {fileID: 919132149155446097, guid: 53e0bed66c2787845a9ca5b01dd9cf5a, type: 3}
       propertyPath: m_Name
       value: BaseWall_001
