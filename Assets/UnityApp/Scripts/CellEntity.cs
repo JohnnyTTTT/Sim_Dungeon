@@ -10,15 +10,21 @@ namespace Johnny.SimDungeon
 {
     public class CellEntity : MonoBehaviour
     {
+        public RoomEntitly room;
         public FlowTilemapCell cell;
         public Vector2Int cellTileCoord;
         public Vector2Int[,] subCellCoords = new Vector2Int[4, 4];
         public BuildingPart floor;
-        public BuildingPart walleast;
+        public BuildingPart wallLeft;
+        public BuildingPart wallRight;
+        public BuildingPart wallUp;
+        public BuildingPart wallDown;
         public List<BuildingPart> walls = new List<BuildingPart>();
+
         public bool m_ShowGizmo;
-        public bool canBuildOn => floor != null;
-        public void Init(FlowTilemapCell flowTilemapCell, Transform parentTransform,bool showGizmo)
+
+
+        public void Init(FlowTilemapCell flowTilemapCell, Transform parentTransform, bool showGizmo)
         {
             cell = flowTilemapCell;
             m_ShowGizmo = showGizmo;
@@ -36,6 +42,12 @@ namespace Johnny.SimDungeon
             }
         }
 
+        public bool CanBuildOn()
+        {
+            return floor != null;
+        }
+
+
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
@@ -43,7 +55,7 @@ namespace Johnny.SimDungeon
             {
                 var center = transform.position + new Vector3(0f, 0.25f, 0f);
                 var size = new Vector3(4f, 0.5f, 4f);
-                Gizmos.color = canBuildOn ? Color.green : Color.red;
+                Gizmos.color = CanBuildOn() ? Color.green : Color.red;
                 Gizmos.DrawWireCube(center, size);
 
                 var origin = transform.position - new Vector3(2, 0, 2);

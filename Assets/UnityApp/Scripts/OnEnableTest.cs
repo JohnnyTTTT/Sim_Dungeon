@@ -2,8 +2,21 @@ using UnityEngine;
 
 public class OnEnableTest : MonoBehaviour
 {
+    public bool OnEnableLog;
+    public bool OnDisableLog;
     private void OnEnable()
     {
-        Debug.Log("OnEnable Test ", gameObject);
+        if (OnEnableLog)
+        {
+            Debug.Log("OnEnable Test ", gameObject);
+        }
+
+    }
+    private void OnDisable()
+    {
+        if (OnDisableLog)
+        {
+            Debug.Log("OnDisable Test ", gameObject);
+        }
     }
 }

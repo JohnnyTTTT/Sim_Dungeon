@@ -41,7 +41,7 @@ namespace Johnny.SimDungeon
             {
                 var marker = spawnData.socket;
                 var cell = DungeonController.Instance.dungeonModel.Tilemap.Cells.GetCell(marker.gridPosition.x, marker.gridPosition.z);
-                if (DungeonController.Instance.dungeonCellDatas.cellsMap.TryGetValue(cell, out var entity))
+                if (CellEntitiyManager.Instance.cellsMap.TryGetValue(cell, out var entity))
                 {
                     var buildingParts = dungeonItem.GetComponentsInChildren<BuildingPart>();
                     foreach (var item in buildingParts)

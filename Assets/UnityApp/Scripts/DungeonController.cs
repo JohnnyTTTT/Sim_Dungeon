@@ -9,18 +9,27 @@ using UnityEngine.InputSystem;
 
 namespace Johnny.SimDungeon
 {
+    public enum StructureMode
+    {
+        None,
+        CreateSpace,
+
+    }
+
+
     public class DungeonController : DungeonEventListener
     {
         public static DungeonController Instance
         {
-            get {
+            get
+            {
                 if (s_Instances == null)
                 {
                     s_Instances = FindFirstObjectByType<DungeonController>();
                 }
                 return s_Instances;
             }
-        
+
         }
         private static DungeonController s_Instances;
         public Dungeon dungeon;
@@ -31,7 +40,6 @@ namespace Johnny.SimDungeon
         public GridFlowDungeonQuery gridFlowDungeonQuery;
         public GridFlowMinimap gridFlowMinimap;
         public BuildingItemSpawnListener buildingItemSpawnListener;
-        public DungeonCellDatas dungeonCellDatas;
         public EasyGridBuilderProController easyGridBuilderProController;
 
         [SerializeField] private Camera m_Camera;
@@ -48,22 +56,274 @@ namespace Johnny.SimDungeon
         private List<GameObject> m_CurrentAreaHighlights = new List<GameObject>();
 
 
+        //Structure
+        public StructureMode structureMode = StructureMode.None;
+        private List<FlowTilemapCell> m_WillCreateSpaces = new List<FlowTilemapCell>();
+
         private void Start()
         {
-            GridManager.Instance.OnActiveGridModeChanged += OnActiveGridModeChanged;
-            m_CustomFloors.Clear();
             dungeon.Build();
-            Debug.Log("[System] : Dungeon Builded");
+            GridManager.Instance.OnActiveGridModeChanged += OnActiveGridModeChanged;
+            GridManager.Instance.OnActiveEasyGridBuilderProChanged += OnActiveEasyGridBuilderProChanged;
+            //m_CustomFloors.Clear();
+            //
+
             //m_GridFlowDungeonBuilder.BuildDungeon(m_DungeonConfig, m_DungeonModel);
+        }
+
+        public FlowTilemapCell WorldPositionToCell(Vector3 worldPosition)
+        {
+            return gridFlowDungeonQuery.WorldCoordToTile(worldPosition);
         }
 
 
 
+        private void OnActiveEasyGridBuilderProChanged(EasyGridBuilderPro arg0)
+        {
+
+            //Debug.Log("[System] : EasyGridBuilderPro Changed");
+            //dungeon.Build();
+            //Debug.Log("[System] : Dungeon Builded");
+        }
+
         private void Update()
         {
 
+
+            if (structureMode == StructureMode.CreateSpace)
+            {
+                StructureModeTest();
+
+            }
             //UpdateHighlight();
             //CheckClick();
+        }
+
+        public void SetCellsTo(List<FlowTilemapCell> cells, FlowTilemapCellType cellType)
+        {
+            foreach (var item in cells)
+            {
+
+            }
+        }
+
+
+        public static readonly IntVector2[] CardinalDirections ={
+            new IntVector2(1, 0),
+            new IntVector2(-1, 0),
+            new IntVector2(0, 1),
+            new IntVector2(0, -1)};
+
+        public static List<CellEntity> FindEdgeCells(List<CellEntity> cells)
+        {
+            var cellCoords = cells.Select(x => x.cell.TileCoord);
+            var edgeCells = new List<CellEntity>();
+
+            foreach (var cell in cells)
+            {
+                foreach (var dir in CardinalDirections)
+                {
+                    var neighbor = cell.cell.TileCoord + dir;
+                    if (!cellCoords.Contains(neighbor))
+                    {
+                        edgeCells.Add(cell);
+                        break;
+                    }
+                }
+            }
+            return edgeCells;
+        }
+
+        public void AddEdgeForCells(List<CellEntity> cellEntitlies, RoomEntitly roomEntitly)
+        {
+            var edgeCellEntitlies = FindEdgeCells(cellEntitlies);
+            var cellEntitiyManager = CellEntitiyManager.Instance;
+            foreach (var cellEntitly in edgeCellEntitlies)
+            {
+                var neighbourData = GetNeighbourData(cellEntitly.cell);
+                for (int i = 0; i < 4; i++)
+                {
+                    //left
+                    var left = neighbourData[0].cell;
+                    var edgeLeft = neighbourData[0].edge;
+                    if (left.CellType == FlowTilemapCellType.Custom)
+                    {
+                        edgeLeft.EdgeType = FlowTilemapEdgeType.Wall;
+                    }
+                    else if (left.CellType == FlowTilemapCellType.Floor)
+                    {
+                        edgeLeft.EdgeType = cellEntitiyManager.GetCellEntitly(left).room == roomEntitly
+                            ? FlowTilemapEdgeType.Empty : FlowTilemapEdgeType.Wall; 
+                    }
+
+                    //up
+                    var up = neighbourData[1].cell;
+                    var edgeUp = neighbourData[1].edge;
+                    if (up.CellType == FlowTilemapCellType.Custom)
+                    {
+                        edgeUp.EdgeType = FlowTilemapEdgeType.Wall;
+                    }
+                    else if (up.CellType == FlowTilemapCellType.Floor )
+                    {
+                        edgeUp.EdgeType = cellEntitiyManager.GetCellEntitly(up).room == roomEntitly
+                            ? FlowTilemapEdgeType.Empty : FlowTilemapEdgeType.Wall;
+                    }
+
+                    //right
+                    var right = neighbourData[2].cell;
+                    var edgeRight = neighbourData[2].edge;
+                    if (right.CellType == FlowTilemapCellType.Custom)
+                    {
+                        edgeRight.EdgeType = FlowTilemapEdgeType.Wall;
+                    }
+                    else if (right.CellType == FlowTilemapCellType.Floor)
+                    {
+                        edgeRight.EdgeType = cellEntitiyManager.GetCellEntitly(right).room == roomEntitly
+                            ? FlowTilemapEdgeType.Empty : FlowTilemapEdgeType.Wall;
+                    }
+
+                    //down
+                    var down = neighbourData[3].cell;
+                    var edgeDown = neighbourData[3].edge;
+                    if (down.CellType == FlowTilemapCellType.Custom)
+                    {
+                        edgeDown.EdgeType = FlowTilemapEdgeType.Wall;
+                    }
+                    else if (down.CellType == FlowTilemapCellType.Floor )
+                    {
+                        edgeDown.EdgeType = cellEntitiyManager.GetCellEntitly(down).room == roomEntitly
+                            ? FlowTilemapEdgeType.Empty : FlowTilemapEdgeType.Wall;
+                    }
+                    Debug.Log($"左 : <{left.CellType}> , 上 : <{up.CellType}> , 右 : <{right.CellType}> , 下 : <{down.CellType}>");
+                }
+            }
+            dungeon.ApplyTheme(new RuntimeDungeonSceneObjectInstantiator());
+        }
+
+        private void StructureModeTest()
+        {
+            var mousePos = Mouse.current.position.ReadValue();
+            var ray = m_Camera.ScreenPointToRay(mousePos);
+            if (Physics.Raycast(ray, out RaycastHit hit, 1000f, m_GroundMask))
+            {
+                var position = new Vector3(hit.point.x, 0f, hit.point.z);
+
+                if (Mouse.current.leftButton.wasReleasedThisFrame)
+                {
+                    var cell = gridFlowDungeonQuery.WorldCoordToTile(position);
+                    cell.CellType = FlowTilemapCellType.Floor;
+
+                    var neighbourData = GetNeighbourData(cell);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        //left
+                        var left = neighbourData[0].cell;
+                        var edgeLeft = neighbourData[0].edge;
+                        if (left.CellType == FlowTilemapCellType.Custom)
+                        {
+                            edgeLeft.EdgeType = FlowTilemapEdgeType.Fence;
+                        }
+                        else if (left.CellType == FlowTilemapCellType.Floor)
+                        {
+                            edgeLeft.EdgeType = FlowTilemapEdgeType.Empty;
+                        }
+
+                        //up
+                        var up = neighbourData[1].cell;
+                        var edgeUp = neighbourData[1].edge;
+                        if (up.CellType == FlowTilemapCellType.Custom)
+                        {
+                            edgeUp.EdgeType = FlowTilemapEdgeType.Fence;
+                        }
+                        else if (up.CellType == FlowTilemapCellType.Floor)
+                        {
+                            edgeUp.EdgeType = FlowTilemapEdgeType.Empty;
+                        }
+
+                        //right
+                        var right = neighbourData[2].cell;
+                        var edgeRight = neighbourData[2].edge;
+                        if (right.CellType == FlowTilemapCellType.Custom)
+                        {
+                            edgeRight.EdgeType = FlowTilemapEdgeType.Fence;
+                        }
+                        else if (right.CellType == FlowTilemapCellType.Floor)
+                        {
+                            edgeRight.EdgeType = FlowTilemapEdgeType.Empty;
+                        }
+
+                        //down
+                        var down = neighbourData[3].cell;
+                        var edgeDown = neighbourData[3].edge;
+                        if (down.CellType == FlowTilemapCellType.Custom)
+                        {
+                            edgeDown.EdgeType = FlowTilemapEdgeType.Fence;
+                        }
+                        else if (down.CellType == FlowTilemapCellType.Floor)
+                        {
+                            edgeDown.EdgeType = FlowTilemapEdgeType.Empty;
+                        }
+                        Debug.Log($"左 : <{left.CellType}> , 上 : <{up.CellType}> , 右 : <{right.CellType}> , 下 : <{down.CellType}>");
+                    }
+
+                    dungeon.ApplyTheme(new RuntimeDungeonSceneObjectInstantiator());
+                }
+                if (Mouse.current.rightButton.wasReleasedThisFrame)
+                {
+                    if (tests.Any())
+                    {
+                        for (int i = tests.Count - 1; i >= 0; i--)
+                        {
+                            Destroy(tests[i]);
+                        }
+                        tests.Clear();
+                    }
+                    var cell = gridFlowDungeonQuery.WorldCoordToTile(position);
+                    //var coord = cell.TileCoord;
+                    var cells = gridFlowDungeonQuery.GetLayoutNodeTile(cell.NodeCoord, false);
+                    foreach (var item in cells)
+                    {
+                        var test1 = Instantiate(testPrefab);
+                        var cellPosition = gridFlowDungeonQuery.TileCoordToWorldCoord(item.TileCoord);
+                        test1.transform.position = cellPosition;
+                        tests.Add(test1);
+                    }
+
+                }
+            }
+        }
+
+
+
+        private NeighborData[] GetNeighbourData(FlowTilemapCell cell)
+        {
+            var tilemap = dungeonModel.Tilemap;
+            var coord = cell.TileCoord;
+            var left = new NeighborData
+            {
+                cell = tilemap.Cells.GetCell(coord.x - 1, coord.y),
+                edge = tilemap.Edges.GetVertical(coord.x, coord.y)
+            };
+
+            var right = new NeighborData
+            {
+                cell = tilemap.Cells.GetCell(coord.x + 1, coord.y),
+                edge = tilemap.Edges.GetVertical(coord.x + 1, coord.y)
+            };
+
+            var down = new NeighborData
+            {
+                cell = tilemap.Cells.GetCell(coord.x, coord.y - 1),
+                edge = tilemap.Edges.GetHorizontal(coord.x, coord.y)
+            };
+
+            var up = new NeighborData
+            {
+                cell = tilemap.Cells.GetCell(coord.x, coord.y + 1),
+                edge = tilemap.Edges.GetHorizontal(coord.x, coord.y + 1)
+            };
+
+            return new[] { left, up, right, down };
         }
 
         private void UpdateHighlight()
@@ -141,7 +401,7 @@ namespace Johnny.SimDungeon
                 {
                     var position = m_LastHitBuildingPart.transform.position;
                     position = new Vector3(position.x, 0f, position.z);
-                    var cell = dungeonModel.GetTilemapCell(position);
+                    var cell = gridFlowDungeonQuery.WorldCoordToTile(position);
                     var roomCells = gridFlowDungeonQuery.GetLayoutNodeTile(cell.NodeCoord, false);
                     //foreach (var item in roomCells)
                     //{
@@ -205,7 +465,7 @@ namespace Johnny.SimDungeon
                     tests.Add(test1);
 
 
-                    //Left
+
                     var neighbourData = GetNeighbourData(cell);
                     for (int i = 0; i < neighbourData.Length; i++)
                     {
@@ -264,36 +524,7 @@ namespace Johnny.SimDungeon
             public FlowTilemapEdge edge;
         }
 
-        private NeighborData[] GetNeighbourData(FlowTilemapCell cell)
-        {
-            var tilemap = dungeonModel.Tilemap;
-            var coord = cell.TileCoord;
-            var left = new NeighborData
-            {
-                cell = tilemap.Cells.GetCell(coord.x - 1, coord.y),
-                edge = tilemap.Edges.GetVertical(coord.x, coord.y)
-            };
 
-            var right = new NeighborData
-            {
-                cell = tilemap.Cells.GetCell(coord.x + 1, coord.y),
-                edge = tilemap.Edges.GetVertical(coord.x + 1, coord.y)
-            };
-
-            var down = new NeighborData
-            {
-                cell = tilemap.Cells.GetCell(coord.x, coord.y - 1),
-                edge = tilemap.Edges.GetHorizontal(coord.x, coord.y)
-            };
-
-            var up = new NeighborData
-            {
-                cell = tilemap.Cells.GetCell(coord.x, coord.y + 1),
-                edge = tilemap.Edges.GetHorizontal(coord.x, coord.y + 1)
-            };
-
-            return new[] { left, up, right, down };
-        }
 
 
 
@@ -306,7 +537,7 @@ namespace Johnny.SimDungeon
 
         public override void OnDungeonDestroyed(Dungeon dungeon)
         {
-            dungeonCellDatas.DestroyCellEntites();
+            CellEntitiyManager.Instance.DestroyCellEntites();
         }
 
         private Vector3 SnapToGrid(Vector3 value)
@@ -317,13 +548,20 @@ namespace Johnny.SimDungeon
             return new Vector3(x, 0.01f, z);
         }
 
+        private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)
+        {
+            if (gridMode != GridMode.None)
+            {
+                //easyGridBuilderProController.Temp_UpdateGrid(dungeonCellDatas.subCellsMap);
+            }
+        }
 
         public override void OnPostDungeonLayoutBuild(Dungeon dungeon, DungeonModel model)
         {
             var dungeonModel = model as GridFlowDungeonModel;
-            dungeonCellDatas.Init(dungeonModel.Tilemap.Cells);
+            CellEntitiyManager.Instance.Init(dungeonModel.Tilemap.Cells);
             //dungeonModel.Tilemap.ed
-            if (m_CustomFloors != null && m_CustomFloors.Any())
+            if (m_WillCreateSpaces.Any())
             {
                 foreach (var item in m_CustomFloors)
                 {
@@ -334,17 +572,11 @@ namespace Johnny.SimDungeon
             gridFlowMinimap.Initialize();
         }
 
-        private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)
-        {
-            if (gridMode != GridMode.None)
-            {
-                easyGridBuilderProController.Temp_UpdateGrid(dungeonCellDatas.subCellsMap);
-            }
-        }
+
 
         public override void OnPostDungeonBuild(Dungeon dungeon, DungeonModel model)
         {
-            dungeonCellDatas.CheckCellEntites();
+            //CellEntitiesData.Instance.CheckCellEntites();
 
 
 

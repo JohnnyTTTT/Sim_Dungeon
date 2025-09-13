@@ -21,20 +21,30 @@ public class EasyGridBuilderProController : MonoBehaviour
 
     public Vector2Int v;
     public bool BuildMode;
-    private void Start()
-    {
 
-    }
+
+    public Transform target;
+    public BuildableGridObjectSO prefab;
+
+
+
+
+
+
+
+
+
+
 
     public void Temp_UpdateGrid(Dictionary<Vector2Int, CellEntity> subCellsMap)
     {
-
-        var grid = m_EasyGridBuilderPro.GetActiveGrid() as GridXZ;
+        var activeGridBuilder = GridManager.Instance.GetActiveEasyGridBuilderPro();
+        var grid = activeGridBuilder.GetActiveGrid() as GridXZ;
         var gridWidth = grid.GetWidth();
         var gridLength = grid.GetLength();
-        var mat = m_EasyGridBuilderPro.GetComponentInChildren<Renderer>().sharedMaterial;
+        var mat = activeGridBuilder.GetComponentInChildren<Renderer>().sharedMaterial;
         temp_GeneratedTexture = mat.GetTexture(Shader.PropertyToID("_Generated_Texture")) as Texture2D;
-        var colors = new Color[gridWidth* gridLength];
+        var colors = new Color[gridWidth * gridLength];
         for (int x = 0; x < gridWidth; x++)
         {
             for (int z = 0; z < gridLength; z++)
@@ -46,7 +56,7 @@ public class EasyGridBuilderProController : MonoBehaviour
                 var adjustedX = gridWidth - 1 - x;      // Flip x
                 var index = adjustedZ * gridWidth + adjustedX;
 
-                colors[index] = subCellsMap[position].canBuildOn ? new Color(255, 255, 255, 255) : temp_HideColor; ;
+                colors[index] = subCellsMap[position].CanBuildOn() ? new Color(255, 255, 255, 255) : temp_HideColor; ;
             }
         }
         temp_GeneratedTexture.SetPixels(colors);
@@ -76,6 +86,7 @@ public class EasyGridBuilderProController : MonoBehaviour
     {
         //MoveOnGroundPlane();
     }
+
     private void MoveOnGroundPlane()
     {
         if (m_Camera == null) return;
@@ -98,7 +109,17 @@ public class EasyGridBuilderProController : MonoBehaviour
         BuildMode = buildMode;
         if (BuildMode)
         {
+            var index = m_EasyGridBuilderPro.GetActiveVerticalGridIndex();
+            if (m_EasyGridBuilderPro.TryInitializeBuildableGridObjectSinglePlacement(target.position, prefab, FourDirectionalRotation.North, true, true, index, true, out BuildableGridObject buildableGridObject, null, null))
+            {
+                buildableGridObject.transform.parent = target;
+
+            }
+            return;
+
+
             //m_EasyGridBuilderPro.GetObjectGridSettings().gridShowColor = color;
+
             if (m_GridManager.TryGetGridAreaDisablerManager(out GridAreaDisablerManager gridAreaDisablerManager))
             {
                 var grid = m_EasyGridBuilderPro.GetActiveGrid() as GridXZ;
