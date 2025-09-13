@@ -67,7 +67,7 @@ namespace Johnny.SimDungeon
                     foreach (var buildableObject in gridBuiltObjectsManager.GetBuiltObjectsList())
                     {
                         var buildableRoom = buildableObject.GetComponent<BuildableRoom>();
-                        var cell = DungeonController.Instance.WorldPositionToCell(buildableObject.transform.position);
+                        var cell = DungeonController.Instance.GetCellFromWorldPosition(buildableObject.transform.position);
                         Debug.Log(CellEntitiyManager.Instance);
                         var cellEntitly = CellEntitiyManager.Instance.GetCellEntitly(cell);
                         cellEntitly.room = room;

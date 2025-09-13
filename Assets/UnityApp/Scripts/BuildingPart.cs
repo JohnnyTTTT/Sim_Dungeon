@@ -7,7 +7,6 @@ namespace Johnny.SimDungeon
     public class BuildingPart : MonoBehaviour
     {
         public CellEntity parent;
-        public FlowTilemapCellType type;
 
     }
 }

@@ -57,28 +57,6 @@ MonoBehaviour:
   input: {fileID: -6784912975407250196}
   output: {fileID: -1189290305100528897}
   graph: {fileID: -506511903298742666}
---- !u!114 &-8756514736065936240
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 455b3b28dd3a4d41a5654db8b9f48cfc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.Grid.GridMarkerGenRule
-  ruleGraph: {fileID: 2897188064540627325}
-  program: {fileID: 8836180372235364180}
-  actions: {fileID: -3885781485382317347}
-  previewTextCondition: Dirt
-  previewTextActions: []
-  color: {r: 0.58329666, g: 1, b: 0.5, a: 1}
-  visuallyDominant: 1
-  coord: {x: 0, y: 0}
-  ruleType: 0
-  hintWillInsertAssetHere: 0
 --- !u!114 &-8742169215994757595
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1032,7 +1010,7 @@ MonoBehaviour:
   inputPins:
   - {fileID: -7588558840984793522}
   outputPins: []
-  graph: {fileID: 2897188064540627325}
+  graph: {fileID: 0}
 --- !u!114 &-5424124897450916799
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1605,7 +1583,6 @@ MonoBehaviour:
   - {fileID: 4301346845247863976}
   - {fileID: 1485059695687101061}
   - {fileID: 5808976170792558854}
-  - {fileID: -8756514736065936240}
   - {fileID: -7695383958983630248}
   - {fileID: -374025694980100224}
   sameHeightMarkers: []
@@ -2684,30 +2661,6 @@ MonoBehaviour:
   markerName: 'Corner '
   copyRotationFromMarkers: []
   copyHeightFromMarkers: []
---- !u!114 &2897188064540627325
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f712e62250a84e678bb9c51b8f3bc3f5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.MarkerGenRuleGraph
-  indexCounter:
-    index: 1
-  topZIndex:
-    index: 7
-  nodes:
-  - {fileID: -5494532199967817725}
-  - {fileID: 4484053714590727210}
-  - {fileID: 3315109918272929238}
-  links:
-  - {fileID: 6807326595169286079}
-  resultNode: {fileID: -5494532199967817725}
-  passNode: {fileID: 4484053714590727210}
 --- !u!114 &2910994371141541988
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2806,7 +2759,7 @@ MonoBehaviour:
   inputPins: []
   outputPins:
   - {fileID: -2350476653535469692}
-  graph: {fileID: 2897188064540627325}
+  graph: {fileID: 0}
   markerName: Dirt
 --- !u!114 &3456268666126353022
 MonoBehaviour:
@@ -3056,7 +3009,7 @@ MonoBehaviour:
   inputPins: []
   outputPins:
   - {fileID: -2887522680811302326}
-  graph: {fileID: 2897188064540627325}
+  graph: {fileID: 0}
 --- !u!114 &4813854703237414325
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3326,7 +3279,7 @@ MonoBehaviour:
   id: 1
   input: {fileID: -7588558840984793522}
   output: {fileID: -2350476653535469692}
-  graph: {fileID: 2897188064540627325}
+  graph: {fileID: 0}
 --- !u!114 &6876258181283129344
 MonoBehaviour:
   m_ObjectHideFlags: 1

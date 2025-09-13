@@ -71,11 +71,35 @@ namespace Johnny.SimDungeon
             //m_GridFlowDungeonBuilder.BuildDungeon(m_DungeonConfig, m_DungeonModel);
         }
 
-        public FlowTilemapCell WorldPositionToCell(Vector3 worldPosition)
+        public FlowTilemapCell GetCellFromWorldPosition(Vector3 worldPosition)
         {
             return gridFlowDungeonQuery.WorldCoordToTile(worldPosition);
         }
 
+        public FlowTilemapCell GetCellFromTileCoord(IntVector2 coord)
+        {
+            return dungeonModel.Tilemap.Cells.GetCell(coord.x, coord.y);
+        }
+
+        public FlowTilemapEdge GetLeftEdgeFromTileCoord(IntVector2 coord)
+        {
+            return  dungeonModel.Tilemap.Edges.GetVertical(coord.x, coord.y);
+        }
+
+        public FlowTilemapEdge GetUpEdgeFromTileCoord(IntVector2 coord)
+        {
+            return dungeonModel.Tilemap.Edges.GetHorizontal(coord.x, coord.y + 1);
+        }
+
+        public FlowTilemapEdge GetRightEdgeFromTileCoord(IntVector2 coord)
+        {
+            return dungeonModel.Tilemap.Edges.GetVertical(coord.x + 1, coord.y);
+        }
+
+        public FlowTilemapEdge GetDownEdgeFromTileCoord(IntVector2 coord)
+        {
+            return dungeonModel.Tilemap.Edges.GetHorizontal(coord.x, coord.y);
+        }
 
 
         private void OnActiveEasyGridBuilderProChanged(EasyGridBuilderPro arg0)
@@ -114,6 +138,7 @@ namespace Johnny.SimDungeon
             new IntVector2(0, 1),
             new IntVector2(0, -1)};
 
+        //在一堆连续的单元格找出边缘的格子
         public static List<CellEntity> FindEdgeCells(List<CellEntity> cells)
         {
             var cellCoords = cells.Select(x => x.cell.TileCoord);
@@ -317,7 +342,7 @@ namespace Johnny.SimDungeon
                 m_LastHitBuildingPart = hit.transform.GetComponent<BuildingPart>();
                 if (m_LastHitBuildingPart != null)
                 {
-                    Debug.Log(m_LastHitBuildingPart.type);
+                    //Debug.Log(m_LastHitBuildingPart.type);
                 }
                 //var cellPos = SnapToGrid(hit.point);
                 //var cell = dungeonModel.GetTilemapCell(cellPos);

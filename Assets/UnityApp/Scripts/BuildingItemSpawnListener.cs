@@ -7,6 +7,14 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
+    public enum RelativeDirection
+    {
+        Left,
+        Up,
+        Right,
+        Down
+    }
+
     public class BuildingItemSpawnListener : DungeonItemSpawnListener
     {
 
@@ -18,54 +26,67 @@ namespace Johnny.SimDungeon
 
         //private CellEntity TryGetValue(FlowTilemapCell cell)
         //{
-        //    if (!cells.TryGetValue(cell, out var info))
-        //    {
-        //        var tileCoord = new Vector2Int(cell.TileCoord.x, cell.TileCoord.y);
-        //        var entity = new GameObject(tileCoord.ToString());
-        //        entity.transform.position = m_DungeonController.gridFlowDungeonQuery.TileCoordToWorldCoord(cell.TileCoord);
-        //        entity.transform.parent = m_CellEntityParent;
-        //        info = entity.AddComponent<CellEntity>();
-        //        var nodeCoord = new Vector2Int(cell.NodeCoord.x, cell.NodeCoord.y);
-        //        //info.Init(tileCoord);
-        //        //info = new SimDungeonCellInfo();
-        //        cells[cell] = info;
-        //    }
+        //    var entitly = CellEntitiyManager.Instance.GetCellEntitly(cell);
+
+        //    entity.transform.position = m_DungeonController.gridFlowDungeonQuery.TileCoordToWorldCoord(cell.TileCoord);
+        //    entity.transform.parent = m_CellEntityParent;
+        //    info = entity.AddComponent<CellEntity>();
+        //    var nodeCoord = new Vector2Int(cell.NodeCoord.x, cell.NodeCoord.y);
+        //    //info.Init(tileCoord);
+        //    //info = new SimDungeonCellInfo();
+        //    cells[cell] = info;
+
         //    return info;
         //}
 
+        /// <summary>
+        /// 判断 a 在 b 的上下左右哪个方向
+        /// </summary>
+        public static RelativeDirection GetDirection(Vector3 a, Vector3 b)
+        {
+            var dir = new Vector2(a.x - b.x, a.z - b.z);
 
+            if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y)) // X 方向差距更大
+            {
+                return dir.x > 0 ? RelativeDirection.Right : RelativeDirection.Left;
+            }
+            else // Z 方向差距更大
+            {
+                return dir.y > 0 ? RelativeDirection.Up : RelativeDirection.Down;
+            }
+        }
 
         public override void SetMetadata(GameObject dungeonItem, DungeonNodeSpawnData spawnData)
         {
             if (dungeonItem != null)
             {
-                var marker = spawnData.socket;
-                var cell = DungeonController.Instance.dungeonModel.Tilemap.Cells.GetCell(marker.gridPosition.x, marker.gridPosition.z);
-                if (CellEntitiyManager.Instance.cellsMap.TryGetValue(cell, out var entity))
+                var buildingParts = dungeonItem.GetComponentsInChildren<BuildingPart>();
+                foreach (var item in buildingParts)
                 {
-                    var buildingParts = dungeonItem.GetComponentsInChildren<BuildingPart>();
-                    foreach (var item in buildingParts)
+                    if (item is Building_Edge building_Edge)
                     {
-                        switch (item.type)
+                        var cell = DungeonController.Instance.GetCellFromWorldPosition(building_Edge.transform.position);
+                        var entitly = CellEntitiyManager.Instance.GetCellEntitly(cell);
+                        var direction = GetDirection(building_Edge.transform.position, entitly.transform.position);
+                        switch (direction)
                         {
-                            case FlowTilemapCellType.Empty:
+                            case RelativeDirection.Left:
+                                entitly.edges[0].buildingPart = building_Edge;
                                 break;
-                            case FlowTilemapCellType.Floor:
-                                entity.floor = item;
+                            case RelativeDirection.Up:
+                                entitly.edges[1].buildingPart = building_Edge;
                                 break;
-                            case FlowTilemapCellType.Wall:
+                            case RelativeDirection.Right:
+                                entitly.edges[2].buildingPart = building_Edge;
                                 break;
-                            case FlowTilemapCellType.Door:
+                            case RelativeDirection.Down:
+                                entitly.edges[3].buildingPart = building_Edge;
                                 break;
-                            case FlowTilemapCellType.Custom:
+                            default:
                                 break;
                         }
-                        item.parent = entity;
+                        item.parent = entitly;
                     }
-                }
-                else
-                {
-                    Debug.LogError($"Can not find entity for cell <{marker.gridPosition}>");
                 }
                 //if (!cells.TryGetValue(gridPosition, out var cell))
                 //{

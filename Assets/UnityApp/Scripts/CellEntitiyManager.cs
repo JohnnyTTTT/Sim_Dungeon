@@ -21,7 +21,7 @@ namespace Johnny.SimDungeon
         }
         private static CellEntitiyManager s_Instance;
 
-        public Dictionary<FlowTilemapCell, CellEntity> cellsMap = new Dictionary<FlowTilemapCell, CellEntity>();
+        private Dictionary<FlowTilemapCell, CellEntity> cellsMap = new Dictionary<FlowTilemapCell, CellEntity>();
         public Dictionary<Vector2Int, CellEntity> subCellsMap = new Dictionary<Vector2Int, CellEntity>();
         [SerializeField] private GameObject m_CellEntityPrefab;
         public bool showGizmo;
