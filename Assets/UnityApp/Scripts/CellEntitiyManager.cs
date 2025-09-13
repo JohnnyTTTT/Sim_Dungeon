@@ -70,17 +70,18 @@ namespace Johnny.SimDungeon
 
         public void DestroyCellEntites()
         {
-            foreach (var item in cellsMap)
+            for (int i = transform.childCount - 1; i >= 0; i--)
             {
                 if (Application.isPlaying)
                 {
-                    Destroy(item.Value.gameObject);
+                    Destroy(transform.GetChild(i).gameObject);
                 }
                 else
                 {
-                    DestroyImmediate(item.Value.gameObject);
+                    DestroyImmediate(transform.GetChild(i).gameObject);
                 }
             }
+
         }
 
     }

@@ -146,53 +146,34 @@ namespace Johnny.SimDungeon
                     //left
                     var left = neighbourData[0].cell;
                     var edgeLeft = neighbourData[0].edge;
-                    if (left.CellType == FlowTilemapCellType.Custom)
+                    if (left.CellType == FlowTilemapCellType.Custom || (left.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetCellEntitly(left).room != roomEntitly))
                     {
-                        edgeLeft.EdgeType = FlowTilemapEdgeType.Wall;
-                    }
-                    else if (left.CellType == FlowTilemapCellType.Floor)
-                    {
-                        edgeLeft.EdgeType = cellEntitiyManager.GetCellEntitly(left).room == roomEntitly
-                            ? FlowTilemapEdgeType.Empty : FlowTilemapEdgeType.Wall; 
+                        edgeLeft.EdgeType = FlowTilemapEdgeType.Fence;
                     }
 
                     //up
                     var up = neighbourData[1].cell;
                     var edgeUp = neighbourData[1].edge;
-                    if (up.CellType == FlowTilemapCellType.Custom)
+                    if (up.CellType == FlowTilemapCellType.Custom || (up.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetCellEntitly(up).room != roomEntitly))
                     {
-                        edgeUp.EdgeType = FlowTilemapEdgeType.Wall;
+                        edgeUp.EdgeType = FlowTilemapEdgeType.Fence;
                     }
-                    else if (up.CellType == FlowTilemapCellType.Floor )
-                    {
-                        edgeUp.EdgeType = cellEntitiyManager.GetCellEntitly(up).room == roomEntitly
-                            ? FlowTilemapEdgeType.Empty : FlowTilemapEdgeType.Wall;
-                    }
+
 
                     //right
                     var right = neighbourData[2].cell;
                     var edgeRight = neighbourData[2].edge;
-                    if (right.CellType == FlowTilemapCellType.Custom)
+                    if (right.CellType == FlowTilemapCellType.Custom || (right.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetCellEntitly(right).room != roomEntitly))
                     {
-                        edgeRight.EdgeType = FlowTilemapEdgeType.Wall;
-                    }
-                    else if (right.CellType == FlowTilemapCellType.Floor)
-                    {
-                        edgeRight.EdgeType = cellEntitiyManager.GetCellEntitly(right).room == roomEntitly
-                            ? FlowTilemapEdgeType.Empty : FlowTilemapEdgeType.Wall;
+                        edgeRight.EdgeType = FlowTilemapEdgeType.Fence;
                     }
 
                     //down
                     var down = neighbourData[3].cell;
                     var edgeDown = neighbourData[3].edge;
-                    if (down.CellType == FlowTilemapCellType.Custom)
+                    if (down.CellType == FlowTilemapCellType.Custom || (down.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetCellEntitly(down).room != roomEntitly))
                     {
-                        edgeDown.EdgeType = FlowTilemapEdgeType.Wall;
-                    }
-                    else if (down.CellType == FlowTilemapCellType.Floor )
-                    {
-                        edgeDown.EdgeType = cellEntitiyManager.GetCellEntitly(down).room == roomEntitly
-                            ? FlowTilemapEdgeType.Empty : FlowTilemapEdgeType.Wall;
+                        edgeDown.EdgeType = FlowTilemapEdgeType.Fence;
                     }
                     Debug.Log($"вС : <{left.CellType}> , ио : <{up.CellType}> , ср : <{right.CellType}> , об : <{down.CellType}>");
                 }
