@@ -997,7 +997,7 @@ MonoBehaviour:
   indexCounter:
     index: 54
   topZIndex:
-    index: 639
+    index: 640
   nodes:
   - {fileID: -3594657537052259348}
   - {fileID: -6408017505075203063}
@@ -1048,7 +1048,7 @@ MonoBehaviour:
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
-  selected: 1
+  selected: 0
   zIndex: 639
   inputPins: []
   outputPins:
@@ -1857,7 +1857,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.SpatialConstraints.SpatialConstraintAsset
   rotateToFit: 1
-  applyFitRotation: 0
+  applyFitRotation: 1
   applyMarkerRotation: 1
   checkRelativeToMarkerRotation: 1
   hostThemeNode: {fileID: 8966833838623696280}
@@ -1919,8 +1919,8 @@ MonoBehaviour:
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
-  selected: 0
-  zIndex: 618
+  selected: 1
+  zIndex: 640
   inputPins:
   - {fileID: -4939119161437252839}
   outputPins:
@@ -1951,7 +1951,7 @@ MonoBehaviour:
   selectionRuleClassName: 
   transformRuleEnabled: 0
   transformRuleClassName: 
-  useSpatialConstraint: 0
+  useSpatialConstraint: 1
   spatialConstraint: {fileID: 8060374318163068932}
   Template: {fileID: 2258760145057214865, guid: 351d2f967af267d43bec7e10d14341d1, type: 3}
 --- !u!114 &9065040484316625214

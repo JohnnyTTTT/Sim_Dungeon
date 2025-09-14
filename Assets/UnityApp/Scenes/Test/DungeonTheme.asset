@@ -1422,7 +1422,7 @@ MonoBehaviour:
   indexCounter:
     index: 52
   topZIndex:
-    index: 612
+    index: 613
   nodes:
   - {fileID: -3594657537052259348}
   - {fileID: -6408017505075203063}
@@ -1455,7 +1455,6 @@ MonoBehaviour:
   - {fileID: 3491785447190631866}
   - {fileID: 7370678615214943317}
   - {fileID: -1643712028188656457}
-  - {fileID: 9020546347383223631}
   - {fileID: 2018550487276188580}
   - {fileID: -5097178179562279538}
   - {fileID: 8031228824161475050}
@@ -2737,8 +2736,8 @@ MonoBehaviour:
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
-  selected: 0
-  zIndex: 608
+  selected: 1
+  zIndex: 613
   inputPins:
   - {fileID: -4939119161437252839}
   outputPins:
@@ -2772,22 +2771,6 @@ MonoBehaviour:
   useSpatialConstraint: 1
   spatialConstraint: {fileID: 8060374318163068932}
   Template: {fileID: 2258760145057214865, guid: 351d2f967af267d43bec7e10d14341d1, type: 3}
---- !u!114 &9020546347383223631
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
-  m_Name: Link_39
-  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
-  id: 39
-  input: {fileID: 5076611885565014930}
-  output: {fileID: 6186663192937890993}
-  graph: {fileID: 11400000}
 --- !u!114 &9065040484316625214
 MonoBehaviour:
   m_ObjectHideFlags: 1

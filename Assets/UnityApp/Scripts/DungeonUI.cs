@@ -11,7 +11,15 @@ namespace Johnny.SimDungeon
         [SerializeField] private EasyGridBuilderProController m_EasyGridBuilderProController;
         [SerializeField] private CategoryUI m_CategoryUI;
         [SerializeField] private BuildableUI m_BuildableUI;
-        public Toggle buildMode;
+
+
+        //Structure
+        public Toggle structureMode;
+        public Toggle extendMode;
+        public Toggle makeRoomMode;
+        public GameObject structurePanel;
+
+
         public Toggle Remove;
         private BuildableObjectUICategorySO activeBuildableObjectUICategorySO;
 
@@ -21,9 +29,7 @@ namespace Johnny.SimDungeon
 
         private void Start()
         {
-
             gridManager = GridManager.Instance;
-            Debug.Log(gridManager, gridManager);
             gridManager.OnActiveEasyGridBuilderProChanged += OnActiveEasyGridBuilderProChanged;
             gridManager.OnActiveGridModeChanged += OnActiveGridModeChanged;
 
@@ -34,29 +40,20 @@ namespace Johnny.SimDungeon
 
 
             activeEasyGridBuilderPro = GridManager.Instance.GetActiveEasyGridBuilderPro();
-            if (activeEasyGridBuilderPro)
-            {
-                activeGridMode = activeEasyGridBuilderPro.GetActiveGridMode();
-                m_CategoryUI.Init(activeEasyGridBuilderPro);
-                m_BuildableUI.Init(activeEasyGridBuilderPro);
-            }
+
+            //UI
+            structureMode.onValueChanged.AddListener(StructureModeValueChanged);
+            extendMode.onValueChanged.AddListener(ExtendModeValueChanged);
+            makeRoomMode.onValueChanged.AddListener(MakeRoomModeValueChanged);
         }
-
-        private IEnumerator LateStart()
-        {
-            yield return new WaitForEndOfFrame();
-
-
-        }
-
 
 
         private void OnActiveEasyGridBuilderProChanged(EasyGridBuilderPro activeEasyGridBuilderProSystem)
         {
-            Debug.Log(111);
             activeEasyGridBuilderPro = activeEasyGridBuilderProSystem;
             activeGridMode = activeEasyGridBuilderPro.GetActiveGridMode();
-
+            m_CategoryUI.Init(activeEasyGridBuilderPro);
+            m_BuildableUI.Init(activeEasyGridBuilderPro);
         }
 
         private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)
@@ -73,7 +70,7 @@ namespace Johnny.SimDungeon
             }
         }
 
-        private void OnBuildableButtonPressedMethod(bool isOn, BuildableObjectSO buildableObjectSO)
+        private void OnBuildableButtonPressedMethod( BuildableObjectSO buildableObjectSO)
         {
             foreach (var easyGridBuilderPro in gridManager.GetEasyGridBuilderProSystemsList())
             {
@@ -83,29 +80,28 @@ namespace Johnny.SimDungeon
 
 
 
-
-
-
-
-
-        private void OnEnable()
-        {
-            buildMode.onValueChanged.AddListener(BuildingModeValueChanged);
-            Remove.onValueChanged.AddListener(RemoveModeValueChanged);
-        }
-
         private void RemoveModeValueChanged(bool arg0)
         {
             DungeonController.Instance.structureMode = arg0 ? StructureMode.CreateSpace : StructureMode.None;
         }
-
-        private void BuildingModeValueChanged(bool arg0)
+        private void ExtendModeValueChanged(bool arg0)
         {
-            if (arg0)
+
+        }
+
+        private void MakeRoomModeValueChanged(bool value)
+        {
+            if (value)
             {
+                EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeFour);
                 gridManager.SetActiveGridModeInAllGrids(GridMode.BuildMode);
             }
+        }
 
+
+        private void StructureModeValueChanged(bool value)
+        {
+            structurePanel.SetActive(value);
             //m_EasyGridBuilderProController.SetAllDisable(arg0);
         }
 

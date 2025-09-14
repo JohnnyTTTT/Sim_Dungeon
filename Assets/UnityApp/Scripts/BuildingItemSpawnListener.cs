@@ -7,18 +7,15 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public enum RelativeDirection
-    {
-        Left,
-        Up,
-        Right,
-        Down
-    }
+
 
     public class BuildingItemSpawnListener : DungeonItemSpawnListener
     {
-
-
+        private static readonly float[] Angles = { 0f, 90f, 180f, 270f };
+        private static Vector3 dirUp = Vector3.forward;    // 世界前
+        private static Vector3 dirDown = Vector3.back;     // 世界后
+        private static Vector3 dirRight = Vector3.right;   // 世界右
+        private static Vector3 dirLeft = Vector3.left;     // 世界左
         private void Start()
         {
             //cells.Clear();
@@ -39,142 +36,183 @@ namespace Johnny.SimDungeon
         //    return info;
         //}
 
-        /// <summary>
-        /// 判断 a 在 b 的上下左右哪个方向
-        /// </summary>
-        public static RelativeDirection GetDirection(Vector3 a, Vector3 b)
+        private Direction GetDirectionForWorld(Quaternion rotation)
         {
-            var dir = new Vector2(a.x - b.x, a.z - b.z);
+            var forward = rotation * Vector3.forward;
+
+            forward.y = 0;
+            forward.Normalize();
+
+            // 定义四个方向向量
+
+
+            // 计算点积
+            float dotUp = Vector3.Dot(forward, dirUp);
+            float dotDown = Vector3.Dot(forward, dirDown);
+            float dotRight = Vector3.Dot(forward, dirRight);
+            float dotLeft = Vector3.Dot(forward, dirLeft);
+
+            // 找最大值对应的方向
+            float maxDot = Mathf.Max(dotUp, dotDown, dotRight, dotLeft);
+
+            if (maxDot == dotUp) return Direction.Down;
+            if (maxDot == dotDown) return Direction.Up;
+            if (maxDot == dotRight) return Direction.Left;
+            return Direction.Right;
+        }
+
+
+        /// <summary>
+        /// 判断 a 在 cell 的上下左右哪个方向
+        /// </summary>
+        public static Direction GetDirectionForCell(Vector3 a, Vector3 cell)
+        {
+            var dir = new Vector2(a.x - cell.x, a.z - cell.z);
 
             if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y)) // X 方向差距更大
             {
-                return dir.x > 0 ? RelativeDirection.Right : RelativeDirection.Left;
+                return dir.x > 0 ? Direction.Right : Direction.Left;
             }
             else // Z 方向差距更大
             {
-                return dir.y > 0 ? RelativeDirection.Up : RelativeDirection.Down;
+                return dir.y > 0 ? Direction.Up : Direction.Down;
             }
         }
 
+        private float GetRandomRotation()
+        {
+            var index = UnityEngine.Random.Range(0, Angles.Length);
+            return Angles[index];
+        }
+        public bool a = true;
+        public bool b = true;
+        public float test;
         public override void SetMetadata(GameObject dungeonItem, DungeonNodeSpawnData spawnData)
         {
             if (dungeonItem != null)
             {
-                var buildingParts = dungeonItem.GetComponentsInChildren<BuildingPart>();
-                foreach (var item in buildingParts)
+                var marker = spawnData.socket;
+                var gridcoord = new IntVector2(marker.gridPosition.x, marker.gridPosition.z);
+                var cell = DungeonController.Instance.GetCellFromTileCoord(gridcoord);
+                var building = dungeonItem.GetComponent<BuildingEntity>();
+                if (building is CellEntity cellEntity)
                 {
-                    if (item is Building_Edge building_Edge)
+                    if (cellEntity.randomAngle)
                     {
-                        var cell = DungeonController.Instance.GetCellFromWorldPosition(building_Edge.transform.position);
-                        var entitly = CellEntitiyManager.Instance.GetCellEntitly(cell);
-                        var direction = GetDirection(building_Edge.transform.position, entitly.transform.position);
-                        switch (direction)
-                        {
-                            case RelativeDirection.Left:
-                                entitly.edges[0].buildingPart = building_Edge;
-                                break;
-                            case RelativeDirection.Up:
-                                entitly.edges[1].buildingPart = building_Edge;
-                                break;
-                            case RelativeDirection.Right:
-                                entitly.edges[2].buildingPart = building_Edge;
-                                break;
-                            case RelativeDirection.Down:
-                                entitly.edges[3].buildingPart = building_Edge;
-                                break;
-                            default:
-                                break;
-                        }
-                        item.parent = entitly;
+                        var rotation = Quaternion.Euler(0, GetRandomRotation(), 0);
+                        cellEntity.transform.rotation = rotation;
                     }
+                    cellEntity.Init(cell);
+                    EntitiyManager_Cell.Instance.Regist(cellEntity);
                 }
-                //if (!cells.TryGetValue(gridPosition, out var cell))
-                //{
-                //    cell = new GameObject(gridPosition.ToString());
+                else if (building is EdgeEntity edgeEntitly)
+                {
+                    //EdgeEntity
+                    var y = Mathf.FloorToInt(spawnData.transform.rotation.eulerAngles.y);
+                    FlowTilemapEdge edge = null;
+                    if (y == 0)
+                    {
+                        edge = DungeonController.Instance.GetDownEdgeFromTileCoord(gridcoord);
+                    }
+                    else if (y == 90)
+                    {
+                        edge = DungeonController.Instance.GetLeftEdgeFromTileCoord(gridcoord);
 
-                //    cell.transform.parent = m_DungeonController.pooledDungeonSceneProvider.itemParent.transform;
-                //    cells[gridPosition] = cell;
-                //}
-                //dungeonItem.transform.parent = cell.transform;
-                //Debug.Log(marker.gridPosition);
-                //var buildingParts = dungeonItem.GetComponentsInChildren<BuildingPart>();
-                //foreach (var item in buildingParts)
-                //{
-                //    var position = new Vector3(item.transform.position.x, 0f, item.transform.position.z);
-                //    var info = TryGetValue(m_DungeonController.dungeonModel.GetTilemapCell(position));
-                //    //Debug.Log(spawnData.socket.gridPosition);
-                //    //Debug.Log(m_DungeonController.dungeonModel.GetTilemapCell(position).TileCoord.x+" "+ m_DungeonController.dungeonModel.GetTilemapCell(position).TileCoord.y);
-                //    switch (item.type)
-                //    {
-                //        case FlowTilemapCellType.Empty:
-                //            break;
-                //        case FlowTilemapCellType.Floor:
-                //            info.floor = item;
-                //            break;
-                //        case FlowTilemapCellType.Wall:
-                //            Vector3 direction = transform.position - position;
-                //            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    }
+                    else if (y == 180)
+                    {
+                        edge = DungeonController.Instance.GetUpEdgeFromTileCoord(gridcoord);
+                    }
+                    else if (y == 270)
+                    {
+                        edge = DungeonController.Instance.GetRightEdgeFromTileCoord(gridcoord);
+                    }
+                    edgeEntitly.Init(edge);
+                    EntitylManager_Edge.Instance.Regist(edgeEntitly);
 
-                //            // 判断方向（角度区间）
-                //            if (angle > -45 && angle <= 45)
-                //            {
-                //                Debug.Log("物体在右侧");
-                //            }
-                //            else if (angle > 45 && angle <= 135)
-                //            {
-                //                Debug.Log("物体在上方");
-                //            }
-                //            else if (angle > 135 || angle <= -135)
-                //            {
-                //                Debug.Log("物体在左侧");
-                //            }
-                //            else
-                //            {
-                //                Debug.Log("物体在下方");
-                //            }
+                    //SubEdgeEntity
+                    //foreach (var subEdgeEntity in edgeEntitly.subEdges)
+                    //{
+                    //    var realCellEntity = EntitiyManager_Cell.Instance.GetCellEntitly(subEdgeEntity.transform.position);
+                    //    var dir = GetDirectionForCell(subEdgeEntity.transform.position, realCellEntity.transform.position);
+                    //    switch (dir)
+                    //    {
+                    //        case Direction.Left:
+                    //            realCellEntity.edges[0] = subEdgeEntity;
+                    //            break;
+                    //        case Direction.Up:
+                    //            realCellEntity.edges[1] = subEdgeEntity;
+                    //            break;
+                    //        case Direction.Right:
+                    //            realCellEntity.edges[2] = subEdgeEntity;
+                    //            break;
+                    //        case Direction.Down:
+                    //            realCellEntity.edges[3] = subEdgeEntity;
+                    //            break;
+                    //    }
+                    //}
+                    //Debug.Log("aaa   " + marker.gridPosition, edgeEntitly);
+                    //Debug.Log(EntitiyManager_Cell.Instance.GetCellEntitly(cell), EntitiyManager_Cell.Instance.GetCellEntitly(cell));
+                    //Debug.Log(marker.SocketType);
 
 
-                //            //m_DungeonController.dungeonModel.Tilemap.Edges.GetVertical
-                //            info.walls.Add(item);
-                //            break;
-                //        case FlowTilemapCellType.Door:
-                //            break;
-                //        case FlowTilemapCellType.Custom:
-                //            break;
-                //        default:
-                //            break;
-                //    }
-                //    item.parent = info;
-                //}
+                    //foreach (var item in edgeEntitly.edges)
+                    //{
+                    //    if (item.replaceableObjectSO == null)
+                    //    {
+                    //        edgeEntitly.SetReplaceableObjectSO(item, BuildableAssets.Instance.stoneWall);
+                    //    }
+                    //    var cell = DungeonController.Instance.GetCellFromTileCoord(gridcoord);
+                    //    var entitly = CellEntitiyManager.Instance.GetCellEntitly(cell);
+                    //    edgeEntitly.Init(cell,);
 
-                //dungeonItem.transform.parent = parent.transform;
+
+
+                    //var directionForCell = GetDirectionForCell(building_Edge.transform.position, entitly.transform.position);
+                    //var edgeEntitly = directionForCell switch
+                    //{
+                    //    Direction.Left => entitly.edges[0],
+                    //    Direction.Up => entitly.edges[1],
+                    //    Direction.Right => entitly.edges[2],
+                    //    Direction.Down => entitly.edges[3],
+                    //};
+                    //edgeEntitly.buildingPart = building_Edge;
+                    //edgeEntitly.cellEntity =
+                    //item.cellEntitly = entitly;
+                }
+                //var directionForWorld = GetDirectionForWorld(dungeonItem.transform.rotation);
+                //building_Edge.SetDirection(directionForWorld);
             }
+
         }
-
-        //public void LogInfo(FlowTilemapCell cell)
-        //{
-        //    var info = cells[cell];
-        //    Debug.Log($"Cell : <{info.name}>", info);
-        //    Debug.Log($"Floor : <{info.floor.name}>", cells[cell].floor);
-        //    for (int i = 0; i < info.walls.Count; i++)
-        //    {
-        //        Debug.Log($"Wall[{i}] : <{info.walls[i].name}>", info.walls[i]);
-        //    }
-        //}
-
-        //public CellEntity GetInfo(FlowTilemapCell item)
-        //{
-        //    if (cells.TryGetValue(item, out var reslut))
-        //    {
-        //        return reslut;
-        //    }
-        //    else
-        //    {
-        //        Debug.LogError($"No CellInfo on <{item.TileCoord},{item.TileCoord.y}>");
-        //    }
-        //    return null;
-        //}
-
-
     }
+
+
+
+    //public void LogInfo(FlowTilemapCell cell)
+    //{
+    //    var info = cells[cell];
+    //    Debug.Log($"Cell : <{info.name}>", info);
+    //    Debug.Log($"Floor : <{info.floor.name}>", cells[cell].floor);
+    //    for (int i = 0; i < info.walls.Count; i++)
+    //    {
+    //        Debug.Log($"Wall[{i}] : <{info.walls[i].name}>", info.walls[i]);
+    //    }
+    //}
+
+    //public CellEntity GetInfo(FlowTilemapCell item)
+    //{
+    //    if (cells.TryGetValue(item, out var reslut))
+    //    {
+    //        return reslut;
+    //    }
+    //    else
+    //    {
+    //        Debug.LogError($"No CellInfo on <{item.TileCoord},{item.TileCoord.y}>");
+    //    }
+    //    return null;
+    //}
+
+
 }
+

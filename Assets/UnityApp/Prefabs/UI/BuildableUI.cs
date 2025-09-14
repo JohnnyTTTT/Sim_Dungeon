@@ -12,7 +12,7 @@ namespace Johnny.SimDungeon
         [SerializeField] private ToggleGroup m_ToggleGroup;
 
         public event OnBuildableButtonPressedDelegate OnBuildableButtonPressed;
-        public delegate void OnBuildableButtonPressedDelegate(bool isOn, BuildableObjectSO buildableObjectSO);
+        public delegate void OnBuildableButtonPressedDelegate( BuildableObjectSO buildableObjectSO);
 
         private List<BuildableObjectSO> buildableObjectSOList = new List<BuildableObjectSO>();
 
@@ -37,10 +37,9 @@ namespace Johnny.SimDungeon
                     imageComponent.sprite = buildableObjectSO.objectIcon;
                 }
 
-                if (buildableUIObject.transform.GetChild(0).TryGetComponent(out Toggle toggle))
+                if (buildableUIObject.transform.TryGetComponent(out Button button))
                 {
-                    toggle.group = m_ToggleGroup;
-                    toggle.onValueChanged.AddListener(delegate { OnBuildableButtonPressed(toggle.isOn, buildableObjectSO); });
+                    button.onClick.AddListener(delegate { OnBuildableButtonPressed( buildableObjectSO); });
                 }
             }
         }

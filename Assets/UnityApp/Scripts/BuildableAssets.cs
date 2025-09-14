@@ -18,6 +18,6 @@ namespace Johnny.SimDungeon
         }
         private static BuildableAssets s_Instances;
 
-        public BuildableEdgeObjectSO wallStone;
+        public ReplaceableObjectSO stoneWall;
     }
 }

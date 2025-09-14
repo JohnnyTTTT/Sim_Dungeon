@@ -20,6 +20,8 @@ namespace Johnny.SimDungeon
 
         public void Init(EasyGridBuilderPro activeEasyGridBuilderPro)
         {
+            Clear();
+
             var uniqueCategorieshashSet = new HashSet<BuildableObjectUICategorySO>();
 
             foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableGridObjectSOList())
