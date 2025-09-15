@@ -9,7 +9,7 @@ namespace Johnny.SimDungeon
         public GameObject proxy;
         private void Start()
         {
-            RoomEntitiyManager.Instance.RegistRoomType(roomType);
+            DataManager_Room.Instance.RegistRoomType(roomType);
         }
 
         public void Hide()

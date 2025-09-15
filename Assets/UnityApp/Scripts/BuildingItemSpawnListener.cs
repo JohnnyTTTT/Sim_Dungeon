@@ -3,15 +3,13 @@ using DungeonArchitect.Flow.Domains.Tilemap;
 using Johnny.SimDungeon;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-
-
     public class BuildingItemSpawnListener : DungeonItemSpawnListener
     {
-        private static readonly float[] Angles = { 0f, 90f, 180f, 270f };
         private static Vector3 dirUp = Vector3.forward;    // 世界前
         private static Vector3 dirDown = Vector3.back;     // 世界后
         private static Vector3 dirRight = Vector3.right;   // 世界右
@@ -79,112 +77,107 @@ namespace Johnny.SimDungeon
             }
         }
 
-        private float GetRandomRotation()
-        {
-            var index = UnityEngine.Random.Range(0, Angles.Length);
-            return Angles[index];
-        }
-        public bool a = true;
-        public bool b = true;
-        public float test;
+
+        //public bool a = true;
+        //public bool b = true;
+        //public float test;
         public override void SetMetadata(GameObject dungeonItem, DungeonNodeSpawnData spawnData)
         {
             if (dungeonItem != null)
             {
-                var marker = spawnData.socket;
-                var gridcoord = new IntVector2(marker.gridPosition.x, marker.gridPosition.z);
-                var cell = DungeonController.Instance.GetCellFromTileCoord(gridcoord);
-                var building = dungeonItem.GetComponent<BuildingEntity>();
-                if (building is CellEntity cellEntity)
+                var entity = dungeonItem.GetComponent<Entity>();
+                if (entity != null)
                 {
-                    if (cellEntity.randomAngle)
+                    var currentCoord = DungeonController.Instance.WorldPositionToTileCoord(entity.transform.position);
+                    if (currentCoord != entity.lastCoord)
                     {
-                        var rotation = Quaternion.Euler(0, GetRandomRotation(), 0);
-                        cellEntity.transform.rotation = rotation;
+                        entity.lastCoord = currentCoord;
+                        if (entity is Entity_Edge edgeEntity)
+                        {
+                            if (edgeEntity.parentCellData != null)
+                            {
+                                edgeEntity.parentCellData.edgeDatas.Remove(edgeEntity);
+                            }
+                            var cellData = DataManager_Cell.Instance.GetData(edgeEntity.transform.position);
+                            if (cellData != null)
+                            {
+                                edgeEntity.parentCellData = cellData;
+                                cellData.edgeDatas.Add(edgeEntity);
+                            }
+                        }
                     }
-                    cellEntity.Init(cell);
-                    EntitiyManager_Cell.Instance.Regist(cellEntity);
                 }
-                else if (building is EdgeEntity edgeEntitly)
-                {
-                    //EdgeEntity
-                    var y = Mathf.FloorToInt(spawnData.transform.rotation.eulerAngles.y);
-                    FlowTilemapEdge edge = null;
-                    if (y == 0)
-                    {
-                        edge = DungeonController.Instance.GetDownEdgeFromTileCoord(gridcoord);
-                    }
-                    else if (y == 90)
-                    {
-                        edge = DungeonController.Instance.GetLeftEdgeFromTileCoord(gridcoord);
-
-                    }
-                    else if (y == 180)
-                    {
-                        edge = DungeonController.Instance.GetUpEdgeFromTileCoord(gridcoord);
-                    }
-                    else if (y == 270)
-                    {
-                        edge = DungeonController.Instance.GetRightEdgeFromTileCoord(gridcoord);
-                    }
-                    edgeEntitly.Init(edge);
-                    EntitylManager_Edge.Instance.Regist(edgeEntitly);
-
-                    //SubEdgeEntity
-                    //foreach (var subEdgeEntity in edgeEntitly.subEdges)
-                    //{
-                    //    var realCellEntity = EntitiyManager_Cell.Instance.GetCellEntitly(subEdgeEntity.transform.position);
-                    //    var dir = GetDirectionForCell(subEdgeEntity.transform.position, realCellEntity.transform.position);
-                    //    switch (dir)
-                    //    {
-                    //        case Direction.Left:
-                    //            realCellEntity.edges[0] = subEdgeEntity;
-                    //            break;
-                    //        case Direction.Up:
-                    //            realCellEntity.edges[1] = subEdgeEntity;
-                    //            break;
-                    //        case Direction.Right:
-                    //            realCellEntity.edges[2] = subEdgeEntity;
-                    //            break;
-                    //        case Direction.Down:
-                    //            realCellEntity.edges[3] = subEdgeEntity;
-                    //            break;
-                    //    }
-                    //}
-                    //Debug.Log("aaa   " + marker.gridPosition, edgeEntitly);
-                    //Debug.Log(EntitiyManager_Cell.Instance.GetCellEntitly(cell), EntitiyManager_Cell.Instance.GetCellEntitly(cell));
-                    //Debug.Log(marker.SocketType);
-
-
-                    //foreach (var item in edgeEntitly.edges)
-                    //{
-                    //    if (item.replaceableObjectSO == null)
-                    //    {
-                    //        edgeEntitly.SetReplaceableObjectSO(item, BuildableAssets.Instance.stoneWall);
-                    //    }
-                    //    var cell = DungeonController.Instance.GetCellFromTileCoord(gridcoord);
-                    //    var entitly = CellEntitiyManager.Instance.GetCellEntitly(cell);
-                    //    edgeEntitly.Init(cell,);
-
-
-
-                    //var directionForCell = GetDirectionForCell(building_Edge.transform.position, entitly.transform.position);
-                    //var edgeEntitly = directionForCell switch
-                    //{
-                    //    Direction.Left => entitly.edges[0],
-                    //    Direction.Up => entitly.edges[1],
-                    //    Direction.Right => entitly.edges[2],
-                    //    Direction.Down => entitly.edges[3],
-                    //};
-                    //edgeEntitly.buildingPart = building_Edge;
-                    //edgeEntitly.cellEntity =
-                    //item.cellEntitly = entitly;
-                }
-                //var directionForWorld = GetDirectionForWorld(dungeonItem.transform.rotation);
-                //building_Edge.SetDirection(directionForWorld);
             }
-
         }
+        //{
+        //    var cell = DungeonController.Instance.GetCellFromWorldPosition(dungeonItem.transform.position);
+        //    Debug.Log(cell.NodeCoord.ToVector2());
+        //}
+        //{
+        //    
+        //    {
+        //        
+        //        if (building == null || building.registered) return;
+        //        var marker = spawnData.socket;
+        //        var gridcoord = new IntVector2(marker.gridPosition.x, marker.gridPosition.z);
+        //        //var cell = DungeonController.Instance.GetCellFromTileCoord(gridcoord);
+        //        var cell = DungeonController.Instance.GetCellFromWorldPosition(dungeonItem.transform.position);
+        //        if (building is Entity_Cell cellEntity)
+        //        {
+        //            cellEntity.Init(cell);
+        //        }
+        //        //else if (building is Entity_Edge edgeEntitly)
+        //        //{
+        //        //    var tileCoord = cell.TileCoord;
+
+        //        //    FlowTilemapEdge edge = null;
+        //        //    var y = Mathf.FloorToInt(transform.rotation.eulerAngles.y);
+        //        //    if (y == 0)
+        //        //    {
+        //        //        edge = DungeonController.Instance.GetDownEdgeFromTileCoord(tileCoord);
+        //        //    }
+        //        //    else if (y == 90)
+        //        //    {
+        //        //        edge = DungeonController.Instance.GetLeftEdgeFromTileCoord(tileCoord);
+
+        //        //    }
+        //        //    else if (y == 180)
+        //        //    {
+        //        //        var newCoord = new IntVector2(tileCoord.x, tileCoord.y - 1);
+        //        //        edge = DungeonController.Instance.GetUpEdgeFromTileCoord(newCoord);
+        //        //    }
+        //        //    else if (y == 270)
+        //        //    {
+        //        //        var newCoord = new IntVector2(tileCoord.x + 1, tileCoord.y);
+        //        //        edge = DungeonController.Instance.GetRightEdgeFromTileCoord(newCoord);
+        //        //    }
+        //        //    edgeEntitly.Init(edge);
+        //        //}
+        //    }
+        //}
+        //{
+        //    if (dungeonItem != null)
+        //    {
+        //        Debug.Log(dungeonItem, dungeonItem);
+
+        //        var cell = DungeonController.Instance.GetCellFromTileCoord(gridcoord);
+        //        var building = dungeonItem.GetComponent<BuildingEntity>();
+        //        if (building is Entity_Cell cellEntity)
+        //        {
+        //            if (cellEntity.randomAngle)
+        //            {
+        //                var rotation = Quaternion.Euler(0, GetRandomRotation(), 0);
+        //                cellEntity.transform.rotation = rotation;
+        //            }
+        //            cellEntity.Init(cell);
+        //            EntitiyManager_Cell.Instance.Regist(cellEntity);
+        //        }
+
+        //        //var directionForWorld = GetDirectionForWorld(dungeonItem.transform.rotation);
+        //        //building_Edge.SetDirection(directionForWorld);
+        //    }
+
+        //}
     }
 
 

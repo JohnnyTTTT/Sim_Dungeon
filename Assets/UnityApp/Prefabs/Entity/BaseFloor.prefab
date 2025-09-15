@@ -63,7 +63,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8921293828836282806}
-  - component: {fileID: 3811413318277801822}
   m_Layer: 0
   m_Name: BaseFloor
   m_TagString: Untagged
@@ -87,59 +86,6 @@ Transform:
   - {fileID: 2664621199696303669}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3811413318277801822
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3054469432581411020}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e22468e4622f27640992a3ebd0e2ea3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.CellEntity
-  Direction: 0
-  DirectionVector: {x: 0, y: 0}
-  randomAngle: 1
-  room: {fileID: 0}
-  cell:
-    CellType: 0
-    CustomCellInfo:
-      name: 
-      defaultColor: {r: 1, g: 1, b: 1, a: 1}
-    Item:
-      A: 0
-      B: 0
-      C: 0
-      D: 0
-    Tags: []
-    Overlay:
-      markerName: 
-      color: {r: 0, g: 0, b: 0, a: 0}
-      tileBlockingOverlay: 1
-      mergeConfig:
-        minHeight: 0
-        maxHeight: 0
-        wallOverlayRule: 0
-        markerHeightOffsetForLayoutTiles: 0
-        markerHeightOffsetForNonLayoutTiles: 0
-        removeElevationMarker: 0
-    NodeCoord:
-      x: 0
-      y: 0
-    TileCoord:
-      x: 0
-      y: 0
-    UseCustomColor: 0
-    CustomColor: {r: 1, g: 1, b: 1, a: 1}
-    MainPath: 0
-    LayoutCell: 0
-    DistanceFromMainPath: 2147483647
-    Height: 0
-  cellTileCoord: {x: 0, y: 0}
-  edges: []
-  m_ShowGizmo: 0
 --- !u!1001 &1133795783131054730
 PrefabInstance:
   m_ObjectHideFlags: 0

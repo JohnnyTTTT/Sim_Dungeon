@@ -70,7 +70,7 @@ namespace Johnny.SimDungeon
 
 
 
-        public void Temp_UpdateGrid(Dictionary<Vector2Int, CellEntity> subCellsMap)
+        public void Temp_UpdateGrid(Dictionary<Vector2Int, Data_Cell> subCellsMap)
         {
             var activeGridBuilder = GridManager.Instance.GetActiveEasyGridBuilderPro();
             var grid = activeGridBuilder.GetActiveGrid() as GridXZ;

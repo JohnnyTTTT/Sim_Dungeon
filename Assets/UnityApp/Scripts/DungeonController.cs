@@ -1,6 +1,7 @@
 using DungeonArchitect;
 using DungeonArchitect.Builders.GridFlow;
 using DungeonArchitect.Flow.Domains.Tilemap;
+using Sirenix.OdinInspector;
 using SoulGames.EasyGridBuilderPro;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace Johnny.SimDungeon
         public BuildingItemSpawnListener buildingItemSpawnListener;
         public EasyGridBuilderProController easyGridBuilderProController;
 
-        public  Camera m_Camera;
+        public Camera m_Camera;
         [SerializeField] private GameObject m_HighlightPrefab;
         [SerializeField] private LayerMask m_GroundMask;
         [SerializeField] private Transform m_SelectionRoot;
@@ -51,7 +52,7 @@ namespace Johnny.SimDungeon
         public List<GameObject> tests = new List<GameObject>();
 
         private GameObject m_CurrentHighlight;
-        private BuildingPart m_LastHitBuildingPart;
+        //private BuildingPart m_LastHitBuildingPart;
         private HashSet<IntVector2> m_CustomFloors = new HashSet<IntVector2>();
         private List<GameObject> m_CurrentAreaHighlights = new List<GameObject>();
 
@@ -60,9 +61,12 @@ namespace Johnny.SimDungeon
         public StructureMode structureMode = StructureMode.None;
         private List<FlowTilemapCell> m_WillCreateSpaces = new List<FlowTilemapCell>();
 
+
         private void Start()
         {
+            Debug.Log("[-----System-----] : Dungeon Build Start");
             dungeon.Build();
+
             GridManager.Instance.OnActiveGridModeChanged += OnActiveGridModeChanged;
             GridManager.Instance.OnActiveEasyGridBuilderProChanged += OnActiveEasyGridBuilderProChanged;
             //m_CustomFloors.Clear();
@@ -71,16 +75,18 @@ namespace Johnny.SimDungeon
             //m_GridFlowDungeonBuilder.BuildDungeon(m_DungeonConfig, m_DungeonModel);
         }
 
+
+
+        #region GetCell
         public FlowTilemapCell GetCellFromWorldPosition(Vector3 worldPosition)
         {
             return gridFlowDungeonQuery.WorldCoordToTile(worldPosition);
         }
-
-        #region GetCellFromTileCoord
         public FlowTilemapCell GetCellFromTileCoord(IntVector2 coord)
         {
             return dungeonModel.Tilemap.Cells.GetCell(coord.x, coord.y);
         }
+
         public FlowTilemapCell GetLeftCellFromTileCoord(IntVector2 coord)
         {
             return dungeonModel.Tilemap.Cells.GetCell(coord.x - 1, coord.y);
@@ -89,7 +95,6 @@ namespace Johnny.SimDungeon
         {
             return dungeonModel.Tilemap.Cells.GetCell(coord.x, coord.y + 1);
         }
-
         public FlowTilemapCell GetRightCellFromTileCoord(IntVector2 coord)
         {
             return dungeonModel.Tilemap.Cells.GetCell(coord.x + 1, coord.y);
@@ -100,6 +105,17 @@ namespace Johnny.SimDungeon
         }
         #endregion
 
+        #region TransformConvert
+        public IntVector2 WorldPositionToTileCoord(Vector3 coord)
+        {
+
+            return dungeonModel.WorldPositionToTilemapCoord(coord);
+        }
+        public Vector3 TileCoordToWorldPosition(IntVector2 coord)
+        {
+            return gridFlowDungeonQuery.TileCoordToWorldCoord(coord);
+        }
+        #endregion
 
         private NeighborData[] GetNeighbourData(FlowTilemapCell cell)
         {
@@ -132,7 +148,7 @@ namespace Johnny.SimDungeon
             return new[] { left, up, right, down };
         }
 
-
+        #region GetEdge
         public FlowTilemapEdge GetLeftEdgeFromTileCoord(IntVector2 coord)
         {
             return dungeonModel.Tilemap.Edges.GetVertical(coord.x, coord.y);
@@ -152,7 +168,7 @@ namespace Johnny.SimDungeon
         {
             return dungeonModel.Tilemap.Edges.GetHorizontal(coord.x, coord.y);
         }
-
+        #endregion
 
         private void OnActiveEasyGridBuilderProChanged(EasyGridBuilderPro arg0)
         {
@@ -191,10 +207,10 @@ namespace Johnny.SimDungeon
             new IntVector2(0, -1)};
 
         //在一堆连续的单元格找出边缘的格子
-        public static List<CellEntity> FindEdgeCells(List<CellEntity> cells)
+        public static List<Data_Cell> FindEdgeCells(List<Data_Cell> cells)
         {
             var cellCoords = cells.Select(x => x.Data.TileCoord);
-            var edgeCells = new List<CellEntity>();
+            var edgeCells = new List<Data_Cell>();
 
             foreach (var cell in cells)
             {
@@ -211,10 +227,10 @@ namespace Johnny.SimDungeon
             return edgeCells;
         }
 
-        public void AddEdgeForCells(List<CellEntity> cellEntitlies, RoomEntitly roomEntitly)
+        public void AddEdgeForCells(List<Data_Cell> cellEntitlies, Room room)
         {
             var edgeCellEntitlies = FindEdgeCells(cellEntitlies);
-            var cellEntitiyManager = EntitiyManager_Cell.Instance;
+            var cellEntitiyManager = DataManager_Cell.Instance;
             foreach (var cellEntitly in edgeCellEntitlies)
             {
                 //var cellCoord = cellEntitly.cell.TileCoord;
@@ -234,7 +250,7 @@ namespace Johnny.SimDungeon
                 //left
                 var left = neighbourData[0].cell;
                 var edgeLeft = neighbourData[0].edge;
-                if (left.CellType == FlowTilemapCellType.Custom || (left.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetCellEntitly(left).room != roomEntitly))
+                if (left.CellType == FlowTilemapCellType.Custom || (left.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(left).parentRoom != room))
                 {
                     edgeLeft.EdgeType = FlowTilemapEdgeType.Fence;
                     edgeLeft.HorizontalEdge = false;
@@ -243,7 +259,7 @@ namespace Johnny.SimDungeon
                 //up
                 var up = neighbourData[1].cell;
                 var edgeUp = neighbourData[1].edge;
-                if (up.CellType == FlowTilemapCellType.Custom || (up.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetCellEntitly(up).room != roomEntitly))
+                if (up.CellType == FlowTilemapCellType.Custom || (up.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(up).parentRoom != room))
                 {
                     edgeUp.EdgeType = FlowTilemapEdgeType.Fence;
                 }
@@ -252,7 +268,7 @@ namespace Johnny.SimDungeon
                 //right
                 var right = neighbourData[2].cell;
                 var edgeRight = neighbourData[2].edge;
-                if (right.CellType == FlowTilemapCellType.Custom || (right.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetCellEntitly(right).room != roomEntitly))
+                if (right.CellType == FlowTilemapCellType.Custom || (right.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(right).parentRoom != room))
                 {
                     edgeRight.EdgeType = FlowTilemapEdgeType.Fence;
                     edgeRight.HorizontalEdge = false;
@@ -261,7 +277,7 @@ namespace Johnny.SimDungeon
                 //down
                 var down = neighbourData[3].cell;
                 var edgeDown = neighbourData[3].edge;
-                if (down.CellType == FlowTilemapCellType.Custom || (down.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetCellEntitly(down).room != roomEntitly))
+                if (down.CellType == FlowTilemapCellType.Custom || (down.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(down).parentRoom != room))
                 {
                     edgeDown.EdgeType = FlowTilemapEdgeType.Fence;
                 }
@@ -364,10 +380,6 @@ namespace Johnny.SimDungeon
             }
         }
 
-
-
-
-
         private void UpdateHighlight()
         {
             var mousePos = Mouse.current.position.ReadValue();
@@ -375,11 +387,11 @@ namespace Johnny.SimDungeon
 
             if (Physics.Raycast(ray, out RaycastHit hit, 1000f, m_GroundMask))
             {
-                m_LastHitBuildingPart = hit.transform.GetComponent<BuildingPart>();
-                if (m_LastHitBuildingPart != null)
-                {
-                    //Debug.Log(m_LastHitBuildingPart.type);
-                }
+                //m_LastHitBuildingPart = hit.transform.GetComponent<BuildingPart>();
+                //if (m_LastHitBuildingPart != null)
+                //{
+                //    //Debug.Log(m_LastHitBuildingPart.type);
+                //}
                 //var cellPos = SnapToGrid(hit.point);
                 //var cell = dungeonModel.GetTilemapCell(cellPos);
                 //if (cell != null && (cell.CellType == FlowTilemapCellType.Custom || cell.CellType == FlowTilemapCellType.Wall))
@@ -417,14 +429,14 @@ namespace Johnny.SimDungeon
             {
                 var mousePos = Mouse.current.position.ReadValue();
                 var ray = m_Camera.ScreenPointToRay(mousePos);
-                if (Physics.Raycast(ray, out RaycastHit hit, 1000f, m_GroundMask))
-                {
-                    var buildingPart = hit.transform.GetComponent<BuildingPart>();
-                    if (buildingPart != null && buildingPart != m_LastHitBuildingPart)
-                    {
-                        m_LastHitBuildingPart = buildingPart;
-                    }
-                }
+                //if (Physics.Raycast(ray, out RaycastHit hit, 1000f, m_GroundMask))
+                //{
+                //    var buildingPart = hit.transform.GetComponent<BuildingPart>();
+                //    if (buildingPart != null && buildingPart != m_LastHitBuildingPart)
+                //    {
+                //        m_LastHitBuildingPart = buildingPart;
+                //    }
+                //}
 
 
 
@@ -439,44 +451,44 @@ namespace Johnny.SimDungeon
                     }
                     tests.Clear();
                 }
-                if (m_LastHitBuildingPart != null)
-                {
-                    var position = m_LastHitBuildingPart.transform.position;
-                    position = new Vector3(position.x, 0f, position.z);
-                    var cell = gridFlowDungeonQuery.WorldCoordToTile(position);
-                    var roomCells = gridFlowDungeonQuery.GetLayoutNodeTile(cell.NodeCoord, false);
-                    //foreach (var item in roomCells)
-                    //{
-                    //    var info = buildingItemSpawnListener.GetInfo(item);
+                //if (m_LastHitBuildingPart != null)
+                //{
+                //    var position = m_LastHitBuildingPart.transform.position;
+                //    position = new Vector3(position.x, 0f, position.z);
+                //    var cell = gridFlowDungeonQuery.WorldCoordToTile(position);
+                //    var roomCells = gridFlowDungeonQuery.GetLayoutNodeTile(cell.NodeCoord, false);
+                //    //foreach (var item in roomCells)
+                //    //{
+                //    //    var info = buildingItemSpawnListener.GetInfo(item);
 
-                    //    switch (m_LastHitBuildingPart.type)
-                    //    {
-                    //        case FlowTilemapCellType.Empty:
-                    //            break;
-                    //        case FlowTilemapCellType.Floor:
-                    //            var test = Instantiate(testPrefab);
-                    //            test.transform.position = info.floor.transform.position;
-                    //            tests.Add(test);
-                    //            break;
-                    //        case FlowTilemapCellType.Wall:
-                    //            foreach (var wall in info.walls)
-                    //            {
-                    //                var testWall = Instantiate(testPrefab);
-                    //                testWall.transform.position = wall.transform.position;
-                    //                tests.Add(testWall);
-                    //            }
-                    //            break;
-                    //        case FlowTilemapCellType.Door:
-                    //            break;
-                    //        case FlowTilemapCellType.Custom:
-                    //            break;
-                    //        default:
-                    //            break;
-                    //    }
+                //    //    switch (m_LastHitBuildingPart.type)
+                //    //    {
+                //    //        case FlowTilemapCellType.Empty:
+                //    //            break;
+                //    //        case FlowTilemapCellType.Floor:
+                //    //            var test = Instantiate(testPrefab);
+                //    //            test.transform.position = info.floor.transform.position;
+                //    //            tests.Add(test);
+                //    //            break;
+                //    //        case FlowTilemapCellType.Wall:
+                //    //            foreach (var wall in info.walls)
+                //    //            {
+                //    //                var testWall = Instantiate(testPrefab);
+                //    //                testWall.transform.position = wall.transform.position;
+                //    //                tests.Add(testWall);
+                //    //            }
+                //    //            break;
+                //    //        case FlowTilemapCellType.Door:
+                //    //            break;
+                //    //        case FlowTilemapCellType.Custom:
+                //    //            break;
+                //    //        default:
+                //    //            break;
+                //    //    }
 
-                    //}
+                //    //}
 
-                }
+                //}
                 //buildingItemSpawnListener.LogInfo(cell);
 
 
@@ -495,49 +507,49 @@ namespace Johnny.SimDungeon
                     tests.Clear();
                 }
 
-                if (m_LastHitBuildingPart != null)
-                {
-                    var position = m_LastHitBuildingPart.transform.position;
-                    position = new Vector3(position.x, 0f, position.z);
-                    var cell = dungeonModel.GetTilemapCell(position);
-                    var coord = cell.TileCoord;
-                    var test1 = Instantiate(testPrefab);
-                    var cellPosition = gridFlowDungeonQuery.TileCoordToWorldCoord(coord);
-                    test1.transform.position = cellPosition;
-                    tests.Add(test1);
+                //if (m_LastHitBuildingPart != null)
+                //{
+                //    var position = m_LastHitBuildingPart.transform.position;
+                //    position = new Vector3(position.x, 0f, position.z);
+                //    var cell = dungeonModel.GetTilemapCell(position);
+                //    var coord = cell.TileCoord;
+                //    var test1 = Instantiate(testPrefab);
+                //    var cellPosition = gridFlowDungeonQuery.TileCoordToWorldCoord(coord);
+                //    test1.transform.position = cellPosition;
+                //    tests.Add(test1);
 
 
 
-                    var neighbourData = GetNeighbourData(cell);
-                    for (int i = 0; i < neighbourData.Length; i++)
-                    {
-                        if (neighbourData[i].edge.EdgeType != FlowTilemapEdgeType.Empty)
-                        {
-                            var test = Instantiate(testPrefab);
-                            switch (i)
-                            {
-                                case 0:
-                                    test.name = "Left";
-                                    break;
-                                case 1:
-                                    test.name = "Up";
-                                    break;
-                                case 2:
-                                    test.name = "Right";
-                                    break;
-                                case 3:
-                                    test.name = "Down";
-                                    break;
-                            }
+                //    var neighbourData = GetNeighbourData(cell);
+                //    for (int i = 0; i < neighbourData.Length; i++)
+                //    {
+                //        if (neighbourData[i].edge.EdgeType != FlowTilemapEdgeType.Empty)
+                //        {
+                //            var test = Instantiate(testPrefab);
+                //            switch (i)
+                //            {
+                //                case 0:
+                //                    test.name = "Left";
+                //                    break;
+                //                case 1:
+                //                    test.name = "Up";
+                //                    break;
+                //                case 2:
+                //                    test.name = "Right";
+                //                    break;
+                //                case 3:
+                //                    test.name = "Down";
+                //                    break;
+                //            }
 
-                            var edgePosition = gridFlowDungeonQuery.TileCoordToWorldCoord(neighbourData[i].edge.EdgeCoord);
-                            test.transform.position = edgePosition;
-                            tests.Add(test);
-                        }
-                    }
+                //            var edgePosition = gridFlowDungeonQuery.TileCoordToWorldCoord(neighbourData[i].edge.EdgeCoord);
+                //            test.transform.position = edgePosition;
+                //            tests.Add(test);
+                //        }
+                //    }
 
 
-                }
+                //}
                 //if (m_CurrentAreaHighlights.Any())
                 //{
                 //    for (int i = m_CurrentAreaHighlights.Count - 1; i >= 0; i--)
@@ -567,8 +579,11 @@ namespace Johnny.SimDungeon
         }
 
 
-
-
+        [Button("ApplyTheme")]
+        private void ApplyTheme()
+        {
+            dungeon.ApplyTheme(new RuntimeDungeonSceneObjectInstantiator());
+        }
 
         public FlowTilemapCell[] GetLayoutNodeTile(Vector3 position)
         {
@@ -605,9 +620,14 @@ namespace Johnny.SimDungeon
             //dungeonModel.Tilemap.ed
             //gridFlowMinimap.Initialize();
         }
-
-
-
+        public override void OnDungeonMarkersEmitted(Dungeon dungeon, DungeonModel model, LevelMarkerList markers)
+        {
+            var gridFlowDungeonModel = model as GridFlowDungeonModel;
+            DataManager_Cell.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
+            DataManager_Edge.Instance.Init(gridFlowDungeonModel.Tilemap.Edges);
+            DataManager_Room.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
+            Debug.Log("[-----System-----] : OnDungeonMarkersEmitted");
+        }
         public override void OnPostDungeonBuild(Dungeon dungeon, DungeonModel model)
         {
             //CellEntitiesData.Instance.CheckCellEntites();
@@ -616,17 +636,17 @@ namespace Johnny.SimDungeon
 
             //Debug.Log("Dungeon build complete");
 
-            var m = model as GridFlowDungeonModel;
-            //if (m_LastClickedCell != null)
-            //{
-            //    var cell = dungeonModel.Tilemap.Cells.GetCell(m_LastClickedCell.Value.x, m_LastClickedCell.Value.y);
-            //    Debug.Log(cell.CellType);
-            //}
 
-            //Debug.Log(m);
-            //Debug.Log(m.Tilemap);
+
+
+
+            Debug.Log("[-----System-----] : OnPostDungeonBuild");
         }
-
+        //public override void OnSpawnedManagedObjects(Dungeon dungeon, GameObject[] spawnedManagedObjects, DungeonModel activeModel)
+        //{
+        //    Debug.Log(spawnedManagedObjects.Count());
+        //    Debug.Log("[System] : OnSpawnedManagedObjects");
+        //}
 
     }
 }
