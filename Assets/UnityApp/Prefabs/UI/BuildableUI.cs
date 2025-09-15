@@ -9,38 +9,56 @@ namespace Johnny.SimDungeon
     {
         [SerializeField] private RectTransform m_ItemPrefab;
         [SerializeField] private Transform m_Content;
-        [SerializeField] private ToggleGroup m_ToggleGroup;
 
         public event OnBuildableButtonPressedDelegate OnBuildableButtonPressed;
-        public delegate void OnBuildableButtonPressedDelegate( BuildableObjectSO buildableObjectSO);
+        public delegate void OnBuildableButtonPressedDelegate(BuildableObjectSO buildableObjectSO);
 
         private List<BuildableObjectSO> buildableObjectSOList = new List<BuildableObjectSO>();
-
+        public Dictionary<BuildableObjectSO, RectTransform> instantiatedUIBuildableObjectsDictionary = new Dictionary<BuildableObjectSO, RectTransform>();
         public void Init(EasyGridBuilderPro activeEasyGridBuilderPro)
         {
-            foreach (BuildableObjectSO buildableObjectSO in activeEasyGridBuilderPro.GetBuildableGridObjectSOList())
+            Clear();
+
+            foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableGridObjectSOList())
             {
                 buildableObjectSOList.Add(buildableObjectSO);
             }
+
+            foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableEdgeObjectSOList())
+            {
+                buildableObjectSOList.Add(buildableObjectSO);
+            }
+
             InstantiateUIBuildableObjects();
         }
 
 
         private void InstantiateUIBuildableObjects()
         {
-            foreach (BuildableObjectSO buildableObjectSO in buildableObjectSOList)
+            foreach (var buildableObjectSO in buildableObjectSOList)
             {
                 var buildableUIObject = Instantiate(m_ItemPrefab, m_Content);
 
-                if (buildableObjectSO.objectIcon && buildableUIObject.transform.GetChild(0).TryGetComponent(out Image imageComponent))
+                if (buildableObjectSO.objectIcon && buildableUIObject.TryGetComponent<IconButton>(out var iconButton))
                 {
-                    imageComponent.sprite = buildableObjectSO.objectIcon;
+                    iconButton.SetIcon(buildableObjectSO.objectIcon);
                 }
 
+
+
+                instantiatedUIBuildableObjectsDictionary.Add(buildableObjectSO, buildableUIObject);
                 if (buildableUIObject.transform.TryGetComponent(out Button button))
                 {
-                    button.onClick.AddListener(delegate { OnBuildableButtonPressed( buildableObjectSO); });
+                    button.onClick.AddListener(delegate { OnBuildableButtonPressed(buildableObjectSO); });
                 }
+            }
+        }
+
+        public void Clear()
+        {
+            for (int i = m_Content.childCount - 1; i >= 0; i--)
+            {
+                Destroy(m_Content.GetChild(i).gameObject);
             }
         }
     }

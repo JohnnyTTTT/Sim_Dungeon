@@ -5,20 +5,20 @@ using UnityEngine.UI;
 
 namespace Johnny.SimDungeon
 {
+
     public class CategoryUI : MonoBehaviour
     {
         [SerializeField] private RectTransform m_ItemPrefab;
         [SerializeField] private Transform m_Content;
-        [SerializeField] private ToggleGroup m_ToggleGroup;
 
         private List<BuildableObjectUICategorySO> buildableObjectUICategorySOList;
         public event OnCategoryButtonPressedDelegate OnCategoryButtonPressed;
 
-        public delegate void OnCategoryButtonPressedDelegate(bool isOn, BuildableObjectUICategorySO buildableObjectUICategorySO);
-        private Dictionary<BuildableObjectUICategorySO, RectTransform> instantiatedUICategoryObjectsDictionary = new Dictionary<BuildableObjectUICategorySO, RectTransform>();
+        public delegate void OnCategoryButtonPressedDelegate(BuildableObjectUICategorySO buildableObjectUICategorySO);
+        public Dictionary<BuildableObjectUICategorySO, RectTransform> instantiatedUICategoryObjectsDictionary = new Dictionary<BuildableObjectUICategorySO, RectTransform>();
 
 
-        public void Init(EasyGridBuilderPro activeEasyGridBuilderPro)
+        public BuildableObjectUICategorySO Init(EasyGridBuilderPro activeEasyGridBuilderPro)
         {
             Clear();
 
@@ -32,8 +32,20 @@ namespace Johnny.SimDungeon
                 }
             }
 
+            foreach (BuildableObjectSO buildableObjectSO in activeEasyGridBuilderPro.GetBuildableEdgeObjectSOList())
+            {
+                if (buildableObjectSO.buildableObjectUICategorySO != null) uniqueCategorieshashSet.Add(buildableObjectSO.buildableObjectUICategorySO);
+            }
+
+
             buildableObjectUICategorySOList = new List<BuildableObjectUICategorySO>(uniqueCategorieshashSet);
             InstantiateUICategoryObjects();
+
+            if (buildableObjectUICategorySOList.Count > 0)
+            {
+                return buildableObjectUICategorySOList[0];
+            }
+            return null;
         }
 
         private void InstantiateUICategoryObjects()
@@ -42,16 +54,16 @@ namespace Johnny.SimDungeon
             {
                 var categoryUIObject = Instantiate(m_ItemPrefab, m_Content);
 
-                if (buildableObjectUICategorySO.categoryIcon != null && categoryUIObject.transform.GetChild(0).TryGetComponent(out Image imageComponent))
+                if (buildableObjectUICategorySO.categoryIcon && categoryUIObject.TryGetComponent<IconButton>(out var iconButton))
                 {
-                    imageComponent.sprite = buildableObjectUICategorySO.categoryIcon;
+                    iconButton.SetIcon(buildableObjectUICategorySO.categoryIcon);
                 }
+
                 instantiatedUICategoryObjectsDictionary.Add(buildableObjectUICategorySO, categoryUIObject);
 
-                if (categoryUIObject.transform.GetChild(0).TryGetComponent(out Toggle toggle))
+                if (categoryUIObject.TryGetComponent(out Button button))
                 {
-                    toggle.group = m_ToggleGroup;
-                    toggle.onValueChanged.AddListener(delegate { OnCategoryButtonPressed(toggle.isOn, buildableObjectUICategorySO); });
+                    button.onClick.AddListener(delegate { OnCategoryButtonPressed(buildableObjectUICategorySO); });
                 }
             }
         }
@@ -59,7 +71,10 @@ namespace Johnny.SimDungeon
 
         public void Clear()
         {
-
+            for (int i = m_Content.childCount - 1; i >= 0; i--)
+            {
+                Destroy(m_Content.GetChild(i).gameObject);
+            }
         }
     }
 }

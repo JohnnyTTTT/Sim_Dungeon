@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45339a2c4a2ab064783d4b3fe33cd694, type: 3}
   m_Name: Replaceable Edge StoneWall_001
   m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.ReplaceableObjectSO
+  objectName: 
   randomModel: 0
+  icon: {fileID: 1597681668544025825, guid: 0cd7a0f2fc236f647ae80a68741b8f66, type: 3}
   Models:
-  - {fileID: 7466627307100593940, guid: e624f2d9d2a9abb4ebb11ea4027e107e, type: 3}
+  - {fileID: 8509909476977542485, guid: f313423699f45184ba13d2c3a48c412b, type: 3}

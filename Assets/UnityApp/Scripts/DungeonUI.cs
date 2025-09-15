@@ -8,19 +8,15 @@ namespace Johnny.SimDungeon
 {
     public class DungeonUI : MonoBehaviour
     {
-        [SerializeField] private EasyGridBuilderProController m_EasyGridBuilderProController;
         [SerializeField] private CategoryUI m_CategoryUI;
         [SerializeField] private BuildableUI m_BuildableUI;
 
 
         //Structure
-        public Toggle structureMode;
         public Toggle extendMode;
-        public Toggle makeRoomMode;
-        public GameObject structurePanel;
+        public Toggle structureMode;
 
 
-        public Toggle Remove;
         private BuildableObjectUICategorySO activeBuildableObjectUICategorySO;
 
         private GridManager gridManager;
@@ -44,7 +40,6 @@ namespace Johnny.SimDungeon
             //UI
             structureMode.onValueChanged.AddListener(StructureModeValueChanged);
             extendMode.onValueChanged.AddListener(ExtendModeValueChanged);
-            makeRoomMode.onValueChanged.AddListener(MakeRoomModeValueChanged);
         }
 
 
@@ -52,9 +47,9 @@ namespace Johnny.SimDungeon
         {
             activeEasyGridBuilderPro = activeEasyGridBuilderProSystem;
             activeGridMode = activeEasyGridBuilderPro.GetActiveGridMode();
-            m_CategoryUI.Init(activeEasyGridBuilderPro);
-            m_BuildableUI.Init(activeEasyGridBuilderPro);
+            Init();
         }
+
 
         private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)
         {
@@ -62,19 +57,59 @@ namespace Johnny.SimDungeon
             activeGridMode = gridMode;
         }
 
-        private void OnCategoryButtonPressedMethod(bool isOn, BuildableObjectUICategorySO buildableObjectUICategorySO)
+
+        private void Init()
         {
-            if (isOn)
+            activeBuildableObjectUICategorySO = m_CategoryUI.Init(activeEasyGridBuilderPro);
+            m_BuildableUI.Init(activeEasyGridBuilderPro);
+            if (activeBuildableObjectUICategorySO != null)
             {
-                activeBuildableObjectUICategorySO = buildableObjectUICategorySO;
+                HandleActiveBuildableObjectUICategorySOInteraction();
+            }
+           
+        }
+
+        private void HandleActiveBuildableObjectUICategorySOInteraction()
+        {
+            Image imageComponent;
+            foreach (var instantiatedUICategoryObject in m_CategoryUI.instantiatedUICategoryObjectsDictionary)
+            {
+                if (instantiatedUICategoryObject.Key == activeBuildableObjectUICategorySO)
+                {
+                    if (instantiatedUICategoryObject.Value.TryGetComponent<Image>(out imageComponent)) imageComponent.color = new Color(0.647f, 0.906f, 0.2f);
+                }
+                else if (instantiatedUICategoryObject.Value.TryGetComponent<Image>(out imageComponent)) imageComponent.color = new Color(0.125f, 0.482f, 1.0f);
+            }
+
+            foreach (var instantiatedUIBuildableObject in m_BuildableUI.instantiatedUIBuildableObjectsDictionary)
+            {
+                if (instantiatedUIBuildableObject.Key.buildableObjectUICategorySO == activeBuildableObjectUICategorySO)
+                {
+                    instantiatedUIBuildableObject.Value.gameObject.SetActive(true);
+                }
+                else instantiatedUIBuildableObject.Value.gameObject.SetActive(false);
             }
         }
 
-        private void OnBuildableButtonPressedMethod( BuildableObjectSO buildableObjectSO)
+
+        private void OnCategoryButtonPressedMethod(BuildableObjectUICategorySO buildableObjectUICategorySO)
+        {
+            activeBuildableObjectUICategorySO = buildableObjectUICategorySO;
+            HandleActiveBuildableObjectUICategorySOInteraction();
+        }
+
+        private void OnBuildableButtonPressedMethod(BuildableObjectSO buildableObjectSO)
         {
             foreach (var easyGridBuilderPro in gridManager.GetEasyGridBuilderProSystemsList())
             {
-                easyGridBuilderPro.SetInputActiveBuildableObjectSO(buildableObjectSO, onlySetBuildableExistInBuildablesList: true);
+                if (buildableObjectSO is BuildableEdgeObjectSO)
+                {
+                    JohnnyBuildSystem.Instance.SetInputActiveBuildableObjectSO(buildableObjectSO);
+                }
+                else
+                {
+                    easyGridBuilderPro.SetInputActiveBuildableObjectSO(buildableObjectSO, onlySetBuildableExistInBuildablesList: true);
+                }
             }
         }
 
@@ -91,18 +126,17 @@ namespace Johnny.SimDungeon
 
         private void MakeRoomModeValueChanged(bool value)
         {
-            if (value)
-            {
-                EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeFour);
-                gridManager.SetActiveGridModeInAllGrids(GridMode.BuildMode);
-            }
+
         }
 
 
         private void StructureModeValueChanged(bool value)
         {
-            structurePanel.SetActive(value);
-            //m_EasyGridBuilderProController.SetAllDisable(arg0);
+            if (value)
+            {
+                EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeFour);
+                gridManager.SetActiveGridModeInAllGrids(GridMode.BuildMode);
+            }
         }
 
         private void HandleBuildableObjectsUIPanelActiveSelf(GridMode gridMode)
