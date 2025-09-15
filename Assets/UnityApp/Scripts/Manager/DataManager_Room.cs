@@ -88,6 +88,7 @@ namespace Johnny.SimDungeon
 
         public void Init(FlowTilemapCellDatabase cells)
         {
+            if (Inited) return;
             map.Clear();
             roomList.Clear();
             foreach (var cell in cells)
@@ -108,6 +109,35 @@ namespace Johnny.SimDungeon
                     map.Add(cellData, room);
                 }
             }
+            Inited = true;
+        }
+
+        public void UnInit()
+        {
+            map.Clear();
+            roomList.Clear();
+            Inited = false;
+        }
+
+        public Room GetData(Data_Cell cell)
+        {
+            if (map.TryGetValue(cell, out var room))
+            {
+                return room;
+            }
+            return null;
+        }
+
+        public Room GetData(IntVector2 coord)
+        {
+            var cell = DataManager_Cell.Instance.GetData(coord);
+            return GetData(cell);
+        }
+
+        public Room GetData(Vector3 worldPosition)
+        {
+            var cell = DataManager_Cell.Instance.GetData(worldPosition);
+            return GetData(cell);
         }
 
         private void OnDrawGizmos()
@@ -121,5 +151,7 @@ namespace Johnny.SimDungeon
             }
 
         }
+
+
     }
 }

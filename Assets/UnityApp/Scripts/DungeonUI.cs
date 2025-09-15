@@ -136,6 +136,7 @@ namespace Johnny.SimDungeon
             {
                 EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeFour);
                 gridManager.SetActiveGridModeInAllGrids(GridMode.BuildMode);
+                activeEasyGridBuilderPro.SetDisplayObjectGrid(true);
             }
         }
 

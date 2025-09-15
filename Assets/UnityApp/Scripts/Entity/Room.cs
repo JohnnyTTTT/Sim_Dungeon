@@ -7,11 +7,12 @@ using UnityEditor;
 #endif
 namespace Johnny.SimDungeon
 {
+    [System.Serializable]
     public class Room
     {
         public string name;
         public Vector3 worldCenter;
-        private List<Data_Cell> m_ContainedCells = new List<Data_Cell>();
+        public List<Data_Cell> containedCells = new List<Data_Cell>();
         public Color roomColor;
 
         public void Init(string n)
@@ -22,28 +23,29 @@ namespace Johnny.SimDungeon
 
         public void AddCell(Data_Cell cellData)
         {
-            m_ContainedCells.Add(cellData);
+            containedCells.Add(cellData);
             cellData.parentRoom = this;
 
             var sum = Vector3.zero;
-            foreach (var item in m_ContainedCells)
+            foreach (var item in containedCells)
             {
-                sum += DungeonController.Instance.TileCoordToWorldPosition(cellData.Data.TileCoord);
+                //Debug.Log(cellData.worldPosition);
+                sum += cellData.worldPosition;
             }
-            worldCenter = sum / m_ContainedCells.Count;
+            worldCenter = sum / containedCells.Count;
         }
 
         public void RemoveCell(Data_Cell cellData)
         {
-            m_ContainedCells.Remove(cellData);
+            containedCells.Remove(cellData);
         }
 
 #if UNITY_EDITOR
         public  void DrawGizmos()
         {
-            foreach (var item in m_ContainedCells)
+            foreach (var item in containedCells)
             {
-                GizmoUnitily.DrawFourSizeCube(item.Data.TileCoord, roomColor, false);
+                GizmoUnitily.DrawFourSizeCube(item.Data.TileCoord, roomColor, true);
             }
             GizmoUnitily.DrawLabel(worldCenter, name);
         }

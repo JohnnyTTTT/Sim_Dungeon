@@ -1,6 +1,7 @@
 using DungeonArchitect;
 using DungeonArchitect.Flow.Domains.Tilemap;
 using Johnny.SimDungeon;
+using SoulGames.EasyGridBuilderPro;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,24 +61,6 @@ namespace Johnny.SimDungeon
         }
 
 
-        /// <summary>
-        /// 判断 a 在 cell 的上下左右哪个方向
-        /// </summary>
-        public static Direction GetDirectionForCell(Vector3 a, Vector3 cell)
-        {
-            var dir = new Vector2(a.x - cell.x, a.z - cell.z);
-
-            if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y)) // X 方向差距更大
-            {
-                return dir.x > 0 ? Direction.Right : Direction.Left;
-            }
-            else // Z 方向差距更大
-            {
-                return dir.y > 0 ? Direction.Up : Direction.Down;
-            }
-        }
-
-
         //public bool a = true;
         //public bool b = true;
         //public float test;
@@ -89,23 +72,29 @@ namespace Johnny.SimDungeon
                 if (entity != null)
                 {
                     var currentCoord = DungeonController.Instance.WorldPositionToTileCoord(entity.transform.position);
-                    if (currentCoord != entity.lastCoord)
+                    if (entity.lastCoord != currentCoord)
                     {
                         entity.lastCoord = currentCoord;
                         if (entity is Entity_Edge edgeEntity)
                         {
-                            if (edgeEntity.parentCellData != null)
-                            {
-                                edgeEntity.parentCellData.edgeDatas.Remove(edgeEntity);
-                            }
-                            var cellData = DataManager_Cell.Instance.GetData(edgeEntity.transform.position);
-                            if (cellData != null)
-                            {
-                                edgeEntity.parentCellData = cellData;
-                                cellData.edgeDatas.Add(edgeEntity);
-                            }
+                            var position = dungeonItem.transform.position;
+                            var x = Mathf.FloorToInt(position.x);
+                            var z = Mathf.FloorToInt(position.z);
+                            var data = DataManager_Tile.Instance.GetData(new Vector2Int(x, z));
+                            data.isEdge = true;
+                            //if (edgeEntity.parentCellData != null)
+                            //{
+                            //    edgeEntity.parentCellData.RomoveEdge(edgeEntity);
+                            //}
+                            //var cellData = DataManager_Cell.Instance.GetData(edgeEntity.transform.position);
+                            //if (cellData != null)
+                            //{
+                            //    edgeEntity.parentCellData = cellData;
+                            //    cellData.AddEdge(edgeEntity);
+                            //}
                         }
                     }
+
                 }
             }
         }

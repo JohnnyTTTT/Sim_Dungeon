@@ -44,8 +44,6 @@ namespace Johnny.SimDungeon
                     iconButton.SetIcon(buildableObjectSO.objectIcon);
                 }
 
-
-
                 instantiatedUIBuildableObjectsDictionary.Add(buildableObjectSO, buildableUIObject);
                 if (buildableUIObject.transform.TryGetComponent(out Button button))
                 {
@@ -60,6 +58,8 @@ namespace Johnny.SimDungeon
             {
                 Destroy(m_Content.GetChild(i).gameObject);
             }
+            buildableObjectSOList.Clear();
+            instantiatedUIBuildableObjectsDictionary.Clear();
         }
     }
 }

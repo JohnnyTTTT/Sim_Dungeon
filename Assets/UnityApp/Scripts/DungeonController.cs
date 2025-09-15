@@ -45,7 +45,7 @@ namespace Johnny.SimDungeon
 
         public Camera m_Camera;
         [SerializeField] private GameObject m_HighlightPrefab;
-        [SerializeField] private LayerMask m_GroundMask;
+        public LayerMask m_GroundMask;
         [SerializeField] private Transform m_SelectionRoot;
 
         public GameObject testPrefab;
@@ -78,6 +78,7 @@ namespace Johnny.SimDungeon
 
 
         #region GetCell
+
         public FlowTilemapCell GetCellFromWorldPosition(Vector3 worldPosition)
         {
             return gridFlowDungeonQuery.WorldCoordToTile(worldPosition);
@@ -592,10 +593,7 @@ namespace Johnny.SimDungeon
             return cells;
         }
 
-        public override void OnDungeonDestroyed(Dungeon dungeon)
-        {
 
-        }
 
         private Vector3 SnapToGrid(Vector3 value)
         {
@@ -626,6 +624,7 @@ namespace Johnny.SimDungeon
             DataManager_Cell.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
             DataManager_Edge.Instance.Init(gridFlowDungeonModel.Tilemap.Edges);
             DataManager_Room.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
+            DataManager_Tile.Instance.Init(EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize1);
             Debug.Log("[-----System-----] : OnDungeonMarkersEmitted");
         }
         public override void OnPostDungeonBuild(Dungeon dungeon, DungeonModel model)
@@ -642,6 +641,15 @@ namespace Johnny.SimDungeon
 
             Debug.Log("[-----System-----] : OnPostDungeonBuild");
         }
+
+        public override void OnDungeonDestroyed(Dungeon dungeon)
+        {
+            DataManager_Cell.Instance.UnInit();
+            DataManager_Edge.Instance.UnInit();
+            DataManager_Room.Instance.UnInit();
+            DataManager_Tile.Instance.UnInit();
+        }
+
         //public override void OnSpawnedManagedObjects(Dungeon dungeon, GameObject[] spawnedManagedObjects, DungeonModel activeModel)
         //{
         //    Debug.Log(spawnedManagedObjects.Count());

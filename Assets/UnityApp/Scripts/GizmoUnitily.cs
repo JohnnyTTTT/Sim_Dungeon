@@ -10,6 +10,7 @@ namespace Johnny.SimDungeon
     {
 
         public static Vector3 FourSize = new Vector3(4f, 0.01f, 4f);
+        public static Vector3 OneSize = new Vector3(1f, 0.01f, 1f);
 
         public static void DrawLine(Vector3 from, Vector3 to, Color color)
         {
@@ -21,7 +22,7 @@ namespace Johnny.SimDungeon
         public static void DrawLabel(Vector3 center, string label)
         {
 #if UNITY_EDITOR
-            Handles.Label(center + new Vector3(0, 0.01f, 0), label);
+            Handles.Label(center + new Vector3(0, 1f, 0), label);
 #endif
         }
 
@@ -31,6 +32,19 @@ namespace Johnny.SimDungeon
             var worldCenter = DungeonController.Instance.TileCoordToWorldPosition(center);
             DrawLabel(worldCenter, label);
 #endif
+        }
+
+        public static void DrawOneSizeCube(Vector3 center, Color color, bool isWire)
+        {
+            Gizmos.color = color;
+            if (isWire)
+            {
+                Gizmos.DrawWireCube(center + new Vector3(0, 0.01f, 0), OneSize);
+            }
+            else
+            {
+                Gizmos.DrawCube(center + new Vector3(0, 0.01f, 0), OneSize);
+            }
         }
 
         public static void DrawFourSizeCube(Vector3 center, Color color, bool isWire)

@@ -1,0 +1,35 @@
+{
+    "version": 1,
+    "name": "SimDungeon Input Asset",
+    "maps": [
+        {
+            "name": "Keyboard",
+            "id": "9ed88cd0-bcf6-4df6-b3a2-aaa776db9826",
+            "actions": [
+                {
+                    "name": "Multi Selection",
+                    "type": "Button",
+                    "id": "77b9e457-545a-413b-8697-6fce92e0f429",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f0c33c64-1b08-4b38-8f1d-2055d321b134",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Multi Selection",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

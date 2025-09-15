@@ -1,4 +1,5 @@
 using DungeonArchitect.Flow.Domains.Tilemap;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,12 +23,19 @@ namespace Johnny.SimDungeon
 
         public void Init(FlowTilemapEdgeDatabase edges)
         {
+            if (Inited) return;
             map.Clear();
             foreach (var edge in edges)
             {
                 var data = new Data_Edge(edge);
             }
+            Inited = true;
         }
 
+        public void UnInit()
+        {
+            map.Clear();
+            Inited = false;
+        }
     }
 }

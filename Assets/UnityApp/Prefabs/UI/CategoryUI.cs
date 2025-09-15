@@ -11,10 +11,11 @@ namespace Johnny.SimDungeon
         [SerializeField] private RectTransform m_ItemPrefab;
         [SerializeField] private Transform m_Content;
 
-        private List<BuildableObjectUICategorySO> buildableObjectUICategorySOList;
-        public event OnCategoryButtonPressedDelegate OnCategoryButtonPressed;
 
+        public event OnCategoryButtonPressedDelegate OnCategoryButtonPressed;
         public delegate void OnCategoryButtonPressedDelegate(BuildableObjectUICategorySO buildableObjectUICategorySO);
+
+        private List<BuildableObjectUICategorySO> buildableObjectUICategorySOList = new List<BuildableObjectUICategorySO>();
         public Dictionary<BuildableObjectUICategorySO, RectTransform> instantiatedUICategoryObjectsDictionary = new Dictionary<BuildableObjectUICategorySO, RectTransform>();
 
 
@@ -75,6 +76,8 @@ namespace Johnny.SimDungeon
             {
                 Destroy(m_Content.GetChild(i).gameObject);
             }
+            buildableObjectUICategorySOList.Clear();
+            instantiatedUICategoryObjectsDictionary.Clear();
         }
     }
 }

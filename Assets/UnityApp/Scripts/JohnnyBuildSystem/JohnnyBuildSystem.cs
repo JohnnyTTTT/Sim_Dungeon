@@ -1,12 +1,16 @@
 using SoulGames.EasyGridBuilderPro;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Johnny.SimDungeon
 {
     public class JohnnyBuildSystem : MonoBehaviour
     {
+        private const string KEYBOARD = "Keyboard";
+        private const string MULTI_SELECTION = "Multi Selection";
         public static JohnnyBuildSystem Instance
         {
             get
@@ -21,11 +25,113 @@ namespace Johnny.SimDungeon
         }
         private static JohnnyBuildSystem s_Instance;
 
-        [SerializeField]private BuildableObjectSO currentBuildable;
+        [SerializeField] private InputActionAsset inputActionsAsset;
+        private InputAction multipleSelectionAction;
+        private bool multipleSelection;
+
+        [SerializeField] private BuildableObjectSO currentBuildable;
+        [SerializeField] private Entity_Edge m_LastPreviewEdge;
+        [SerializeField] private List<Entity_Edge> m_LastPreviewRoomEdges;
+
+        private void OnEnable()
+        {
+            var map = inputActionsAsset.FindActionMap(KEYBOARD);
+            multipleSelectionAction = map.FindAction(MULTI_SELECTION);
+            multipleSelectionAction.performed += MultiSelectionHoldActionPerformed;
+            multipleSelectionAction.canceled += MultiSelectionHoldActionCancelled;
+            multipleSelectionAction.Enable();
+        }
 
         public void SetInputActiveBuildableObjectSO(BuildableObjectSO buildableObjectSO)
         {
             currentBuildable = buildableObjectSO;
+        }
+
+        private void MultiSelectionHoldActionPerformed(InputAction.CallbackContext context)
+        {
+
+
+            multipleSelection = true;
+            Debug.Log(1);
+        }
+
+        private void MultiSelectionHoldActionCancelled(InputAction.CallbackContext context)
+        {
+            multipleSelection = false;
+            Debug.Log(2);
+        }
+
+        private void Update()
+        {
+            if (currentBuildable != null)
+            {
+                var mousePos = Mouse.current.position.ReadValue();
+                var ray = DungeonController.Instance.m_Camera.ScreenPointToRay(mousePos);
+                var mask = DungeonController.Instance.m_GroundMask;
+
+                Entity_Edge newHitEdge = null;
+
+                if (Physics.Raycast(ray, out var hit, 1000f, mask))
+                {
+                    if (hit.transform.TryGetComponent<Entity>(out var entity) && entity is Entity_Edge edgeEntity)
+                    {
+                        newHitEdge = edgeEntity;
+                    }
+                }
+
+                if (newHitEdge != m_LastPreviewEdge)
+                {
+                    if (m_LastPreviewEdge != null)
+                    {
+                        Preview(false);
+                        m_LastPreviewEdge = null;
+                    }
+                    if (newHitEdge != null)
+                    {
+                        m_LastPreviewEdge = newHitEdge;
+                        Preview(true);
+                    }
+                }
+
+            }
+        }
+
+        private void Preview(bool value)
+        {
+            Debug.Log(value);
+            if (multipleSelection)
+            {
+                var room = DataManager_Room.Instance.GetData(m_LastPreviewEdge.transform.position);
+                foreach (var cellData in room.containedCells)
+                {
+                    foreach (var edge in cellData.GetEdgeEntities())
+                    {
+                        if (edge != m_LastPreviewEdge)
+                        {
+                            if (value)
+                            {
+                                edge.Preview(currentBuildable);
+                            }
+                            else
+                            {
+                                edge.CancelPreview();
+                            }
+                          
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (value)
+                {
+                    m_LastPreviewEdge.Preview(currentBuildable);
+                }
+                else
+                {
+                    m_LastPreviewEdge.CancelPreview();
+                }
+            }
         }
     }
 }

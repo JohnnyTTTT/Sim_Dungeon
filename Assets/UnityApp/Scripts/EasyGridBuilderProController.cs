@@ -1,6 +1,6 @@
-using DungeonArchitect.Flow.Domains.Tilemap;
-using Johnny.SimDungeon;
+
 using SoulGames.EasyGridBuilderPro;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -26,8 +26,8 @@ namespace Johnny.SimDungeon
 
         }
         private static EasyGridBuilderProController s_Instance;
-        [SerializeField] private EasyGridBuilderProXZ m_EasyGridBuilderProSize4;
-        [SerializeField] private EasyGridBuilderProXZ m_EasyGridBuilderProSize1;
+        public EasyGridBuilderProXZ m_EasyGridBuilderProSize4;
+        public EasyGridBuilderProXZ m_EasyGridBuilderProSize1;
         [SerializeField] private GridAreaDisablerManager m_GridAreaDisablerManager;
 
         public GridType currentGridType;
@@ -47,6 +47,17 @@ namespace Johnny.SimDungeon
 
         public Transform target;
         public BuildableGridObjectSO prefab;
+        private void Start()
+        {
+            StartCoroutine(PostStart());
+        }
+
+        private IEnumerator PostStart()
+        {
+            yield return new WaitForEndOfFrame();
+            m_EasyGridBuilderProSize4.gameObject.SetActive(false);
+            m_EasyGridBuilderProSize1.gameObject.SetActive(false);
+        }
 
         public void ChangeCurrentGrid(GridType gridType)
         {
@@ -54,20 +65,18 @@ namespace Johnny.SimDungeon
             switch (currentGridType)
             {
                 case GridType.SizeOne:
+                    m_EasyGridBuilderProSize4.gameObject.SetActive(false);
+                    m_EasyGridBuilderProSize1.gameObject.SetActive(true);
                     GridManager.Instance.SetActiveGridSystem(m_EasyGridBuilderProSize1);
                     break;
                 case GridType.SizeFour:
+                    m_EasyGridBuilderProSize4.gameObject.SetActive(true);
+                    m_EasyGridBuilderProSize1.gameObject.SetActive(false);
                     GridManager.Instance.SetActiveGridSystem(m_EasyGridBuilderProSize4);
                     break;
             }
+
         }
-
-
-
-
-
-
-
 
 
         public void Temp_UpdateGrid(Dictionary<Vector2Int, Data_Cell> subCellsMap)
