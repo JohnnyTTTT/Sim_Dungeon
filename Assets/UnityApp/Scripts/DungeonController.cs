@@ -3,6 +3,7 @@ using DungeonArchitect.Builders.GridFlow;
 using DungeonArchitect.Flow.Domains.Tilemap;
 using Sirenix.OdinInspector;
 using SoulGames.EasyGridBuilderPro;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -636,7 +637,7 @@ namespace Johnny.SimDungeon
             //Debug.Log("Dungeon build complete");
 
 
-
+            StartCoroutine(PostStart());
 
 
             Debug.Log("[-----System-----] : OnPostDungeonBuild");
@@ -648,8 +649,13 @@ namespace Johnny.SimDungeon
             DataManager_Edge.Instance.UnInit();
             DataManager_Room.Instance.UnInit();
             DataManager_Tile.Instance.UnInit();
-        }
 
+        }
+        private IEnumerator PostStart()
+        {
+            yield return new WaitForEndOfFrame();
+            SpawnManager.Instance.SpawnWorld();
+        }
         //public override void OnSpawnedManagedObjects(Dungeon dungeon, GameObject[] spawnedManagedObjects, DungeonModel activeModel)
         //{
         //    Debug.Log(spawnedManagedObjects.Count());

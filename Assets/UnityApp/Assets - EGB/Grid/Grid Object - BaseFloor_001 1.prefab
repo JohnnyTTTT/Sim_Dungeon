@@ -214,7 +214,7 @@ GameObject:
   - component: {fileID: 5332617091910232687}
   - component: {fileID: -8930773524602078114}
   m_Layer: 0
-  m_Name: Grid Object - BaseFloor_001
+  m_Name: Grid Object - BaseFloor_001 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -458,7 +458,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2851975457961750950}
-  - component: {fileID: 8716396941774367609}
   - component: {fileID: 5644833702542052917}
   m_Layer: 0
   m_Name: Model
@@ -483,20 +482,6 @@ Transform:
   - {fileID: 7899346945964826617}
   m_Father: {fileID: 4549288026964822154}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8716396941774367609
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6274671528042071631}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45dde926424de5d4c8f26e8bb38b32c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.BuildingPart
-  parent: {fileID: 0}
-  type: 1
 --- !u!65 &5644833702542052917
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -15,6 +15,7 @@ namespace Johnny.SimDungeon
         //Structure
         public Toggle extendMode;
         public Toggle structureMode;
+        public Toggle buildMode;
 
 
         private BuildableObjectUICategorySO activeBuildableObjectUICategorySO;
@@ -40,7 +41,9 @@ namespace Johnny.SimDungeon
             //UI
             structureMode.onValueChanged.AddListener(StructureModeValueChanged);
             extendMode.onValueChanged.AddListener(ExtendModeValueChanged);
+            buildMode.onValueChanged.AddListener(BuildModeValueChanged);
         }
+
 
 
         private void OnActiveEasyGridBuilderProChanged(EasyGridBuilderPro activeEasyGridBuilderProSystem)
@@ -136,7 +139,15 @@ namespace Johnny.SimDungeon
             {
                 EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeFour);
                 gridManager.SetActiveGridModeInAllGrids(GridMode.BuildMode);
-                activeEasyGridBuilderPro.SetDisplayObjectGrid(true);
+            }
+        }
+
+        private void BuildModeValueChanged(bool value)
+        {
+            if (value)
+            {
+                EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeOne);
+                gridManager.SetActiveGridModeInAllGrids(GridMode.BuildMode);
             }
         }
 

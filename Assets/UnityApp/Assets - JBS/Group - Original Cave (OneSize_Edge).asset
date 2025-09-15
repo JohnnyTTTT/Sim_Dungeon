@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9f5a85ff3adf49345b7d2bb2cec19feb, type: 3}
-  m_Name: Replaceable Edge
+  m_Name: Group - Original Cave (OneSize_Edge)
   m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.ReplaceableCategorySO
-  categoryName: 
-  icon: {fileID: 2243685600903963446, guid: 0cd7a0f2fc236f647ae80a68741b8f66, type: 3}
+  prefab: {fileID: 11400000, guid: ece915d89d7c2c24e862cf255ca2f528, type: 2}
+  probability: 0.02

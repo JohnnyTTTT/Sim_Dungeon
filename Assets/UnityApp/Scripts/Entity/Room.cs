@@ -13,6 +13,7 @@ namespace Johnny.SimDungeon
         public string name;
         public Vector3 worldCenter;
         public List<Data_Cell> containedCells = new List<Data_Cell>();
+        public RoomType  roomType;
         public Color roomColor;
 
         public void Init(string n)

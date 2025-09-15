@@ -46,9 +46,16 @@ namespace Johnny.SimDungeon
                 for (int z = 0; z < easyGridBuilder.GetGridLength(); z++)
                 {
                     var position = new Vector2Int(x, z);
-                    var newData = new Data_Tile(position);
-                    newData.parentCell = DataManager_Cell.Instance.GetData(newData.worldPosition);
-                    map.Add(newData.coord, newData);
+                    var worldPosition = new Vector3(position.x + 0.5f, 0f, position.y + 0.5f);
+                    var cell = DataManager_Cell.Instance.GetData(worldPosition);
+                    if (cell != null)
+                    {
+                        var newData = new Data_Tile(position);
+                        newData.parentCell = cell;
+                        cell.tiles.Add(newData);
+                        map.Add(newData.coord, newData);
+                    }
+
                 }
             }
         }

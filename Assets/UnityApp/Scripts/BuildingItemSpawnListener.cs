@@ -59,7 +59,26 @@ namespace Johnny.SimDungeon
             if (maxDot == dotRight) return Direction.Left;
             return Direction.Right;
         }
+        public enum Orientation
+        {
+            Horizontal,
+            Vertical
+        }
 
+        public static Orientation GetOrientation(Transform t)
+        {
+            var forward = t.forward;
+            var dir = new Vector2(forward.x, forward.z).normalized;
+
+            if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
+            {
+                return Orientation.Horizontal;
+            }
+            else
+            {
+                return Orientation.Vertical;
+            }
+        }
 
         //public bool a = true;
         //public bool b = true;
@@ -80,8 +99,35 @@ namespace Johnny.SimDungeon
                             var position = dungeonItem.transform.position;
                             var x = Mathf.FloorToInt(position.x);
                             var z = Mathf.FloorToInt(position.z);
-                            var data = DataManager_Tile.Instance.GetData(new Vector2Int(x, z));
-                            data.isEdge = true;
+                            var startCoord = new Vector2Int(x, z);
+                            var data = DataManager_Tile.Instance.GetData(startCoord);
+                            if (data != null)
+                            {
+                                data.isEdge = true;
+                                var orientation = GetOrientation(dungeonItem.transform);
+                                switch (orientation)
+                                {
+                                    case Orientation.Horizontal:
+                                        var data1 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x, startCoord.y + 1));
+                                        data1.isEdge = true;
+                                        var data2 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x, startCoord.y - 1));
+                                        data2.isEdge = true;
+                                        var data3 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x, startCoord.y - 2));
+                                        data3.isEdge = true;
+                                        break;
+                                    case Orientation.Vertical:
+                                        var data4 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x + 1, startCoord.y));
+                                        data4.isEdge = true;
+                                        var data5 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x - 1, startCoord.y));
+                                        data5.isEdge = true;
+                                        var data6 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x - 2, startCoord.y));
+                                        data6.isEdge = true;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+
                             //if (edgeEntity.parentCellData != null)
                             //{
                             //    edgeEntity.parentCellData.RomoveEdge(edgeEntity);

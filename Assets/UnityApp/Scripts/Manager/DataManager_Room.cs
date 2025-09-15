@@ -12,6 +12,7 @@ namespace Johnny.SimDungeon
     public enum RoomType
     {
         None,
+        OriginaCave,
         Hotel,
         HotelRoom,
     }
@@ -97,12 +98,13 @@ namespace Johnny.SimDungeon
                 {
                     var cellData = DataManager_Cell.Instance.GetData(cell);
                     var nodeCoord = cell.NodeCoord;
-                    var roomName = "Room - " + nodeCoord.ToVector2().ToString();
+                    var roomName = "OriginaCave" + nodeCoord.ToVector2().ToString();
                     var room = roomList.Where(x => x.name == roomName).FirstOrDefault();
                     if (room == null)
                     {
                         room = new Room();
                         room.Init(roomName);
+                        room.roomType = RoomType.OriginaCave;
                         roomList.Add(room);
                     }
                     room.AddCell(cellData);

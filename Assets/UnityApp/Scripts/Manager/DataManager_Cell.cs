@@ -15,7 +15,7 @@ namespace Johnny.SimDungeon
         private static readonly float[] Angles = { 0f, 90f, 180f, 270f };
         public bool randomAngle;
         public Room parentRoom;
-        public Data_Tile[,] subCells = new Data_Tile[4, 4];
+        public List<Data_Tile> tiles = new List<Data_Tile>();
         public Vector3 worldPosition;
         //вСиосроб
         private Entity_Edge[] edgeDatas = new Entity_Edge[4];
