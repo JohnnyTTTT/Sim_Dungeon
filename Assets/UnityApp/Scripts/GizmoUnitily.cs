@@ -9,7 +9,7 @@ namespace Johnny.SimDungeon
     public static class GizmoUnitily
     {
 
-        public static Vector3 FourSize = new Vector3(4f, 0.01f, 4f);
+        public static Vector3 TwoSize = new Vector3(2f, 0.01f, 2f);
         public static Vector3 OneSize = new Vector3(1f, 0.01f, 1f);
 
         public static void DrawLine(Vector3 from, Vector3 to, Color color)
@@ -47,23 +47,23 @@ namespace Johnny.SimDungeon
             }
         }
 
-        public static void DrawFourSizeCube(Vector3 center, Color color, bool isWire)
+        public static void DrawTwoSizeCube(Vector3 center, Color color, bool isWire)
         {
             Gizmos.color = color;
             if (isWire)
             {
-                Gizmos.DrawWireCube(center + new Vector3(0, 0.01f, 0), FourSize);
+                Gizmos.DrawWireCube(center + new Vector3(0, 0.01f, 0), TwoSize);
             }
             else
             {
-                Gizmos.DrawCube(center + new Vector3(0, 0.01f, 0), FourSize);
+                Gizmos.DrawCube(center + new Vector3(0, 0.01f, 0), TwoSize);
             }
         }
 
-        public static void DrawFourSizeCube(IntVector2 center, Color color, bool isWire)
+        public static void DrawTwoSizeCube(IntVector2 center, Color color, bool isWire)
         {
             var worldCenter = DungeonController.Instance.TileCoordToWorldPosition(center);
-            DrawFourSizeCube(worldCenter, color, isWire);
+            DrawTwoSizeCube(worldCenter, color, isWire);
         }
     }
 }

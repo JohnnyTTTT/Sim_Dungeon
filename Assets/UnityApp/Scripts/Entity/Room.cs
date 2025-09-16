@@ -7,15 +7,14 @@ using UnityEditor;
 #endif
 namespace Johnny.SimDungeon
 {
-    [System.Serializable]
     public class Room
     {
         public string name;
-        public Vector3 worldCenter;
         public List<Data_Cell> containedCells = new List<Data_Cell>();
-        public RoomType  roomType;
+        public RoomType roomType;
         public Color roomColor;
-
+        public Bounds bounds;
+        public Vector3 center;
         public void Init(string n)
         {
             name = n;
@@ -26,14 +25,28 @@ namespace Johnny.SimDungeon
         {
             containedCells.Add(cellData);
             cellData.parentRoom = this;
-
-            var sum = Vector3.zero;
-            foreach (var item in containedCells)
+            CalculateBounds();
+        }
+        public void CalculateBounds()
+        {
+            if (containedCells == null || containedCells.Count == 0)
             {
-                //Debug.Log(cellData.worldPosition);
-                sum += cellData.worldPosition;
+                bounds = new Bounds(Vector3.zero, Vector3.zero);
+                center = Vector3.zero;
+                return;
             }
-            worldCenter = sum / containedCells.Count;
+
+            // 初始化 bounds
+            bounds = new Bounds(containedCells[0].worldPosition, Vector3.zero);
+
+            // 包含所有格子
+            foreach (var cell in containedCells)
+            {
+                bounds.Encapsulate(cell.worldPosition);
+            }
+
+            // Y轴可以忽略或保持为0
+            center = new Vector3(bounds.center.x, 0f, bounds.center.z);
         }
 
         public void RemoveCell(Data_Cell cellData)
@@ -42,13 +55,13 @@ namespace Johnny.SimDungeon
         }
 
 #if UNITY_EDITOR
-        public  void DrawGizmos()
+        public void DrawGizmos()
         {
             foreach (var item in containedCells)
             {
-                GizmoUnitily.DrawFourSizeCube(item.Data.TileCoord, roomColor, true);
+                GizmoUnitily.DrawTwoSizeCube(item.Data.TileCoord, roomColor, true);
             }
-            GizmoUnitily.DrawLabel(worldCenter, name);
+            GizmoUnitily.DrawLabel(center, name);
         }
 #endif
     }

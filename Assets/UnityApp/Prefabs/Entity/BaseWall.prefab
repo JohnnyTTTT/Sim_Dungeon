@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 3407519850946740615}
   - component: {fileID: 7003963250220125132}
   - component: {fileID: 8797448139101322100}
+  - component: {fileID: 6317876980376326822}
   m_Layer: 0
   m_Name: BaseWall
   m_TagString: Untagged
@@ -86,10 +87,7 @@ MonoBehaviour:
   model: {fileID: 2678210142409657767}
   preview: {fileID: 0}
   replaceableObjectSO: {fileID: 0}
-  parentRoom:
-    name: 
-    worldCenter: {x: 0, y: 0, z: 0}
-    roomColor: {r: 0, g: 0, b: 0, a: 0}
+  direction: 0
 --- !u!65 &8797448139101322100
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -109,8 +107,22 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 4, y: 3, z: 0.2}
-  m_Center: {x: 0, y: 1.5, z: 0}
+  m_Size: {x: 2, y: 4, z: 0.2}
+  m_Center: {x: 0, y: 2, z: 0}
+--- !u!114 &6317876980376326822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258760145057214865}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42bdacac17728264493421450b4da3e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.WallTest
+  angleThreshold: 0
+  model: {fileID: 3342015362011846429}
 --- !u!1001 &868897155257071267
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -187,6 +199,10 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: ba064a7a25244a449b60f55b3dad0970, type: 3}
       propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: ba064a7a25244a449b60f55b3dad0970, type: 3}
+      propertyPath: m_LocalScale.y
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ba064a7a25244a449b60f55b3dad0970, type: 3}

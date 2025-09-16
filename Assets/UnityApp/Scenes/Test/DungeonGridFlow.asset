@@ -325,7 +325,7 @@ MonoBehaviour:
   indexCounter:
     index: 56
   topZIndex:
-    index: 330
+    index: 331
   nodes:
   - {fileID: 9181654878815998289}
   - {fileID: 8901431847947355109}
@@ -611,7 +611,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DungeonArchitect.Modules.Flow.Implementations::DungeonArchitect.Flow.Impl.GridFlow.Tasks.GridFlowLayoutTaskCreateGrid
   description: 
-  resolution: {x: 6, y: 6}
+  resolution: {x: 8, y: 8}
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1014,13 +1014,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: DungeonArchitect.Modules.Flow::DungeonArchitect.Flow.Exec.FlowExecGraphNodePin
   pinType: 1
   node: {fileID: 8901431847947355109}
-  position: {x: 54.88, y: 23.265}
+  position: {x: 55.144714, y: 23.253948}
   boundsOffset:
     serializedVersion: 2
-    x: -54.88
-    y: -23.265
-    width: 109.76
-    height: 46.53
+    x: -55.144714
+    y: -23.253948
+    width: 110.28943
+    height: 46.507896
   tangent: {x: 0, y: -1}
   tangentStrength: 50
   Padding: {x: 12, y: 12}
@@ -1111,13 +1111,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: DungeonArchitect.Modules.Flow::DungeonArchitect.Flow.Exec.FlowExecGraphNodePin
   pinType: 0
   node: {fileID: 8901431847947355109}
-  position: {x: 54.88, y: 23.265}
+  position: {x: 55.144714, y: 23.253948}
   boundsOffset:
     serializedVersion: 2
-    x: -54.88
-    y: -23.265
-    width: 109.76
-    height: 46.53
+    x: -55.144714
+    y: -23.253948
+    width: 110.28943
+    height: 46.507896
   tangent: {x: 0, y: -1}
   tangentStrength: 50
   Padding: {x: 10, y: 10}
@@ -1139,13 +1139,13 @@ MonoBehaviour:
     serializedVersion: 2
     x: -542.5
     y: -72.5
-    width: 109.76
-    height: 46.53
+    width: 110.28943
+    height: 46.507896
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 329
+  zIndex: 331
   inputPins:
   - {fileID: 8560447184837783066}
   outputPins:

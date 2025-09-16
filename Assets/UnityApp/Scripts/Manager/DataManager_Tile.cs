@@ -22,6 +22,7 @@ namespace Johnny.SimDungeon
             GizmoUnitily.DrawOneSizeCube(worldPosition, isEdge ? Color.red : Color.blue, true);
         }
     }
+
     public class DataManager_Tile : EntityManager<Vector2Int, Data_Tile>
     {
         public static DataManager_Tile Instance
@@ -55,9 +56,10 @@ namespace Johnny.SimDungeon
                         cell.tiles.Add(newData);
                         map.Add(newData.coord, newData);
                     }
-
                 }
             }
+            Inited = true;
+            Debug.Log($"[-----System-----] : DataManager_Tile inited , tile count <{map.Count}>");
         }
 
         public void UnInit()

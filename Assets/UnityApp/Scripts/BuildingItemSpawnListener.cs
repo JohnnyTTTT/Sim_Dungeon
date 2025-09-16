@@ -80,6 +80,24 @@ namespace Johnny.SimDungeon
             }
         }
 
+
+        public static Direction GetDirection(Vector3 a, Vector3 b)
+        {
+            var dx = a.x - b.x;
+            var dz = a.z - b.z;
+
+            if (Mathf.Abs(dx) > Mathf.Abs(dz))
+            {
+                return dx > 0 ? Direction.Right : Direction.Left;
+            }
+            else
+            {
+                return dz > 0 ? Direction.Up : Direction.Down;
+            }
+        }
+
+
+
         //public bool a = true;
         //public bool b = true;
         //public float test;
@@ -87,6 +105,27 @@ namespace Johnny.SimDungeon
         {
             if (dungeonItem != null)
             {
+                var edgeGroup = dungeonItem.GetComponent<Entity_EdgeGroup>();
+                if (edgeGroup != null)
+                {
+                    var primaryCell = DataManager_Cell.Instance.GetData(edgeGroup.primary.position);
+                    var secondaryCell = DataManager_Cell.Instance.GetData(edgeGroup.secondary.position);
+
+                    if (primaryCell != null)
+                    {
+                        edgeGroup.primaryCell = primaryCell;
+                        var room = primaryCell.parentRoom;
+                        edgeGroup.primaryRoom = room.roomType != RoomType.OriginaCave ? room : null;
+                    }
+                    if (secondaryCell != null)
+                    {
+                        edgeGroup.secondaryCell = secondaryCell;
+                        var room = secondaryCell.parentRoom;
+                        edgeGroup.secondaryRoom = room.roomType != RoomType.OriginaCave ? room : null;
+
+                    }
+                }
+                return;
                 var entity = dungeonItem.GetComponent<Entity>();
                 if (entity != null)
                 {
@@ -105,23 +144,64 @@ namespace Johnny.SimDungeon
                             {
                                 data.isEdge = true;
                                 var orientation = GetOrientation(dungeonItem.transform);
+                                var drientation = GetDirection(dungeonItem.transform.position, data.worldPosition);
+                                var y = dungeonItem.transform.rotation.y;
+                                switch (drientation)
+                                {
+                                    case Direction.Left:
+                                        if (y == 90f)
+                                        {
+                                            edgeEntity.SetDirection(Direction.Left);
+                                        }
+                                        else
+                                        {
+                                            edgeEntity.SetDirection(Direction.Right);
+                                        }
+                                        break;
+                                    case Direction.Up:
+                                        if (y == 0f)
+                                        {
+                                            edgeEntity.SetDirection(Direction.Up);
+                                        }
+                                        else
+                                        {
+                                            edgeEntity.SetDirection(Direction.Down);
+                                        }
+                                        break;
+                                    case Direction.Right:
+                                        if (y == 90f)
+                                        {
+                                            edgeEntity.SetDirection(Direction.Right);
+                                        }
+                                        else
+                                        {
+                                            edgeEntity.SetDirection(Direction.Left);
+                                        }
+                                        break;
+                                    case Direction.Down:
+                                        if (y == 0f)
+                                        {
+                                            edgeEntity.SetDirection(Direction.Down);
+                                        }
+                                        else
+                                        {
+                                            edgeEntity.SetDirection(Direction.Up);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+
+
                                 switch (orientation)
                                 {
                                     case Orientation.Horizontal:
-                                        var data1 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x, startCoord.y + 1));
-                                        data1.isEdge = true;
                                         var data2 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x, startCoord.y - 1));
                                         data2.isEdge = true;
-                                        var data3 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x, startCoord.y - 2));
-                                        data3.isEdge = true;
                                         break;
                                     case Orientation.Vertical:
-                                        var data4 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x + 1, startCoord.y));
-                                        data4.isEdge = true;
                                         var data5 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x - 1, startCoord.y));
                                         data5.isEdge = true;
-                                        var data6 = DataManager_Tile.Instance.GetData(new Vector2Int(startCoord.x - 2, startCoord.y));
-                                        data6.isEdge = true;
                                         break;
                                     default:
                                         break;

@@ -9,7 +9,7 @@ namespace Johnny.SimDungeon
     public enum GridType
     {
         SizeOne,
-        SizeFour,
+        SizeTwo,
     }
     public class EasyGridBuilderProController : MonoBehaviour
     {
@@ -26,8 +26,10 @@ namespace Johnny.SimDungeon
 
         }
         private static EasyGridBuilderProController s_Instance;
-        public EasyGridBuilderProXZ m_EasyGridBuilderProSize4;
+
         public EasyGridBuilderProXZ m_EasyGridBuilderProSize1;
+        public EasyGridBuilderProXZ m_EasyGridBuilderProSize2;
+
         [SerializeField] private GridAreaDisablerManager m_GridAreaDisablerManager;
 
         public GridType currentGridType;
@@ -55,7 +57,7 @@ namespace Johnny.SimDungeon
         private IEnumerator PostStart()
         {
             yield return new WaitForEndOfFrame();
-            m_EasyGridBuilderProSize4.gameObject.SetActive(false);
+            m_EasyGridBuilderProSize2.gameObject.SetActive(false);
             m_EasyGridBuilderProSize1.gameObject.SetActive(false);
         }
 
@@ -65,14 +67,14 @@ namespace Johnny.SimDungeon
             switch (currentGridType)
             {
                 case GridType.SizeOne:
-                    m_EasyGridBuilderProSize4.gameObject.SetActive(false);
+                    m_EasyGridBuilderProSize2.gameObject.SetActive(false);
                     m_EasyGridBuilderProSize1.gameObject.SetActive(true);
                     GridManager.Instance.SetActiveGridSystem(m_EasyGridBuilderProSize1);
                     break;
-                case GridType.SizeFour:
-                    m_EasyGridBuilderProSize4.gameObject.SetActive(true);
+                case GridType.SizeTwo:
+                    m_EasyGridBuilderProSize2.gameObject.SetActive(true);
                     m_EasyGridBuilderProSize1.gameObject.SetActive(false);
-                    GridManager.Instance.SetActiveGridSystem(m_EasyGridBuilderProSize4);
+                    GridManager.Instance.SetActiveGridSystem(m_EasyGridBuilderProSize2);
                     break;
             }
 

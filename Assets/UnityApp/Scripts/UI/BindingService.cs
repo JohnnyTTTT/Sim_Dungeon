@@ -1,0 +1,44 @@
+using Loxodon.Framework.Binding;
+using Loxodon.Framework.Contexts;
+using UnityEngine;
+
+namespace Johnny.SimDungeon
+{
+    public class BindingService : MonoBehaviour
+    {
+        public static BindingService Instance
+        {
+            get
+            {
+                if (s_Instance == null)
+                {
+                    s_Instance = FindFirstObjectByType<BindingService>();
+                }
+                return s_Instance;
+            }
+        }
+        private static BindingService s_Instance;
+
+        public static MainPanelViewModel MainPanelViewModel;
+
+
+        private BindingServiceBundle m_BindingServiceBundle;
+
+        private void Awake()
+        {
+            Debug.Log($"[------ BindingService ------ ] : Init");
+            var context = Context.GetApplicationContext();
+            m_BindingServiceBundle = new BindingServiceBundle(context.GetContainer());
+            m_BindingServiceBundle.Start();
+
+            MainPanelViewModel = new MainPanelViewModel();
+
+        }
+
+        private void OnDestroy()
+        {
+            m_BindingServiceBundle.Stop();
+            Debug.Log($"[------ BindingService ------ ] : Stop");
+        }
+    }
+}

@@ -14,6 +14,8 @@ namespace Johnny.SimDungeon
         public Data_Cell parentCellData;
         public Room parentRoom;
 
+        public static int DirectionHash = Shader.PropertyToID("_Direction");
+        public Direction direction;
 
         public void Preview(BuildableObjectSO buildableObjectSO)
         {       
@@ -74,6 +76,20 @@ namespace Johnny.SimDungeon
                 if (randomPoint <= currentProbability) return randomPrefab;
             }
             return null;
+        }
+
+        public void SetDirection(Direction drientation)
+        {
+            direction = drientation;
+            var renderer = GetComponentInChildren<Renderer>();
+            var vector = direction switch
+            {
+                Direction.Left => new Vector2(-1,0),
+                Direction.Up => new Vector2(0, 1),
+                Direction.Right => new Vector2(1, 0),
+                Direction.Down => new Vector2(0, -1),
+            };
+            //renderer.material.SetVector(DirectionHash, vector);
         }
     }
 }

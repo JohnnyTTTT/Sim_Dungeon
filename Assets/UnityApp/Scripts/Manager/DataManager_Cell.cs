@@ -105,7 +105,7 @@ namespace Johnny.SimDungeon
 
         public void DrawGizmos()
         {
-            GizmoUnitily.DrawFourSizeCube(worldPosition, Color.green, true);
+            GizmoUnitily.DrawTwoSizeCube(worldPosition, Color.green, true);
             foreach (var item in edgeDatas)
             {
                 if (item != null)
@@ -212,7 +212,9 @@ namespace Johnny.SimDungeon
                 }
             }
             Inited = true;
+            Debug.Log($"[-----System-----] : DataManager_Cell inited , cell count <{map.Count}>");
         }
+
         public void UnInit()
         {
             map.Clear();

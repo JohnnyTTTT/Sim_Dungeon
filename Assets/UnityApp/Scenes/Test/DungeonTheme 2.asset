@@ -1,5 +1,28 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-9095739865533573446
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15a4af758c5024ee3ad022895232667f, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphPin
+  pinType: 1
+  node: {fileID: -6436927558489737011}
+  position: {x: 60, y: 120}
+  boundsOffset:
+    serializedVersion: 2
+    x: -40
+    y: -15
+    width: 80
+    height: 15
+  tangent: {x: 0, y: 1}
+  tangentStrength: 50
 --- !u!114 &-8899274660400954926
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -28,22 +51,6 @@ MonoBehaviour:
   inputPins: []
   outputPins:
   - {fileID: 6515424244384698710}
-  graph: {fileID: 11400000}
---- !u!114 &-8862590521350952887
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
-  m_Name: Link_6
-  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
-  id: 6
-  input: {fileID: -7726829947411993094}
-  output: {fileID: 9156150458333625078}
   graph: {fileID: 11400000}
 --- !u!114 &-8785218436475500890
 MonoBehaviour:
@@ -84,15 +91,15 @@ MonoBehaviour:
   caption: Game Object Node
   bounds:
     serializedVersion: 2
-    x: 712
-    y: -326
+    x: 708
+    y: -172
     width: 120
     height: 120
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
-  selected: 1
-  zIndex: 51
+  selected: 0
+  zIndex: 69
   inputPins:
   - {fileID: -8743332526442181294}
   outputPins:
@@ -162,7 +169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.SpatialConstraints.SpatialConstraintAsset
   rotateToFit: 1
-  applyFitRotation: 0
+  applyFitRotation: 1
   applyMarkerRotation: 1
   checkRelativeToMarkerRotation: 1
   hostThemeNode: {fileID: -7002922616721053371}
@@ -190,6 +197,26 @@ MonoBehaviour:
     height: 15
   tangent: {x: 0, y: 1}
   tangentStrength: 50
+--- !u!114 &-8148098939378081076
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 473b3d45cb4f50043ba3a6be2df48e2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.SpatialConstraints.SpatialConstraintGraph
+  indexCounter:
+    index: 0
+  topZIndex:
+    index: 0
+  nodes:
+  - {fileID: 6715728906056891438}
+  links: []
+  asset: {fileID: 8297106187526099012}
 --- !u!114 &-7726829947411993094
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -229,15 +256,15 @@ MonoBehaviour:
   caption: Game Object Node
   bounds:
     serializedVersion: 2
-    x: 330
-    y: -355
+    x: 338
+    y: -361
     width: 120
     height: 120
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 20
+  zIndex: 83
   inputPins:
   - {fileID: -5403617862368626049}
   outputPins:
@@ -310,15 +337,15 @@ MonoBehaviour:
   caption: Game Object Node
   bounds:
     serializedVersion: 2
-    x: 572
-    y: -329
+    x: 562
+    y: -175
     width: 120
     height: 120
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 50
+  zIndex: 70
   inputPins:
   - {fileID: -7726829947411993094}
   outputPins:
@@ -410,6 +437,64 @@ MonoBehaviour:
   outputPins:
   - {fileID: -1800373716636899776}
   graph: {fileID: 11400000}
+--- !u!114 &-6436927558489737011
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfc1d246dd77b46a4aee970ab911ea63, type: 3}
+  m_Name: MeshNode_d9473242-c6d2-4963-83a7-deed48c386d0
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.Graphs.GameObjectNode
+  id: d9473242-c6d2-4963-83a7-deed48c386d0
+  caption: Game Object Node
+  bounds:
+    serializedVersion: 2
+    x: 640.4155
+    y: -321.3174
+    width: 120
+    height: 120
+  canBeDeleted: 1
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 81
+  inputPins:
+  - {fileID: -4626822278695709408}
+  outputPins:
+  - {fileID: -9095739865533573446}
+  graph: {fileID: 11400000}
+  offset:
+    e00: 1
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 1
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 1
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 1
+  consumeOnAttach: 1
+  attachmentProbability: 1
+  IsStatic: 0
+  affectsNavigation: 1
+  selectionRuleEnabled: 0
+  selectionRuleClassName: 
+  transformRuleEnabled: 0
+  transformRuleClassName: 
+  useSpatialConstraint: 0
+  spatialConstraint: {fileID: 8297106187526099012}
+  Template: {fileID: 2258760145057214865, guid: d0c8ebff5e24f0e4fb22136cfd2fdbd4, type: 3}
 --- !u!114 &-6298116108898682110
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -456,22 +541,6 @@ MonoBehaviour:
     height: 15
   tangent: {x: 0, y: -1}
   tangentStrength: 50
---- !u!114 &-6119292989222695251
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
-  m_Name: Link_5
-  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
-  id: 5
-  input: {fileID: -8743332526442181294}
-  output: {fileID: 9156150458333625078}
-  graph: {fileID: 11400000}
 --- !u!114 &-5763496339388794398
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -601,7 +670,7 @@ MonoBehaviour:
     height: 15
   tangent: {x: 0, y: 1}
   tangentStrength: 50
---- !u!114 &-4355207900409058816
+--- !u!114 &-4626822278695709408
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -610,13 +679,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
-  m_Name: Link_2
-  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
-  id: 2
-  input: {fileID: -5403617862368626049}
-  output: {fileID: -1196434298448371443}
-  graph: {fileID: 11400000}
+  m_Script: {fileID: 11500000, guid: 15a4af758c5024ee3ad022895232667f, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphPin
+  pinType: 0
+  node: {fileID: -6436927558489737011}
+  position: {x: 60, y: 0}
+  boundsOffset:
+    serializedVersion: 2
+    x: -40
+    y: 0
+    width: 80
+    height: 15
+  tangent: {x: 0, y: -1}
+  tangentStrength: 50
 --- !u!114 &-4319540750401046329
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -673,6 +749,22 @@ MonoBehaviour:
   id: 7
   input: {fileID: -3190536593532311744}
   output: {fileID: 6515424244384698710}
+  graph: {fileID: 11400000}
+--- !u!114 &-4193185879134442456
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_15
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 15
+  input: {fileID: -4626822278695709408}
+  output: {fileID: 9156150458333625078}
   graph: {fileID: 11400000}
 --- !u!114 &-3964276261055231286
 MonoBehaviour:
@@ -801,15 +893,15 @@ MonoBehaviour:
   caption: MarkerEmitter
   bounds:
     serializedVersion: 2
-    x: 328
-    y: -197
+    x: 338
+    y: -194
     width: 120
     height: 50
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 21
+  zIndex: 84
   inputPins:
   - {fileID: 5450795114786567342}
   outputPins: []
@@ -857,6 +949,22 @@ MonoBehaviour:
     height: 15
   tangent: {x: 0, y: 1}
   tangentStrength: 50
+--- !u!114 &-2484147675029204644
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_14
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 14
+  input: {fileID: -5403617862368626049}
+  output: {fileID: 7497032339816364957}
+  graph: {fileID: 11400000}
 --- !u!114 &-2356496105817288600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1017,7 +1125,7 @@ MonoBehaviour:
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 34
+  zIndex: 52
   inputPins:
   - {fileID: -3190536593532311744}
   outputPins:
@@ -1031,7 +1139,7 @@ MonoBehaviour:
     e10: 0
     e11: 1
     e12: 0
-    e13: 0
+    e13: 4
     e20: 0
     e21: 0
     e22: 1
@@ -1064,9 +1172,9 @@ MonoBehaviour:
   m_Name: DungeonTheme 2
   m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.Graph
   indexCounter:
-    index: 8
+    index: 16
   topZIndex:
-    index: 51
+    index: 84
   nodes:
   - {fileID: -6834357345733334772}
   - {fileID: 8695320524079790731}
@@ -1088,31 +1196,15 @@ MonoBehaviour:
   - {fileID: -8899274660400954926}
   - {fileID: 8452706665658948458}
   - {fileID: 3373297819446834021}
+  - {fileID: -6436927558489737011}
   links:
   - {fileID: 2936526141784877924}
-  - {fileID: -4355207900409058816}
-  - {fileID: 1894531770465808948}
-  - {fileID: 380991219205520305}
-  - {fileID: -6119292989222695251}
-  - {fileID: -8862590521350952887}
   - {fileID: -4214999581869594025}
   - {fileID: 5392308807309107833}
---- !u!114 &380991219205520305
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
-  m_Name: Link_4
-  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
-  id: 4
-  input: {fileID: 5450795114786567342}
-  output: {fileID: -4661492970144718872}
-  graph: {fileID: 11400000}
+  - {fileID: 6559384805711058083}
+  - {fileID: -2484147675029204644}
+  - {fileID: -4193185879134442456}
+  - {fileID: 5436121161096306245}
 --- !u!114 &586477259717932521
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1200,7 +1292,7 @@ MonoBehaviour:
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 18
+  zIndex: 75
   inputPins: []
   outputPins:
   - {fileID: 7497032339816364957}
@@ -1253,22 +1345,6 @@ MonoBehaviour:
   inputPins: []
   outputPins:
   - {fileID: -8378507931573749742}
-  graph: {fileID: 11400000}
---- !u!114 &1894531770465808948
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
-  m_Name: Link_3
-  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
-  id: 3
-  input: {fileID: -5403617862368626049}
-  output: {fileID: 7497032339816364957}
   graph: {fileID: 11400000}
 --- !u!114 &2936526141784877924
 MonoBehaviour:
@@ -1411,7 +1487,7 @@ MonoBehaviour:
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 26
+  zIndex: 80
   inputPins: []
   outputPins:
   - {fileID: 9156150458333625078}
@@ -1489,6 +1565,22 @@ MonoBehaviour:
   id: 8
   input: {fileID: -4237875902407280065}
   output: {fileID: 5574162053997549237}
+  graph: {fileID: 11400000}
+--- !u!114 &5436121161096306245
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_16
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 16
+  input: {fileID: 5450795114786567342}
+  output: {fileID: -4661492970144718872}
   graph: {fileID: 11400000}
 --- !u!114 &5450795114786567342
 MonoBehaviour:
@@ -1655,6 +1747,56 @@ MonoBehaviour:
     height: 15
   tangent: {x: 0, y: 1}
   tangentStrength: 50
+--- !u!114 &6559384805711058083
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_13
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 13
+  input: {fileID: -5403617862368626049}
+  output: {fileID: -1196434298448371443}
+  graph: {fileID: 11400000}
+--- !u!114 &6715728906056891438
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 584263142da7e3f4ebae84cbbc5b4b65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.Graphs.SpatialConstraints.SCReferenceNode
+  id: 1d8ab488-27b4-4ed2-b86e-4346946bfa8d
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 90
+    y: 90
+    width: 20
+    height: 20
+  canBeDeleted: 0
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 0
+  inputPins: []
+  outputPins: []
+  graph: {fileID: -8148098939378081076}
+  ruleDomain: 0
+  isSnapped: 1
+  constraints: []
+  constraintEvaluationMode: 0
+  exclusionRuleSearchRadius: 0.1
+  exclusionRuleMarkersToRemove: []
 --- !u!114 &6779753358394748980
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1668,7 +1810,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.SpatialConstraints.SpatialConstraintAsset
   rotateToFit: 1
-  applyFitRotation: 0
+  applyFitRotation: 1
   applyMarkerRotation: 1
   checkRelativeToMarkerRotation: 1
   hostThemeNode: {fileID: -8751096669789931943}
@@ -1851,6 +1993,24 @@ MonoBehaviour:
   constraintEvaluationMode: 0
   exclusionRuleSearchRadius: 0.1
   exclusionRuleMarkersToRemove: []
+--- !u!114 &8297106187526099012
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec8e932ba1f67d245ac1a041984c7f5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.SpatialConstraints.SpatialConstraintAsset
+  rotateToFit: 1
+  applyFitRotation: 0
+  applyMarkerRotation: 1
+  checkRelativeToMarkerRotation: 1
+  hostThemeNode: {fileID: -6436927558489737011}
+  graph: {fileID: -8148098939378081076}
 --- !u!114 &8452706665658948458
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1904,7 +2064,7 @@ MonoBehaviour:
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 15
+  zIndex: 74
   inputPins: []
   outputPins:
   - {fileID: -1196434298448371443}

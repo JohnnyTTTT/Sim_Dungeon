@@ -1,5 +1,8 @@
 using DungeonArchitect;
 using DungeonArchitect.Builders.GridFlow;
+#if UNITY_EDITOR
+using DungeonArchitect.Editors;
+#endif
 using DungeonArchitect.Flow.Domains.Tilemap;
 using Sirenix.OdinInspector;
 using SoulGames.EasyGridBuilderPro;
@@ -235,18 +238,6 @@ namespace Johnny.SimDungeon
             var cellEntitiyManager = DataManager_Cell.Instance;
             foreach (var cellEntitly in edgeCellEntitlies)
             {
-                //var cellCoord = cellEntitly.cell.TileCoord;
-                //var leftCell = GetLeftCellFromTileCoord(cellCoord);
-                //var leftCellRightEdge = GetRightEdgeFromTileCoord(leftCell.TileCoord);
-                //if (leftCell.CellType == FlowTilemapCellType.Custom || (leftCell.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetCellEntitly(leftCell).room != roomEntitly))
-                //{
-                //    leftCellRightEdge.EdgeType = FlowTilemapEdgeType.Fence;
-                //    leftCellRightEdge.HorizontalEdge = false;
-                //    //Debug.Log(leftCellRightEdge.EdgeCoord.ToVector2() + "  " + left.TileCoord.ToVector2());
-                //    //leftCellRightEdge.EdgeCoord = left.TileCoord;
-                //}
-
-
                 var neighbourData = GetNeighbourData(cellEntitly.Data);
 
                 //left
@@ -265,7 +256,6 @@ namespace Johnny.SimDungeon
                 {
                     edgeUp.EdgeType = FlowTilemapEdgeType.Fence;
                 }
-
 
                 //right
                 var right = neighbourData[2].cell;
@@ -286,7 +276,7 @@ namespace Johnny.SimDungeon
                 //Debug.Log($"вС : <{left.CellType}> , ио : <{up.CellType}> , ср : <{right.CellType}> , об : <{down.CellType}>");
 
             }
-            dungeon.ApplyTheme(new RuntimeDungeonSceneObjectInstantiator());
+            ApplyTheme();
         }
 
         private void StructureModeTest()
@@ -580,9 +570,28 @@ namespace Johnny.SimDungeon
             public FlowTilemapEdge edge;
         }
 
+        [Button]
+        private void BuildDungeon()
+        {
+            if (Application.isPlaying)
+            {
+                dungeon.Build(new RuntimeDungeonSceneObjectInstantiator());
+            }
+            else
+            {
+                dungeon.Build(new EditorDungeonSceneObjectInstantiator());
+            }
 
-        [Button("ApplyTheme")]
-        private void ApplyTheme()
+        }
+
+        [Button]
+        private void DestroyDungeon()
+        {
+            dungeon.DestroyDungeon();
+        }
+
+        [Button]
+        public void ApplyTheme()
         {
             dungeon.ApplyTheme(new RuntimeDungeonSceneObjectInstantiator());
         }
@@ -619,6 +628,7 @@ namespace Johnny.SimDungeon
             //dungeonModel.Tilemap.ed
             //gridFlowMinimap.Initialize();
         }
+
         public override void OnDungeonMarkersEmitted(Dungeon dungeon, DungeonModel model, LevelMarkerList markers)
         {
             var gridFlowDungeonModel = model as GridFlowDungeonModel;
@@ -637,7 +647,7 @@ namespace Johnny.SimDungeon
             //Debug.Log("Dungeon build complete");
 
 
-            StartCoroutine(PostStart());
+            //StartCoroutine(PostStart());
 
 
             Debug.Log("[-----System-----] : OnPostDungeonBuild");
@@ -661,6 +671,7 @@ namespace Johnny.SimDungeon
         //    Debug.Log(spawnedManagedObjects.Count());
         //    Debug.Log("[System] : OnSpawnedManagedObjects");
         //}
+
 
     }
 }

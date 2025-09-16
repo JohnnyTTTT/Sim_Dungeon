@@ -1737,7 +1737,7 @@ MonoBehaviour:
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
-  selected: 1
+  selected: 0
   zIndex: 4694
   inputPins:
   - {fileID: -4185939555180740271}
@@ -3667,7 +3667,7 @@ MonoBehaviour:
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
-  selected: 0
+  selected: 1
   zIndex: 4660
   inputPins:
   - {fileID: -7013237108365398782}

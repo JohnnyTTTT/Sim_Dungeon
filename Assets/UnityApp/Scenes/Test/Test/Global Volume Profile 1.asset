@@ -358,10 +358,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32b6af8f7ad32324cb6941c3290e5895, type: 3}
   m_Name: MicroShadowing
   m_EditorClassIdentifier: Unity.RenderPipelines.HighDefinition.Runtime::UnityEngine.Rendering.HighDefinition.MicroShadowing
-  active: 0
+  active: 1
   enable:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0
   opacity:
     m_OverrideState: 1
     m_Value: 1
