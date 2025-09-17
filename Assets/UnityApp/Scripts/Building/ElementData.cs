@@ -2,17 +2,14 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public enum Direction
-    {
-        Left,
-        Up,
-        Right,
-        Down
-    }
 
-    public abstract class ElementData<T> 
+    public abstract class ElementData
     {
         public int GUID;
+    }
+    public abstract class ElementData<T> : ElementData
+    {
+
         public T Data;
 
         //[SerializeField] protected Direction Direction;

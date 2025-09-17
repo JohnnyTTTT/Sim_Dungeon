@@ -27,12 +27,18 @@ namespace Johnny.SimDungeon
         }
         private static EasyGridBuilderProController s_Instance;
 
+        private GridManager gridManager;
+
+
+
         public EasyGridBuilderProXZ m_EasyGridBuilderProSize1;
         public EasyGridBuilderProXZ m_EasyGridBuilderProSize2;
+        public EasyGridBuilderProXZ m_CurrentGridBuilderPro;
+        public GridType currentGridType;
 
         [SerializeField] private GridAreaDisablerManager m_GridAreaDisablerManager;
 
-        public GridType currentGridType;
+
 
 
         public UnityEvent<bool> OnBuildModeChanged;
@@ -57,6 +63,7 @@ namespace Johnny.SimDungeon
         private IEnumerator PostStart()
         {
             yield return new WaitForEndOfFrame();
+            gridManager = GridManager.Instance;
             m_EasyGridBuilderProSize2.gameObject.SetActive(false);
             m_EasyGridBuilderProSize1.gameObject.SetActive(false);
         }
@@ -64,21 +71,75 @@ namespace Johnny.SimDungeon
         public void ChangeCurrentGrid(GridType gridType)
         {
             currentGridType = gridType;
+
             switch (currentGridType)
             {
                 case GridType.SizeOne:
-                    m_EasyGridBuilderProSize2.gameObject.SetActive(false);
-                    m_EasyGridBuilderProSize1.gameObject.SetActive(true);
-                    GridManager.Instance.SetActiveGridSystem(m_EasyGridBuilderProSize1);
+
+                    gridManager.SetActiveGridSystem(m_EasyGridBuilderProSize1);
                     break;
                 case GridType.SizeTwo:
                     m_EasyGridBuilderProSize2.gameObject.SetActive(true);
                     m_EasyGridBuilderProSize1.gameObject.SetActive(false);
-                    GridManager.Instance.SetActiveGridSystem(m_EasyGridBuilderProSize2);
+                    gridManager.SetActiveGridSystem(m_EasyGridBuilderProSize2);
                     break;
             }
+            m_CurrentGridBuilderPro = gridManager.GetActiveEasyGridBuilderPro() as EasyGridBuilderProXZ;
+            gridManager.SetActiveGridModeInAllGrids(GridMode.BuildMode);
+        }
+
+        public bool ReplaceEdge(Entity_Edge entity_Edge, BuildableFreeObjectSO temelpte,out BuildableFreeObject spawned)
+        {
+            ChangeCurrentGrid(GridType.SizeTwo);
+            var worldPosition = entity_Edge.transform.position;
+            var random = RandomUtility.UpdateBuildableObjectSORandomPrefab(temelpte);
+            var verticalGridIndex = m_CurrentGridBuilderPro.GetActiveVerticalGridIndex();
+            return TryInitializeBuildableFreeObjectSinglePlacement(worldPosition, temelpte,
+                entity_Edge.direction, EightDirectionalRotation.North, 0f, Vector3.zero, true, verticalGridIndex, true, out spawned, random, null);
+        }
+
+
+        //public bool TryDestroyBuildableEdgeObject()
+        //{
+        //    if (gridManager.TryGetBuildableObjectDestroyer(out var destroyer))
+        //    {
+        //        if(destroyer.TryDestroyBuildableEdgeObject())
+
+
+        //    }
+        //    return false;
+        //}
+
+        public bool TryInitializeBuildableFreeObjectSinglePlacement(Vector3 worldPosition, BuildableFreeObjectSO buildableFreeObjectSO, FourDirectionalRotation fourDirectionalDirection,
+            EightDirectionalRotation eightDirectionalDirection, float freeRotation, Vector3 hitNormals, bool ignoreCustomConditions, int verticalGridIndex, bool byPassEventsAndMessages,
+            out BuildableFreeObject spawnnedBuildableFreeObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null, BuildableFreeObject originalBuildableFreeObject = null)
+        {
+            return m_CurrentGridBuilderPro.TryInitializeBuildableFreeObjectSinglePlacement(worldPosition, buildableFreeObjectSO, fourDirectionalDirection,
+                eightDirectionalDirection, freeRotation, hitNormals, ignoreCustomConditions, verticalGridIndex, byPassEventsAndMessages
+                , out spawnnedBuildableFreeObject, buildableObjectSORandomPrefab, originalBuildableFreeObject);
+        }
+        public bool TryInitializeBuildableEdgeObjectSinglePlacement(Vector3 worldPosition, BuildableEdgeObjectSO buildableEdgeObjectSO, FourDirectionalRotation fourDirectionalDirection,
+            bool isBuildableEdgeObjectFlipped, bool ignoreCustomConditions, bool ignoreReplacement, int verticalGridIndex, bool byPassEventsAndMessages, out BuildableEdgeObject spawnnedBuildableEdgeObject,
+            BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null, BuildableEdgeObject originalBuildableEdgeObject = null)
+        {
+
+            return m_CurrentGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement(worldPosition, buildableEdgeObjectSO,
+                 FourDirectionalRotation.West, isBuildableEdgeObjectFlipped, ignoreCustomConditions, ignoreReplacement, verticalGridIndex, byPassEventsAndMessages, out spawnnedBuildableEdgeObject,
+               buildableObjectSORandomPrefab, originalBuildableEdgeObject);
+        }
+
+        public bool TryInitializeBuildableGridObjectSinglePlacement(Vector3 worldPosition, BuildableGridObjectSO buildableGridObjectSO,
+            FourDirectionalRotation direction, bool ignoreBuildConditions, bool ignoreReplacement,
+            int activeVerticalGridIndex, bool byPassEventsAndMessages, out BuildableGridObject buildableGridObject,
+            BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null, BuildableGridObject originalBuildableGridObject = null)
+        {
+
+            return m_CurrentGridBuilderPro.TryInitializeBuildableGridObjectSinglePlacement(worldPosition, buildableGridObjectSO,
+                direction, ignoreBuildConditions, ignoreReplacement, activeVerticalGridIndex, byPassEventsAndMessages, out buildableGridObject,
+               buildableObjectSORandomPrefab, originalBuildableGridObject);
 
         }
+
 
 
         public void Temp_UpdateGrid(Dictionary<Vector2Int, Data_Cell> subCellsMap)

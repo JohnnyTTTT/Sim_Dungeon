@@ -5,7 +5,6 @@ namespace Johnny.SimDungeon
 {
     public class JohnnyBuildAssets : MonoBehaviour
     {
-        public ReplaceableObjectSO[] replaceableObjects;
-        public BuildableObjectUICategorySO[] edgeCategory;
+        public RoomInfo[] replaceableObjects;
     }
 }

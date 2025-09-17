@@ -30,24 +30,58 @@ namespace Johnny.SimDungeon
         private static SpawnManager s_Instance;
 
         public SpawnRulee[] spawnRules;
+        private Dictionary<RoomType, SpawnRulee> spawnRulesDic = new Dictionary<RoomType, SpawnRulee>();
 
-        private System.Random rng;
-
-
+        private void Start()
+        {
+            foreach (var item in spawnRules)
+            {
+                spawnRulesDic[item.roomType] = item;
+            }
+        }
         [Button]
         public void SpawnWorld()
         {
-            var intSeed = unchecked((int)DungeonController.Instance.dungeon.Config.Seed);
-            rng = new System.Random(intSeed);
+            if (!Application.isPlaying) return;
 
-            EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeOne);
+            RandomUtility.SetSeed((int)DungeonController.Instance.dungeon.Config.Seed);
+
+            EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeTwo);
 
             var rooms = DataManager_Room.Instance.roomList;
-            foreach (var item in rooms)
+            foreach (var room in rooms)
             {
-                if (item.roomType == RoomType.OriginaCave)
+                if (spawnRulesDic.TryGetValue(room.roomType, out var rule))
                 {
-                    Spawn(item, spawnRules[0]);
+                    ApplyRule(room, rule);
+                }
+            }
+
+
+            //var rooms = DataManager_Room.Instance.roomList;
+            //foreach (var item in rooms)
+            //{
+            //    if (item.roomType == RoomType.OriginaCave)
+            //    {
+            //        Spawn(item, spawnRules[0]);
+            //    }
+            //}
+        }
+        private bool a;
+        private void ApplyRule(Room room, SpawnRulee rule)
+        {
+            var cells = room.containedCells;
+            foreach (var cell in cells)
+            {
+                foreach (var edge in cell.edges)
+                {
+                    //if (!a)
+                    {
+                        var wallTemplete = RandomUtility.GetRandomElement(rule.Biome.walls);
+                        edge.TryReplace(wallTemplete);
+                        a = true;
+                    }
+
                 }
             }
         }
@@ -66,7 +100,7 @@ namespace Johnny.SimDungeon
             SpawnObjects(tiles, biome);
         }
 
-        public void SpawnObjects(List<Data_Tile> tiles, BiomeSO  biome)
+        public void SpawnObjects(List<Data_Tile> tiles, BiomeSO biome)
         {
             var spawnObjects = biome.prefabs;
             var gidBuilderPro = GridManager.Instance.GetActiveEasyGridBuilderPro();
@@ -80,11 +114,11 @@ namespace Johnny.SimDungeon
                     if (obj.spawnRule == SpawnRule.OnlyEdge && !tile.isEdge)
                         continue;
 
-                    if (NextFloat() <= obj.probability)
+                    if (RandomUtility.NextFloat() <= obj.probability)
                     {
-                        var randomPrefabs = UpdateActiveBuildableObjectSORandomPrefab(obj.prefab);
+                        var randomPrefabs = RandomUtility.UpdateBuildableObjectSORandomPrefab(obj.prefab);
                         var spawned = gidBuilderPro.TryInitializeBuildableGridObjectSinglePlacement(tile.worldPosition,
-                               obj.prefab, rotation, false, true, verticalGridIndex, true, out _, randomPrefabs);
+                               obj.prefab, rotation, true, true, verticalGridIndex, true, out _, randomPrefabs);
 
                     }
                 }
@@ -92,18 +126,12 @@ namespace Johnny.SimDungeon
         }
 
 
-
-        private float NextFloat()
-        {
-            return (float)rng.NextDouble();
-        }
-
         private BiomeSpawnObject PickByProbability(List<BiomeSpawnObject> list)
         {
             var total = list.Sum(o => o.probability);
             if (total <= 0f) return null;
 
-            var roll = rng.NextDouble() * total;
+            var roll = RandomUtility.GetRandomFloat(total);
             foreach (var obj in list)
             {
                 if (roll < obj.probability)
@@ -112,52 +140,6 @@ namespace Johnny.SimDungeon
             }
             return null;
         }
-
-
-        private BuildableObjectSO.RandomPrefabs UpdateActiveBuildableObjectSORandomPrefab(BuildableObjectSO buildableObjectSO)
-        {
-            float totalProbability;
-            float randomPoint;
-
-            totalProbability = CalculateTotalProbability(buildableObjectSO);
-            randomPoint = UnityEngine.Random.Range(0f, totalProbability);
-
-            return SelectPrefabByProbability(buildableObjectSO, randomPoint);
-        }
-
-        private float CalculateTotalProbability(BuildableObjectSO buildableObjectSO)
-        {
-            var totalProbability = 0f;
-            foreach (var randomPrefab in buildableObjectSO.randomPrefabs)
-            {
-                totalProbability += randomPrefab.probability;
-            }
-            return totalProbability;
-        }
-
-        private BuildableObjectSO.RandomPrefabs SelectPrefabByProbability(BuildableObjectSO buildableObjectSO, float randomPoint)
-        {
-            var currentProbability = 0f;
-            foreach (var randomPrefab in buildableObjectSO.randomPrefabs)
-            {
-                currentProbability += randomPrefab.probability;
-                if (randomPoint <= currentProbability) return randomPrefab;
-            }
-            return null;
-        }
-
-
-
-
-
-
-      
-
-
-
-
-
-
 
 
 

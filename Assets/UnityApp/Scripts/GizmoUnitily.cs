@@ -47,6 +47,26 @@ namespace Johnny.SimDungeon
             }
         }
 
+        public static void DrawWall(Vector3 center, Color color, bool isHorizontalEdge)
+        {
+            Gizmos.color = color;
+            var offset = isHorizontalEdge ?  new Vector3(0f, 0f, -1f) : new Vector3(-1f, 0f, 0f) ;
+            if (isHorizontalEdge)
+            {
+    
+                Gizmos.DrawWireCube(center + offset, new Vector3(2f, 0.01f, 0.3f));
+
+            }
+            else
+            {
+                Gizmos.DrawWireCube(center + offset, new Vector3(0.3f, 0.01f, 2f));
+            }
+        }
+        public static void DrawWall(IntVector2 center, Color color, bool isHorizontalEdge)
+        {
+            var position = DungeonController.Instance.TileCoordToWorldPosition(center);
+            DrawWall(position, color, isHorizontalEdge);
+        }
         public static void DrawTwoSizeCube(Vector3 center, Color color, bool isWire)
         {
             Gizmos.color = color;

@@ -53,6 +53,8 @@ Material:
     - _ConservativeDepthOffsetEnable: 1
     - _CullMode: 2
     - _CullModeForward: 2
+    - _CullPlane: 0
+    - _CullPlaneHeight: 1.01
     - _DepthOffsetEnable: 1
     - _DoubleSidedEnable: 0
     - _DoubleSidedGIMode: 0
@@ -61,6 +63,7 @@ Material:
     - _DstBlend2: 0
     - _EnableBlendModePreserveSpecularLighting: 1
     - _EnableFogOnTransparent: 1
+    - _Float0: 0.68
     - _OpaqueCullMode: 2
     - _PerPixelSorting: 0
     - _ReceivesSSR: 1

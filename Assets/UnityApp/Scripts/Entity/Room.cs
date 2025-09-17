@@ -7,17 +7,33 @@ using UnityEditor;
 #endif
 namespace Johnny.SimDungeon
 {
-    public class Room
+    public class Room : ElementData
     {
         public string name;
         public List<Data_Cell> containedCells = new List<Data_Cell>();
-        public RoomType roomType;
+        public RoomType roomType
+        {
+            get
+            {
+                return m_RoomType;
+            }
+        }
+        private RoomType m_RoomType;
+
+        public IntVector2 spawnNodeCoord;
         public Color roomColor;
         public Bounds bounds;
         public Vector3 center;
-        public void Init(string n)
+        public void Init(string n, RoomType type, IntVector2? spawnCoord = null)
         {
             name = n;
+            m_RoomType = type;
+            if (spawnNodeCoord != null)
+            {
+                spawnNodeCoord = spawnCoord.Value;
+
+            }
+
             roomColor = Random.ColorHSV();
         }
 

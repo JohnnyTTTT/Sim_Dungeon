@@ -4,6 +4,7 @@ using DungeonArchitect.Builders.GridFlow;
 using DungeonArchitect.Editors;
 #endif
 using DungeonArchitect.Flow.Domains.Tilemap;
+using DungeonArchitect.Flow.Impl.GridFlow;
 using Sirenix.OdinInspector;
 using SoulGames.EasyGridBuilderPro;
 using System.Collections;
@@ -60,26 +61,42 @@ namespace Johnny.SimDungeon
         private HashSet<IntVector2> m_CustomFloors = new HashSet<IntVector2>();
         private List<GameObject> m_CurrentAreaHighlights = new List<GameObject>();
 
+        private RuntimeSimSceneObjectInstantiator m_RuntimeSimSceneObjectInstantiator;
 
         //Structure
         public StructureMode structureMode = StructureMode.None;
         private List<FlowTilemapCell> m_WillCreateSpaces = new List<FlowTilemapCell>();
-
+        public float wallDotThreshold;
 
         private void Start()
         {
-            Debug.Log("[-----System-----] : Dungeon Build Start");
-            dungeon.Build();
+            m_RuntimeSimSceneObjectInstantiator = new RuntimeSimSceneObjectInstantiator();
 
-            GridManager.Instance.OnActiveGridModeChanged += OnActiveGridModeChanged;
-            GridManager.Instance.OnActiveEasyGridBuilderProChanged += OnActiveEasyGridBuilderProChanged;
+            StartCoroutine(PostStart());
+
             //m_CustomFloors.Clear();
             //
 
             //m_GridFlowDungeonBuilder.BuildDungeon(m_DungeonConfig, m_DungeonModel);
         }
 
+        private IEnumerator PostStart()
+        {
+            yield return new WaitForEndOfFrame();
 
+
+            GridManager.Instance.OnActiveGridModeChanged += OnActiveGridModeChanged;
+            GridManager.Instance.OnActiveEasyGridBuilderProChanged += OnActiveEasyGridBuilderProChanged;
+
+            Debug.Log("[-----System-----] : Dungeon Build Start");
+
+            DestroyDungeon();
+            yield return new WaitForEndOfFrame();
+            BuildDungeon();
+            yield return new WaitForEndOfFrame();
+
+            SpawnManager.Instance.SpawnWorld();
+        }
 
         #region GetCell
 
@@ -152,6 +169,23 @@ namespace Johnny.SimDungeon
 
             return new[] { left, up, right, down };
         }
+
+        public GridFlowLayoutNodeRoomType GetRoomType(IntVector2 coord)
+        {
+            var layoutNode = gridFlowDungeonQuery.GetLayoutNode(coord);
+            var roomType = GridFlowLayoutNodeRoomType.Unknown;
+
+            if (layoutNode != null)
+            {
+                var domainData = layoutNode.GetDomainData<GridFlowTilemapDomainData>();
+                if (domainData != null)
+                {
+                    roomType = domainData.RoomType;
+                }
+            }
+            return roomType;
+        }
+
 
         #region GetEdge
         public FlowTilemapEdge GetLeftEdgeFromTileCoord(IntVector2 coord)
@@ -243,7 +277,9 @@ namespace Johnny.SimDungeon
                 //left
                 var left = neighbourData[0].cell;
                 var edgeLeft = neighbourData[0].edge;
-                if (left.CellType == FlowTilemapCellType.Custom || (left.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(left).parentRoom != room))
+
+                if (left.CellType == FlowTilemapCellType.Custom ||
+                    (left.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(left.TileCoord).parentRoom != room))
                 {
                     edgeLeft.EdgeType = FlowTilemapEdgeType.Fence;
                     edgeLeft.HorizontalEdge = false;
@@ -252,7 +288,8 @@ namespace Johnny.SimDungeon
                 //up
                 var up = neighbourData[1].cell;
                 var edgeUp = neighbourData[1].edge;
-                if (up.CellType == FlowTilemapCellType.Custom || (up.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(up).parentRoom != room))
+                if (up.CellType == FlowTilemapCellType.Custom ||
+                    (up.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(up.TileCoord).parentRoom != room))
                 {
                     edgeUp.EdgeType = FlowTilemapEdgeType.Fence;
                 }
@@ -260,7 +297,8 @@ namespace Johnny.SimDungeon
                 //right
                 var right = neighbourData[2].cell;
                 var edgeRight = neighbourData[2].edge;
-                if (right.CellType == FlowTilemapCellType.Custom || (right.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(right).parentRoom != room))
+                if (right.CellType == FlowTilemapCellType.Custom ||
+                    (right.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(right.TileCoord).parentRoom != room))
                 {
                     edgeRight.EdgeType = FlowTilemapEdgeType.Fence;
                     edgeRight.HorizontalEdge = false;
@@ -269,7 +307,8 @@ namespace Johnny.SimDungeon
                 //down
                 var down = neighbourData[3].cell;
                 var edgeDown = neighbourData[3].edge;
-                if (down.CellType == FlowTilemapCellType.Custom || (down.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(down).parentRoom != room))
+                if (down.CellType == FlowTilemapCellType.Custom ||
+                    (down.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(down.TileCoord).parentRoom != room))
                 {
                     edgeDown.EdgeType = FlowTilemapEdgeType.Fence;
                 }
@@ -570,11 +609,12 @@ namespace Johnny.SimDungeon
             public FlowTilemapEdge edge;
         }
 
-        [Button]
-        private void BuildDungeon()
+
+        public void BuildDungeon()
         {
             if (Application.isPlaying)
             {
+
                 dungeon.Build(new RuntimeDungeonSceneObjectInstantiator());
             }
             else
@@ -584,13 +624,12 @@ namespace Johnny.SimDungeon
 
         }
 
-        [Button]
-        private void DestroyDungeon()
+        public void DestroyDungeon()
         {
             dungeon.DestroyDungeon();
         }
 
-        [Button]
+
         public void ApplyTheme()
         {
             dungeon.ApplyTheme(new RuntimeDungeonSceneObjectInstantiator());
@@ -661,11 +700,7 @@ namespace Johnny.SimDungeon
             DataManager_Tile.Instance.UnInit();
 
         }
-        private IEnumerator PostStart()
-        {
-            yield return new WaitForEndOfFrame();
-            SpawnManager.Instance.SpawnWorld();
-        }
+
         //public override void OnSpawnedManagedObjects(Dungeon dungeon, GameObject[] spawnedManagedObjects, DungeonModel activeModel)
         //{
         //    Debug.Log(spawnedManagedObjects.Count());

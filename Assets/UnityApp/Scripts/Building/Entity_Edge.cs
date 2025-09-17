@@ -6,22 +6,56 @@ namespace Johnny.SimDungeon
 {
     public class Entity_Edge : Entity
     {
-        public Transform modelRoot;
-        public Transform model;
-        public Transform preview;
-
-        public BuildableObjectSO replaceableObjectSO;
-        public Data_Cell parentCellData;
-        public Room parentRoom;
-
         public static int DirectionHash = Shader.PropertyToID("_Direction");
-        public Direction direction;
+
+        public Transform baseModel;
+
+        public Entity_EdgeGroup parent;
+        public Entity_Edge relativeEdge;
+        private Data_Cell parentCellData;
+
+        private BuildableFreeObject currentObject;
+        private Transform preview;
+        public FourDirectionalRotation direction;
+
+
+        public override bool TryReplace(BuildableObjectSO temelpte)
+        {
+            if (temelpte is BuildableFreeObjectSO buildableFreeObject)
+            {
+                if (currentObject == null || currentObject.GetBuildableObjectSO() != buildableFreeObject)
+                {
+                    if (EasyGridBuilderProController.Instance.ReplaceEdge(this, buildableFreeObject, out var buildable))
+                    {
+                        currentObject = buildable;
+                        if (baseModel != null)
+                        {
+                            Destroy(baseModel.gameObject);
+                        }
+                    }
+                    if (parent.isRim)
+                    {
+                        relativeEdge.TryReplace(temelpte);
+                    }
+                }
+            }
+            return false;
+        }
+
+        public void SetParentCellData(Data_Cell cell)
+        {
+            if (cell != null)
+            {
+                parentCellData = cell;
+                cell.edges.Add(this);
+            }
+        }
 
         public void Preview(BuildableObjectSO buildableObjectSO)
-        {       
+        {
             //有可能每帧都call
             if (preview != null) return;
-            model.gameObject.SetActive(false);
+            baseModel.gameObject.SetActive(false);
             UpdateActiveBuildableObjectSORandomPrefab(buildableObjectSO);
         }
 
@@ -29,14 +63,14 @@ namespace Johnny.SimDungeon
         {
             Destroy(preview.gameObject);
             preview = null;
-            model.gameObject.SetActive(true);
+            baseModel.gameObject.SetActive(true);
         }
 
         public void EnsurePreview()
         {
-            Destroy(model.gameObject);
-            model = preview;
-            model.GetComponent<Collider>().enabled = true;
+            Destroy(baseModel.gameObject);
+            baseModel = preview;
+            baseModel.GetComponent<Collider>().enabled = true;
             preview = null;
         }
 
@@ -50,7 +84,7 @@ namespace Johnny.SimDungeon
 
             var activeBuildableObjectSORandomPrefab = SelectPrefabByProbability(buildableObjectSO, randomPoint);
 
-            var preview = Instantiate(activeBuildableObjectSORandomPrefab.objectPrefab, modelRoot);
+            var preview = Instantiate(activeBuildableObjectSORandomPrefab.objectPrefab, transform);
             preview.transform.localPosition = Vector3.zero;
             preview.transform.localRotation = Quaternion.identity;
             preview.GetComponent<Collider>().enabled = false;
@@ -78,18 +112,5 @@ namespace Johnny.SimDungeon
             return null;
         }
 
-        public void SetDirection(Direction drientation)
-        {
-            direction = drientation;
-            var renderer = GetComponentInChildren<Renderer>();
-            var vector = direction switch
-            {
-                Direction.Left => new Vector2(-1,0),
-                Direction.Up => new Vector2(0, 1),
-                Direction.Right => new Vector2(1, 0),
-                Direction.Down => new Vector2(0, -1),
-            };
-            //renderer.material.SetVector(DirectionHash, vector);
-        }
     }
 }

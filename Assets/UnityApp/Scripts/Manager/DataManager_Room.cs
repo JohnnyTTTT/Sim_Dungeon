@@ -11,13 +11,14 @@ namespace Johnny.SimDungeon
 {
     public enum RoomType
     {
-        None,
+        Undefined,
         OriginaCave,
+        EmptyRoom,
         Hotel,
         HotelRoom,
     }
 
-    public class DataManager_Room : EntityManager<Data_Cell, Room>
+    public class DataManager_Room : EntityManager<Room>
     {
         public static DataManager_Room Instance
         {
@@ -33,9 +34,6 @@ namespace Johnny.SimDungeon
         private static DataManager_Room s_Instance;
         public List<Room> roomList = new List<Room>();
         private RoomType m_CurrentRoomType;
-
-        [Title("Titles and Headers")]
-        public bool drawGizmos;
 
         private void Start()
         {
@@ -56,35 +54,59 @@ namespace Johnny.SimDungeon
 
         private void OnGridObjectBoxPlacementUpdated(EasyGridBuilderPro easyGridBuilderPro, Vector3 boxPlacementEndPosition)
         {
+            if (GridManager.Instance.TryGetBuildableGridObjectGhost(out var a))
+            {
+                if (a.TryGetGhostObjectVisualDictionary(out var aaa))
+                {
+                    foreach (var item in aaa)
+                    {
+                        Debug.Log(item.Key, item.Value);
+                    }
 
+
+
+                }
+            }
         }
 
         private void OnGridObjectBoxPlacementFinalized(EasyGridBuilderPro easyGridBuilderPro)
         {
-            if (m_CurrentRoomType != RoomType.None)
+            if (m_CurrentRoomType != RoomType.Undefined)
             {
-                var room = new Room();
-                room.Init(m_CurrentRoomType.ToString());
-                roomList.Add(room);
-                var cellDatas = new List<Data_Cell>();
-                if (GridManager.Instance.TryGetGridBuiltObjectsManager(out GridBuiltObjectsManager gridBuiltObjectsManager))
+                var room = MakeRoom(m_CurrentRoomType.ToString(), m_CurrentRoomType);
+
+                var roomCells = new List<Data_Cell>();
+                if (GridManager.Instance.TryGetBuildableGridObjectGhost(out var buildableGridObjectGhost)
+                    && buildableGridObjectGhost.TryGetGhostObjectVisualDictionary(out var ghostObjects))
                 {
-                    foreach (var buildableObject in gridBuiltObjectsManager.GetBuiltObjectsList())
+                    foreach (var buildableObject in ghostObjects)
                     {
-                        var buildableRoom = buildableObject.GetComponent<BuildableRoom>();
-                        var cellData = DataManager_Cell.Instance.GetData(buildableObject.transform.position);
+                        var buildableRoom = buildableObject.Value.GetComponent<BuildableRoom>();
+                        var cellData = DataManager_Cell.Instance.GetData(buildableObject.Value.transform.position);
+
+                        var coord = cellData.Data.TileCoord;
+                        var oldParent = map[coord];
+                        oldParent.RemoveCell(cellData);
                         room.AddCell(cellData);
-                        cellDatas.Add(cellData);
-                        if (map.ContainsKey(cellData))
-                        {
-                            map.Remove(cellData);
-                        }
-                        map.Add(cellData,room);
+                        map[coord] = room;
+                        roomCells.Add(cellData);
                         buildableRoom.Hide();
                     }
+                    Debug.Log(roomCells.Count);
+                    DungeonController.Instance.AddEdgeForCells(roomCells, room);
+
+                    m_CurrentRoomType = RoomType.Undefined;
                 }
-                DungeonController.Instance.AddEdgeForCells(cellDatas, room);
             }
+        }
+
+
+        private Room MakeRoom(string roomName, RoomType roomType, IntVector2? spawnNodeCoord = null)
+        {
+            var room = new Room();
+            room.Init(roomName, roomType, spawnNodeCoord);
+            roomList.Add(room);
+            return room;
         }
 
         public void Init(FlowTilemapCellDatabase cells)
@@ -96,19 +118,45 @@ namespace Johnny.SimDungeon
             {
                 if (cell.CellType == FlowTilemapCellType.Floor)
                 {
-                    var cellData = DataManager_Cell.Instance.GetData(cell);
+                    var cellData = DataManager_Cell.Instance.GetData(cell.TileCoord);
                     var nodeCoord = cell.NodeCoord;
-                    var roomName = "OriginaCave" + nodeCoord.ToVector2().ToString();
-                    var room = roomList.Where(x => x.name == roomName).FirstOrDefault();
+                    var room = roomList.Where(x => x.spawnNodeCoord == nodeCoord).FirstOrDefault();
                     if (room == null)
                     {
-                        room = new Room();
-                        room.Init(roomName);
-                        room.roomType = RoomType.OriginaCave;
-                        roomList.Add(room);
+                        var roomTypeDA = DungeonController.Instance.GetRoomType(nodeCoord);
+                        var roomName = "";
+                        var roomType = RoomType.Undefined;
+                        switch (roomTypeDA)
+                        {
+                            case DungeonArchitect.Flow.Impl.GridFlow.GridFlowLayoutNodeRoomType.Unknown:
+                                roomName = "Unknown" + nodeCoord.ToVector2().ToString();
+                                roomType = RoomType.OriginaCave;
+                                break;
+                            case DungeonArchitect.Flow.Impl.GridFlow.GridFlowLayoutNodeRoomType.Room:
+                                roomName = "EmptyRoom" + nodeCoord.ToVector2().ToString();
+                                roomType = RoomType.EmptyRoom;
+                                break;
+                            case DungeonArchitect.Flow.Impl.GridFlow.GridFlowLayoutNodeRoomType.Corridor:
+                                roomName = "Corridor" + nodeCoord.ToVector2().ToString();
+                                roomType = RoomType.OriginaCave;
+                                break;
+                            case DungeonArchitect.Flow.Impl.GridFlow.GridFlowLayoutNodeRoomType.Cave:
+                                roomName = "OriginaCave" + nodeCoord.ToVector2().ToString();
+                                roomType = RoomType.OriginaCave;
+                                break;
+                            default:
+                                break;
+                        }
+                        room = MakeRoom(roomName, roomType, nodeCoord);
                     }
+
+
+
+
+
+  
                     room.AddCell(cellData);
-                    map.Add(cellData, room);
+                    map[cell.TileCoord] = room;
                 }
             }
             Inited = true;
@@ -121,26 +169,7 @@ namespace Johnny.SimDungeon
             Inited = false;
         }
 
-        public Room GetData(Data_Cell cell)
-        {
-            if (map.TryGetValue(cell, out var room))
-            {
-                return room;
-            }
-            return null;
-        }
 
-        public Room GetData(IntVector2 coord)
-        {
-            var cell = DataManager_Cell.Instance.GetData(coord);
-            return GetData(cell);
-        }
-
-        public Room GetData(Vector3 worldPosition)
-        {
-            var cell = DataManager_Cell.Instance.GetData(worldPosition);
-            return GetData(cell);
-        }
 
         private void OnDrawGizmos()
         {

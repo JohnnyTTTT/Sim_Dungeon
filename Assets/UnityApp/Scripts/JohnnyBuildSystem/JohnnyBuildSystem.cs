@@ -98,7 +98,6 @@ namespace Johnny.SimDungeon
 
         private void Preview(bool value)
         {
-            Debug.Log(value);
             if (multipleSelection)
             {
                 var room = DataManager_Room.Instance.GetData(m_LastPreviewEdge.transform.position);
@@ -116,7 +115,6 @@ namespace Johnny.SimDungeon
                             {
                                 edge.CancelPreview();
                             }
-                          
                         }
                     }
                 }

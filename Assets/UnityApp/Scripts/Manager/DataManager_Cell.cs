@@ -12,62 +12,63 @@ namespace Johnny.SimDungeon
 {
     public class Data_Cell : ElementData<FlowTilemapCell>
     {
-        private static readonly float[] Angles = { 0f, 90f, 180f, 270f };
-        public bool randomAngle;
+        public Data_Edge horizontalEdge;
+        public Data_Edge verticalEdge;
+        public List<Entity_Edge> edges = new List<Entity_Edge>();
         public Room parentRoom;
         public List<Data_Tile> tiles = new List<Data_Tile>();
         public Vector3 worldPosition;
-        //左上右下
-        private Entity_Edge[] edgeDatas = new Entity_Edge[4];
 
-        public bool m_ShowGizmo;
+        //左上右下
+
+
 
         public Data_Cell(FlowTilemapCell data) : base(data)
         {
             worldPosition = DungeonController.Instance.TileCoordToWorldPosition(data.TileCoord);
         }
 
-        public void AddEdge(Entity_Edge entity)
-        {
-            var direction = GetEdgeDirection(entity.transform.position);
-            switch (direction)
-            {
-                case Direction.Left:
-                    edgeDatas[0] = entity;
-                    break;
-                case Direction.Up:
-                    edgeDatas[1] = entity;
-                    break;
-                case Direction.Right:
-                    edgeDatas[2] = entity;
-                    break;
-                case Direction.Down:
-                    edgeDatas[3] = entity;
-                    break;
-            }
-            CalculateSubCells();
-        }
+        //public void AddEdge(Entity_Edge entity)
+        //{
+        //    var direction = GetEdgeDirection(entity.transform.position);
+        //    switch (direction)
+        //    {
+        //        case Direction.Left:
+        //            edgeDatas[0] = entity;
+        //            break;
+        //        case Direction.Up:
+        //            edgeDatas[1] = entity;
+        //            break;
+        //        case Direction.Right:
+        //            edgeDatas[2] = entity;
+        //            break;
+        //        case Direction.Down:
+        //            edgeDatas[3] = entity;
+        //            break;
+        //    }
+        //    CalculateSubCells();
+        //}
 
-        public void RomoveEdge(Entity_Edge entity)
-        {
-            var direction = GetEdgeDirection(entity.transform.position);
-            switch (direction)
-            {
-                case Direction.Left:
-                    edgeDatas[0] = null;
-                    break;
-                case Direction.Up:
-                    edgeDatas[1] = null;
-                    break;
-                case Direction.Right:
-                    edgeDatas[2] = null;
-                    break;
-                case Direction.Down:
-                    edgeDatas[3] = null;
-                    break;
-            }
-            CalculateSubCells();
-        }
+        //public void RomoveEdge(Entity_Edge entity)
+        //{
+        //    var direction = GetEdgeDirection(entity.transform.position);
+        //    switch (direction)
+        //    {
+        //        case Direction.Left:
+        //            edgeDatas[0] = null;
+        //            break;
+        //        case Direction.Up:
+        //            edgeDatas[1] = null;
+        //            break;
+        //        case Direction.Right:
+        //            edgeDatas[2] = null;
+        //            break;
+        //        case Direction.Down:
+        //            edgeDatas[3] = null;
+        //            break;
+        //    }
+        //    CalculateSubCells();
+        //}
 
         private void CalculateSubCells()
         {
@@ -83,30 +84,30 @@ namespace Johnny.SimDungeon
 
         }
 
-        public Entity_Edge[] GetEdgeEntities()
+        public List<Entity_Edge> GetEdgeEntities()
         {
-            return edgeDatas;
+            return edges;
         }
 
 
-        private Direction GetEdgeDirection(Vector3 edge)
+        private FourDirectionalRotation GetEdgeDirection(Vector3 edge)
         {
             var dir = new Vector2(edge.x - worldPosition.x, edge.z - worldPosition.z);
 
             if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y)) // X 方向差距更大
             {
-                return dir.x > 0 ? Direction.Right : Direction.Left;
+                return dir.x > 0 ? FourDirectionalRotation.East : FourDirectionalRotation.West;
             }
             else
             {
-                return dir.y > 0 ? Direction.Up : Direction.Down;
+                return dir.y > 0 ? FourDirectionalRotation.North : FourDirectionalRotation.South;
             }
         }
 
         public void DrawGizmos()
         {
             GizmoUnitily.DrawTwoSizeCube(worldPosition, Color.green, true);
-            foreach (var item in edgeDatas)
+            foreach (var item in edges)
             {
                 if (item != null)
                 {
@@ -137,7 +138,7 @@ namespace Johnny.SimDungeon
             //    var position = new Vector3(item.position.x + 0.5f, 0f, item.position.y + 0.5f);
             //    GizmoUnitily.DrawOneSizeCube(position, item.GizmoColor, true);
             //}
-            GizmoUnitily.DrawLabel(Data.TileCoord, new Vector2Int(Data.TileCoord.x, Data.TileCoord.y).ToString());
+            GizmoUnitily.DrawLabel(Data.TileCoord, new Vector2Int(Data.TileCoord.x, Data.TileCoord.y).ToString()+" "+Data.CellType);
         }
         //public override void Init(FlowTilemapCell flowTilemapCell)
         //{
@@ -171,15 +172,8 @@ namespace Johnny.SimDungeon
 
         //}
 
-        private float GetRandomRotation()
-        {
-            var index = UnityEngine.Random.Range(0, Angles.Length);
-            return Angles[index];
-        }
-
-
     }
-    public class DataManager_Cell : EntityManager<FlowTilemapCell, Data_Cell>
+    public class DataManager_Cell : EntityManager<Data_Cell>
     {
         public static DataManager_Cell Instance
         {
@@ -195,50 +189,29 @@ namespace Johnny.SimDungeon
         }
         private static DataManager_Cell s_Instance;
 
-        [Title("Titles and Headers")]
-        public bool drawGizmos;
+
         public Vector2Int drawGizmosCoord;
 
+        public bool drawAll;
         public void Init(FlowTilemapCellDatabase cells)
         {
             if (Inited) return;
+
             map.Clear();
+
             foreach (var cell in cells)
             {
-                if (cell.CellType == FlowTilemapCellType.Floor)
-                {
-                    var data = new Data_Cell(cell);
-                    map.Add(cell, data);
-                }
+                var data = new Data_Cell(cell);
+                map[cell.TileCoord] = data;
             }
             Inited = true;
-            Debug.Log($"[-----System-----] : DataManager_Cell inited , cell count <{map.Count}>");
+            Debug.Log($"[-----System-----] : DataManager Cell inited , Cell count <{map.Count}>");
         }
 
         public void UnInit()
         {
             map.Clear();
             Inited = false;
-        }
-        public Data_Cell GetData(FlowTilemapCell cell)
-        {
-            if (map.TryGetValue(cell, out var entitly))
-            {
-                return entitly;
-            }
-            return null;
-        }
-
-        public Data_Cell GetData(IntVector2 coord)
-        {
-            var cell = DungeonController.Instance.GetCellFromTileCoord(coord);
-            return GetData(cell);
-        }
-
-        public Data_Cell GetData(Vector3 worldPosition)
-        {
-            var cell = DungeonController.Instance.GetCellFromWorldPosition(worldPosition);
-            return GetData(cell);
         }
 
         private void OnDrawGizmos()
@@ -247,13 +220,17 @@ namespace Johnny.SimDungeon
             {
                 if (drawGizmosCoord.x > -1 && drawGizmosCoord.y > -1)
                 {
-                    GetData(new IntVector2(drawGizmosCoord.x, drawGizmosCoord.y)).DrawGizmos();
+                    var data = GetData(new IntVector2(drawGizmosCoord.x, drawGizmosCoord.y));
+                    data.DrawGizmos();
                 }
                 else
                 {
                     foreach (var item in map)
                     {
-                        item.Value.DrawGizmos();
+                        if (drawAll || item.Value.Data.CellType == FlowTilemapCellType.Floor)
+                        {
+                            item.Value.DrawGizmos();
+                        }
                     }
                 }
 

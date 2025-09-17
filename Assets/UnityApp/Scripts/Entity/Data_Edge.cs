@@ -1,26 +1,33 @@
 using DungeonArchitect.Flow.Domains.Tilemap;
 using UnityEngine;
 using DungeonArchitect;
+using System;
 
 namespace Johnny.SimDungeon
 {
     public class Data_Edge : ElementData<FlowTilemapEdge>
     {
+        public Entity_EdgeGroup entity;
+        public Entity_Corner corner;
+
         public Data_Edge(FlowTilemapEdge data) : base(data)
         {
 
         }
 
-        //public void DrawGizmos()
-        //{
-        //    foreach (var item in m_ContainedCells)
-        //    {
-        //        GizmoUnitily.DrawFourSizeCube(item.Data.TileCoord, roomColor, false);
-        //    }
-        //    GizmoUnitily.DrawLabel(worldCenter, name);
-        //}
-        //protected override void Start()
-        //{
+        public void SetCorner(Entity_Corner corner)
+        {
+            this.corner = corner;
+        }
+
+        public void DrawGizmos()
+        {
+            GizmoUnitily.DrawWall(Data.EdgeCoord, Data.HorizontalEdge ? Color.red : Color.blue, Data.HorizontalEdge);
+            GizmoUnitily.DrawLine(DungeonController.Instance.TileCoordToWorldPosition(Data.EdgeCoord)
+                , entity.transform.position + new Vector3(0f, 2f, 0f), Data.HorizontalEdge ? Color.red : Color.blue);
+        }
+
+
 
 
         //    //SubEdgeEntity

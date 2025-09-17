@@ -2,15 +2,24 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: SubsurfaceScattering
   m_Shader: {fileID: 4800000, guid: 355b034fae663fa4cb701b1614a2851f, type: 3}
-  m_ShaderKeywords: _ADD_PRECOMPUTED_VELOCITY _DISABLE_SSR_TRANSPARENT _MATERIAL_FEATURE_SUBSURFACE_SCATTERING
-    _MATERIAL_FEATURE_TRANSMISSION _NORMALMAP_TANGENT_SPACE
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _MATERIAL_FEATURE_SUBSURFACE_SCATTERING
+  - _MATERIAL_FEATURE_TRANSMISSION
+  m_InvalidKeywords:
+  - _ADD_PRECOMPUTED_VELOCITY
+  - _CONSERVATIVE_DEPTH_OFFSET
+  - _DEPTHOFFSET_ON
+  - _DISABLE_SSR_TRANSPARENT
+  - _NORMALMAP_TANGENT_SPACE
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -19,6 +28,7 @@ Material:
     MotionVector: User
   disabledShaderPasses:
   - TransparentBackface
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -58,24 +68,44 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AddPrecomputedVelocity: 1
     - _AlphaCutoff: 0.5
     - _AlphaCutoffEnable: 0
     - _AlphaDstBlend: 0
     - _AlphaSrcBlend: 1
+    - _AlphaToMask: 0
+    - _AlphaToMaskInspectorValue: 0
     - _BlendMode: 0
+    - _ConservativeDepthOffsetEnable: 1
     - _CullMode: 2
     - _CullModeForward: 2
+    - _DepthOffsetEnable: 1
     - _DiffusionProfile: 2.0644455
     - _DoubleSidedEnable: 0
+    - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 2
     - _DstBlend: 0
+    - _DstBlend2: 0
     - _EnableBlendModePreserveSpecularLighting: 1
     - _EnableFogOnTransparent: 1
     - _Float0: 0
     - _Int0: 1
     - _OpaqueCullMode: 2
+    - _PerPixelSorting: 0
     - _Profile: 2.0644455
     - _ReceivesSSR: 1
     - _ReceivesSSRTransparent: 0
@@ -89,10 +119,10 @@ Material:
     - _StencilRefGBuffer: 14
     - _StencilRefMV: 40
     - _StencilWriteMask: 6
-    - _StencilWriteMaskDepth: 8
+    - _StencilWriteMaskDepth: 9
     - _StencilWriteMaskDistortionVec: 4
-    - _StencilWriteMaskGBuffer: 14
-    - _StencilWriteMaskMV: 40
+    - _StencilWriteMaskGBuffer: 15
+    - _StencilWriteMaskMV: 41
     - _SupportDecals: 1
     - _SurfaceType: 0
     - _TransparentBackfaceEnable: 0
@@ -107,13 +137,13 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0, g: 0, b: 0, a: 0}
-    - _DiffusionProfile_Asset: {r: -0.10853875, g: 9.125911e-17, b: -5.2030944e-14,
-        a: 0.000000027117968}
+    - _DiffusionProfile_Asset: {r: -0.10853875, g: 9.125911e-17, b: -5.2030944e-14, a: 0.000000027117968}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _Profile_Asset: {r: -0.10853875, g: 9.125911e-17, b: -5.2030944e-14, a: 0.000000027117968}
     - _Profile_asset: {r: -0.10853875, g: 9.125911e-17, b: -5.2030944e-14, a: 0.000000027117968}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &3423579753449822679
 MonoBehaviour:
   m_ObjectHideFlags: 11

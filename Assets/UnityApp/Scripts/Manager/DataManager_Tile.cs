@@ -1,3 +1,4 @@
+using DungeonArchitect;
 using Sirenix.OdinInspector;
 using SoulGames.EasyGridBuilderPro;
 using System;
@@ -5,14 +6,14 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public class Data_Tile
+    public class Data_Tile: ElementData
     {
-        public Vector2Int coord;
+        public IntVector2 coord;
         public Vector3 worldPosition;
         public Data_Cell parentCell;
         public bool isEdge;
 
-        public Data_Tile(Vector2Int vector)
+        public Data_Tile(IntVector2 vector)
         {
             coord = vector;
             worldPosition = new Vector3(coord.x + 0.5f, 0f, coord.y + 0.5f);
@@ -23,7 +24,7 @@ namespace Johnny.SimDungeon
         }
     }
 
-    public class DataManager_Tile : EntityManager<Vector2Int, Data_Tile>
+    public class DataManager_Tile : EntityManager< Data_Tile>
     {
         public static DataManager_Tile Instance
         {
@@ -37,8 +38,7 @@ namespace Johnny.SimDungeon
             }
         }
         private static DataManager_Tile s_Instance;
-        [Title("Titles and Headers")]
-        public bool drawGizmos;
+
         public void Init(EasyGridBuilderPro easyGridBuilder)
         {
             if (Inited) return;
@@ -46,16 +46,13 @@ namespace Johnny.SimDungeon
             {
                 for (int z = 0; z < easyGridBuilder.GetGridLength(); z++)
                 {
-                    var position = new Vector2Int(x, z);
+                    var position = new IntVector2(x, z);
                     var worldPosition = new Vector3(position.x + 0.5f, 0f, position.y + 0.5f);
                     var cell = DataManager_Cell.Instance.GetData(worldPosition);
-                    if (cell != null)
-                    {
                         var newData = new Data_Tile(position);
-                        newData.parentCell = cell;
-                        cell.tiles.Add(newData);
-                        map.Add(newData.coord, newData);
-                    }
+                    newData.parentCell = cell;
+                    cell.tiles.Add(newData);
+                    map.Add(newData.coord, newData);
                 }
             }
             Inited = true;
@@ -67,6 +64,7 @@ namespace Johnny.SimDungeon
             map.Clear();
             Inited = false;
         }
+
         private void OnDrawGizmos()
         {
             if (drawGizmos)
@@ -76,15 +74,6 @@ namespace Johnny.SimDungeon
                     item.Value.DrawGizmos();
                 }
             }
-        }
-
-        public Data_Tile GetData(Vector2Int coord)
-        {
-            if (map.TryGetValue(coord, out var data))
-            {
-                return data;
-            }
-            return null;
         }
     }
 }
