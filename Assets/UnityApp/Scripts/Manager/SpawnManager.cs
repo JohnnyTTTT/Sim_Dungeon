@@ -47,6 +47,7 @@ namespace Johnny.SimDungeon
             RandomUtility.SetSeed((int)DungeonController.Instance.dungeon.Config.Seed);
 
             EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeTwo);
+            EasyGridBuilderProController.Instance.ChangeCurrentMode(GridMode.BuildMode);
 
             var rooms = DataManager_Room.Instance.roomList;
             foreach (var room in rooms)
@@ -56,7 +57,7 @@ namespace Johnny.SimDungeon
                     ApplyRule(room, rule);
                 }
             }
-
+            EasyGridBuilderProController.Instance.ChangeCurrentMode(GridMode.None);
 
             //var rooms = DataManager_Room.Instance.roomList;
             //foreach (var item in rooms)
@@ -73,15 +74,18 @@ namespace Johnny.SimDungeon
             var cells = room.containedCells;
             foreach (var cell in cells)
             {
+                var groundTemplete = RandomUtility.GetRandomElement(rule.Biome.grounds);
+                if (groundTemplete != null)
+                {
+                    cell.entity.TryReplace(groundTemplete);
+                }
                 foreach (var edge in cell.edges)
                 {
-                    //if (!a)
+                    var wallTemplete = RandomUtility.GetRandomElement(rule.Biome.walls);
+                    if (wallTemplete != null)
                     {
-                        var wallTemplete = RandomUtility.GetRandomElement(rule.Biome.walls);
                         edge.TryReplace(wallTemplete);
-                        a = true;
                     }
-
                 }
             }
         }

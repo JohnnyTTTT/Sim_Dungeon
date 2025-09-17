@@ -16,8 +16,8 @@ MonoBehaviour:
   objectIcon: {fileID: 21300000, guid: 2d4886129c99c5846a82e2bcfc77e2ed, type: 3}
   buildableObjectUICategorySO: {fileID: 11400000, guid: 81d257747ea27c540a799d720aebc54e, type: 2}
   randomPrefabs:
-  - objectPrefab: {fileID: 4549288026964822154, guid: b4f4bc4105076284492fd4ad91f8df80, type: 3}
-    ghostObjectPrefab: {fileID: 4549288026964822154, guid: b4f4bc4105076284492fd4ad91f8df80, type: 3}
+  - objectPrefab: {fileID: 4549288026964822154, guid: a64afa6797b07534abec2b15309b47de, type: 3}
+    ghostObjectPrefab: {fileID: 4549288026964822154, guid: a64afa6797b07534abec2b15309b47de, type: 3}
     probability: 0
   eachPlacementUseRandomPrefab: 0
   validPlacementMaterial: {fileID: 2100000, guid: 60b6e8cab158bd44dbdf258b7527565a, type: 2}

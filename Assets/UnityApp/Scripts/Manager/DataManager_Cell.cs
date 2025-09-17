@@ -12,16 +12,13 @@ namespace Johnny.SimDungeon
 {
     public class Data_Cell : ElementData<FlowTilemapCell>
     {
+        public Entity_Ground entity;
         public Data_Edge horizontalEdge;
         public Data_Edge verticalEdge;
         public List<Entity_Edge> edges = new List<Entity_Edge>();
         public Room parentRoom;
         public List<Data_Tile> tiles = new List<Data_Tile>();
         public Vector3 worldPosition;
-
-        //вСиосроб
-
-
 
         public Data_Cell(FlowTilemapCell data) : base(data)
         {
@@ -173,6 +170,7 @@ namespace Johnny.SimDungeon
         //}
 
     }
+
     public class DataManager_Cell : EntityManager<Data_Cell>
     {
         public static DataManager_Cell Instance

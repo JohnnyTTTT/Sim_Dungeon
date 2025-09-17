@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c10d407eef01e1449a3f32cd61894cc6, type: 3}
   m_Name: Biome - Original Cave
   m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.BiomeSO
+  grounds:
+  - {fileID: 11400000, guid: ea529d3f372b2534ea37c8de9e041e2a, type: 2}
   walls:
   - {fileID: 11400000, guid: 3de620a239aaae644b3cccdd857b0633, type: 2}
   prefabs: []

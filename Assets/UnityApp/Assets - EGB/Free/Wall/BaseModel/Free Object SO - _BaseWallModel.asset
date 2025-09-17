@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c911fdae6a66643488f5baf45dd89ac3, type: 3}
+  m_Name: Free Object SO - _BaseWallModel
+  m_EditorClassIdentifier: Assembly-CSharp::SoulGames.EasyGridBuilderPro.BuildableFreeObjectSO
+  objectName: StoneWall_001
+  objectIcon: {fileID: 1239350156046317824, guid: 0cd7a0f2fc236f647ae80a68741b8f66, type: 3}
+  buildableObjectUICategorySO: {fileID: 11400000, guid: d5df4609c54749a45955d4dafe275e11, type: 2}
+  randomPrefabs:
+  - objectPrefab: {fileID: 8128397093128452917, guid: 2cf8a01218479bc44a960f3dda88554a, type: 3}
+    ghostObjectPrefab: {fileID: 8128397093128452917, guid: 2cf8a01218479bc44a960f3dda88554a, type: 3}
+    probability: 0
+  eachPlacementUseRandomPrefab: 1
+  validPlacementMaterial: {fileID: 0}
+  invalidPlacementMaterial: {fileID: 0}
+  setSpawnedObjectLayer: 0
+  spawnedObjectLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  setGridSystemAsParent: 1
+  useObjectGridCustomAlphaMaskScale: 0
+  objectGridCustomAlphaMaskScale: {x: 0, y: 0}
+  customSurfaceLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  raiseObjectWithVerticalGrids: 0
+  enablePlaceAndDeselect: 0
+  affectByBasicAreaDisablers: 0
+  affectByAreaDisablers: 0
+  affectByBasicAreaEnablers: 0
+  affectByAreaEnablers: 0
+  isObjectReplacable: 0
+  replacingObjectIgnoreCustomConditions: 1
+  isObjectSelectable: 0
+  isSelectedObjectRotatable: 0
+  isObjectDestructable: 0
+  isObjectMovable: 0
+  enableTerrainInteractions: 0
+  flattenTerrain: 0
+  flattenerSize: 0
+  removeTerrainDetails: 0
+  detailsRemoverSize: 0
+  paintTerrainTexture: 0
+  terrainTextureIndex: 0
+  painterBrushSize: 0
+  painterBrushType: 1
+  painterBrushOpacity: 1
+  painterBrushFallOff: 0
+  faceCollidingSurfaceNormalDirection: 0
+  surfaceNormalDirectionLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  buildableFreeObjectCategorySO: {fileID: 11400000, guid: b638143e4203c6f49acaa4e1984139da, type: 2}
+  rotationType: 0
+  freeRotationSpeed: 100
+  freezeRotation: 0
+  fourDirectionalRotation: 0
+  eightDirectionalRotation: 0
+  freeRotation: 0
+  placementType: 0
+  intervalBetweenEachPlacement: 0
+  objectBaseSpacingAlongSpline: 1
+  objectMinSpacingAlongSpline: 1
+  objectMaxSpacingAlongSpline: 1
+  objectRotateToSplineDirection: 0
+  spacingChangeSmoothness: 1
+  splineTangetMode: 0
+  closedSpline: 0
+  affectByFreeObjectSnappers: 0

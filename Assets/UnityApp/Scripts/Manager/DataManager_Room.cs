@@ -14,6 +14,7 @@ namespace Johnny.SimDungeon
         Undefined,
         OriginaCave,
         EmptyRoom,
+        Tavern,
         Hotel,
         HotelRoom,
     }
@@ -104,7 +105,12 @@ namespace Johnny.SimDungeon
         private Room MakeRoom(string roomName, RoomType roomType, IntVector2? spawnNodeCoord = null)
         {
             var room = new Room();
-            room.Init(roomName, roomType, spawnNodeCoord);
+            room.Init(roomName, roomType);
+            if (spawnNodeCoord != null)
+            {
+                room.spawnNodeCoord = spawnNodeCoord.Value;
+            }
+
             roomList.Add(room);
             return room;
         }

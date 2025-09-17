@@ -615,7 +615,7 @@ namespace Johnny.SimDungeon
             if (Application.isPlaying)
             {
 
-                dungeon.Build(new RuntimeDungeonSceneObjectInstantiator());
+                dungeon.Build(new RuntimeSimSceneObjectInstantiator());
             }
             else
             {
@@ -632,7 +632,7 @@ namespace Johnny.SimDungeon
 
         public void ApplyTheme()
         {
-            dungeon.ApplyTheme(new RuntimeDungeonSceneObjectInstantiator());
+            dungeon.ApplyTheme(new RuntimeSimSceneObjectInstantiator());
         }
 
         public FlowTilemapCell[] GetLayoutNodeTile(Vector3 position)

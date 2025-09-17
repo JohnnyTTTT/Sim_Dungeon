@@ -83,10 +83,10 @@ MonoBehaviour:
   lastCoord:
     x: 0
     y: 0
-  modelRoot: {fileID: 8767615668744427018}
-  model: {fileID: 2678210142409657767}
-  preview: {fileID: 0}
-  replaceableObjectSO: {fileID: 0}
+  drawGizmos: 0
+  baseModel: {fileID: 0}
+  parent: {fileID: 0}
+  relativeEdge: {fileID: 0}
   direction: 0
 --- !u!65 &8797448139101322100
 BoxCollider:

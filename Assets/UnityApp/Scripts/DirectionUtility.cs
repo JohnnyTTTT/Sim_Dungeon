@@ -51,6 +51,7 @@ namespace Johnny.SimDungeon
                 return diff.z > 0 ? FourDirectionalRotation.North : FourDirectionalRotation.South;
             }
         }
+
         public static Orientation GetOrientation(Transform t)
         {
             var forward = t.forward;

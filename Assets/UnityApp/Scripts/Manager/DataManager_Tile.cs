@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public class Data_Tile: ElementData
+    public class Data_Tile : ElementData
     {
         public IntVector2 coord;
         public Vector3 worldPosition;
@@ -24,7 +24,7 @@ namespace Johnny.SimDungeon
         }
     }
 
-    public class DataManager_Tile : EntityManager< Data_Tile>
+    public class DataManager_Tile : EntityManager<Data_Tile>
     {
         public static DataManager_Tile Instance
         {
@@ -49,7 +49,7 @@ namespace Johnny.SimDungeon
                     var position = new IntVector2(x, z);
                     var worldPosition = new Vector3(position.x + 0.5f, 0f, position.y + 0.5f);
                     var cell = DataManager_Cell.Instance.GetData(worldPosition);
-                        var newData = new Data_Tile(position);
+                    var newData = new Data_Tile(position);
                     newData.parentCell = cell;
                     cell.tiles.Add(newData);
                     map.Add(newData.coord, newData);

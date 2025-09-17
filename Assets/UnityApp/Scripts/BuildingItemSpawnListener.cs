@@ -41,14 +41,15 @@ namespace Johnny.SimDungeon
             if (dungeonItem != null)
             {
                 var entity = dungeonItem.GetComponent<Entity>();
-                if (entity == null) return;
-                var currentCoord = DungeonController.Instance.WorldPositionToTileCoord(entity.transform.position);
-                if (entity.lastCoord != currentCoord)
+                if (entity != null)
                 {
-                    entity.lastCoord = currentCoord;
-                    entity.UpdateData();
+                    var currentCoord = DungeonController.Instance.WorldPositionToTileCoord(entity.transform.position);
+                    if (entity.lastCoord != currentCoord)
+                    {
+                        entity.lastCoord = currentCoord;
+                        entity.UpdateData();
+                    }
                 }
-
             }
             //{
             //    var cell = DungeonController.Instance.GetCellFromWorldPosition(dungeonItem.transform.position);
