@@ -18,6 +18,9 @@ namespace Johnny.SimDungeon
                 return m_RoomType;
             }
         }
+
+        public BiomeSO biome;
+
         private RoomType m_RoomType;
 
         public IntVector2 spawnNodeCoord;
@@ -36,9 +39,9 @@ namespace Johnny.SimDungeon
         public void AddCell(Data_Cell cellData)
         {
             containedCells.Add(cellData);
-            cellData.parentRoom = this;
             CalculateBounds();
         }
+
         public void CalculateBounds()
         {
             if (containedCells == null || containedCells.Count == 0)
@@ -71,6 +74,7 @@ namespace Johnny.SimDungeon
         {
             foreach (var item in containedCells)
             {
+                //item.DrawGizmos();
                 GizmoUnitily.DrawTwoSizeCube(item.Data.TileCoord, roomColor, true);
             }
             GizmoUnitily.DrawLabel(center, name);

@@ -48,6 +48,10 @@ namespace Johnny.SimDungeon
                     {
                         entity.lastCoord = currentCoord;
                         entity.UpdateData();
+                        if (DungeonController.Instance.worldDataInited)
+                        {
+                            entity.ApplyBiomeRule();
+                        }
                     }
                 }
             }

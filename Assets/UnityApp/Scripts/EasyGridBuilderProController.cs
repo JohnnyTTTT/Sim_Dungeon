@@ -35,7 +35,6 @@ namespace Johnny.SimDungeon
 
         public EasyGridBuilderProXZ m_EasyGridBuilderProSize1;
         public EasyGridBuilderProXZ m_EasyGridBuilderProSize2;
-        public EasyGridBuilderProXZ m_CurrentGridBuilderPro;
         public GridType currentGridType;
 
         [SerializeField] private GridAreaDisablerManager m_GridAreaDisablerManager;
@@ -70,30 +69,9 @@ namespace Johnny.SimDungeon
             m_EasyGridBuilderProSize1.gameObject.SetActive(false);
         }
 
-        public void ChangeCurrentGrid(GridType gridType)
-        {
-            currentGridType = gridType;
 
-            switch (currentGridType)
-            {
-                case GridType.SizeOne:
 
-                    gridManager.SetActiveGridSystem(m_EasyGridBuilderProSize1);
-                    break;
-                case GridType.SizeTwo:
-                    m_EasyGridBuilderProSize2.gameObject.SetActive(true);
-                    m_EasyGridBuilderProSize1.gameObject.SetActive(false);
-                    gridManager.SetActiveGridSystem(m_EasyGridBuilderProSize2);
-                    break;
-            }
-            m_CurrentGridBuilderPro = gridManager.GetActiveEasyGridBuilderPro() as EasyGridBuilderProXZ;
 
-        }
-
-        public void ChangeCurrentMode(GridMode mode)
-        {
-            gridManager.SetActiveGridModeInAllGrids(mode);
-        }
 
         public bool ReplaceCorner(Entity_Corner corner, BuildableFreeObjectSO temelpte, BuildableFreeObject old, out BuildableFreeObject spawned)
         {
@@ -102,35 +80,32 @@ namespace Johnny.SimDungeon
             //    spawned = null;
             //    return false;
             //}
-            ChangeCurrentGrid(GridType.SizeTwo);
+            BindingService.MainPanelViewModel.GridType = GridType.SizeTwo;
             var worldPosition = corner.transform.position;
             var random = RandomUtility.UpdateBuildableObjectSORandomPrefab(temelpte);
-            var verticalGridIndex = m_CurrentGridBuilderPro.GetActiveVerticalGridIndex();
+            var verticalGridIndex = BindingService.MainPanelViewModel.ActiveEasyGridBuilderPro.GetActiveVerticalGridIndex();
             var direction = RandomUtility.GetRandomFourDirectionalRotation();
             return TryInitializeBuildableFreeObjectSinglePlacement(worldPosition, temelpte,
                 direction, EightDirectionalRotation.North, 0f, Vector3.zero, true, verticalGridIndex, true, out spawned, random, null);
         }
 
-        public bool ReplaceEdge(Entity_Edge entity_Edge, BuildableFreeObjectSO temelpte, BuildableObjectSO.RandomPrefabs prefabs, BuildableFreeObject old, out BuildableFreeObject spawned)
+        public bool TryInitializeBuildableFreeObjectSinglePlacement(Entity entity, BuildableFreeObjectSO temelpte,  out BuildableFreeObject spawned)
         {
-            //if (!TryDestroyBuildableFreeObject(old))
-            //{
-            //    spawned = null;
-            //    return false;
-            //}
-            ChangeCurrentGrid(GridType.SizeTwo);
-            var worldPosition = entity_Edge.transform.position;
-            var verticalGridIndex = m_CurrentGridBuilderPro.GetActiveVerticalGridIndex();
+            BindingService.MainPanelViewModel.GridType = GridType.SizeTwo;
+            var worldPosition = entity.transform.position;
+            var worldRatation = entity.transform.rotation.eulerAngles.y;
+            var verticalGridIndex = BindingService.MainPanelViewModel.ActiveEasyGridBuilderPro.GetActiveVerticalGridIndex();
+            var prefabs = RandomUtility.UpdateBuildableObjectSORandomPrefab(temelpte);
             return TryInitializeBuildableFreeObjectSinglePlacement(worldPosition, temelpte,
-                entity_Edge.direction, EightDirectionalRotation.North, 0f, Vector3.zero, true, verticalGridIndex, true, out spawned, prefabs, null);
+                FourDirectionalRotation.North, EightDirectionalRotation.North, worldRatation, Vector3.zero, true, verticalGridIndex, true, out spawned, prefabs, null);
         }
 
         public bool ReplaceGround(Entity_Ground element_Ground, BuildableGridObjectSO temelpte, out BuildableGridObject buildable)
         {
-            ChangeCurrentGrid(GridType.SizeTwo);
+            BindingService.MainPanelViewModel.GridType = GridType.SizeTwo;
             var worldPosition = element_Ground.transform.position;
             var random = RandomUtility.UpdateBuildableObjectSORandomPrefab(temelpte);
-            var verticalGridIndex = m_CurrentGridBuilderPro.GetActiveVerticalGridIndex();
+            var verticalGridIndex = BindingService.MainPanelViewModel.ActiveEasyGridBuilderPro.GetActiveVerticalGridIndex();
             var direction = RandomUtility.GetRandomFourDirectionalRotation();
             return TryInitializeBuildableGridObjectSinglePlacement(worldPosition, temelpte, direction
                 , true, true, verticalGridIndex, true, out buildable, random, null);
@@ -140,8 +115,14 @@ namespace Johnny.SimDungeon
 
         public bool TryDestroyBuildableFreeObject(BuildableFreeObject buildable)
         {
+            //if (gridManager.TryGetBuildableObjectMover(out var buildableObjectMover))
+            //{
+            //    buildableObjectMover.mo
+            //}
+            //
             if (gridManager.TryGetBuildableObjectDestroyer(out var destroyer))
             {
+                //destroyer. SetInputDestroyBuildableObject(buildable);
                 if (destroyer.TryDestroyBuildableFreeObject(buildable, true))
                 {
                     return true;
@@ -154,7 +135,7 @@ namespace Johnny.SimDungeon
             EightDirectionalRotation eightDirectionalDirection, float freeRotation, Vector3 hitNormals, bool ignoreCustomConditions, int verticalGridIndex, bool byPassEventsAndMessages,
             out BuildableFreeObject spawnnedBuildableFreeObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null, BuildableFreeObject originalBuildableFreeObject = null)
         {
-            return m_CurrentGridBuilderPro.TryInitializeBuildableFreeObjectSinglePlacement(worldPosition, buildableFreeObjectSO, fourDirectionalDirection,
+            return BindingService.MainPanelViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableFreeObjectSinglePlacement(worldPosition, buildableFreeObjectSO, fourDirectionalDirection,
                 eightDirectionalDirection, freeRotation, hitNormals, ignoreCustomConditions, verticalGridIndex, byPassEventsAndMessages
                 , out spawnnedBuildableFreeObject, buildableObjectSORandomPrefab, originalBuildableFreeObject);
         }
@@ -164,7 +145,7 @@ namespace Johnny.SimDungeon
             BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null, BuildableEdgeObject originalBuildableEdgeObject = null)
         {
 
-            return m_CurrentGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement(worldPosition, buildableEdgeObjectSO,
+            return BindingService.MainPanelViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement(worldPosition, buildableEdgeObjectSO,
                  FourDirectionalRotation.West, isBuildableEdgeObjectFlipped, ignoreCustomConditions, ignoreReplacement, verticalGridIndex, byPassEventsAndMessages, out spawnnedBuildableEdgeObject,
                buildableObjectSORandomPrefab, originalBuildableEdgeObject);
         }
@@ -175,7 +156,7 @@ namespace Johnny.SimDungeon
             BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null, BuildableGridObject originalBuildableGridObject = null)
         {
 
-            return m_CurrentGridBuilderPro.TryInitializeBuildableGridObjectSinglePlacement(worldPosition, buildableGridObjectSO,
+            return BindingService.MainPanelViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableGridObjectSinglePlacement(worldPosition, buildableGridObjectSO,
                 direction, ignoreBuildConditions, ignoreReplacement, activeVerticalGridIndex, byPassEventsAndMessages, out buildableGridObject,
                buildableObjectSORandomPrefab, originalBuildableGridObject);
 

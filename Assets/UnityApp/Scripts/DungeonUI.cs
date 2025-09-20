@@ -8,8 +8,8 @@ namespace Johnny.SimDungeon
 {
     public class DungeonUI : MonoBehaviour
     {
-        [SerializeField] private CategoryUI m_CategoryUI;
-        [SerializeField] private BuildableUI m_BuildableUI;
+        [SerializeField] private CategoryObjectsPanelView m_CategoryUI;
+        [SerializeField] private BuildableObjectsPanelView m_BuildableUI;
 
 
         //Structure
@@ -31,8 +31,8 @@ namespace Johnny.SimDungeon
             gridManager.OnActiveGridModeChanged += OnActiveGridModeChanged;
 
 
-            m_CategoryUI.OnCategoryButtonPressed += OnCategoryButtonPressedMethod;
-            m_BuildableUI.OnBuildableButtonPressed += OnBuildableButtonPressedMethod;
+            //m_CategoryUI.OnCategoryButtonPressed += OnCategoryButtonPressedMethod;
+            //m_BuildableUI.OnBuildableButtonPressed += OnBuildableButtonPressedMethod;
 
 
 
@@ -63,35 +63,35 @@ namespace Johnny.SimDungeon
 
         private void Init()
         {
-            activeBuildableObjectUICategorySO = m_CategoryUI.Init(activeEasyGridBuilderPro);
-            m_BuildableUI.Init(activeEasyGridBuilderPro);
-            if (activeBuildableObjectUICategorySO != null)
-            {
-                HandleActiveBuildableObjectUICategorySOInteraction();
-            }
+            //activeBuildableObjectUICategorySO = m_CategoryUI.Init(activeEasyGridBuilderPro);
+            //m_BuildableUI.Init(activeEasyGridBuilderPro);
+            //if (activeBuildableObjectUICategorySO != null)
+            //{
+            //    HandleActiveBuildableObjectUICategorySOInteraction();
+            //}
            
         }
 
         private void HandleActiveBuildableObjectUICategorySOInteraction()
         {
-            Image imageComponent;
-            foreach (var instantiatedUICategoryObject in m_CategoryUI.instantiatedUICategoryObjectsDictionary)
-            {
-                if (instantiatedUICategoryObject.Key == activeBuildableObjectUICategorySO)
-                {
-                    if (instantiatedUICategoryObject.Value.TryGetComponent<Image>(out imageComponent)) imageComponent.color = new Color(0.647f, 0.906f, 0.2f);
-                }
-                else if (instantiatedUICategoryObject.Value.TryGetComponent<Image>(out imageComponent)) imageComponent.color = new Color(0.125f, 0.482f, 1.0f);
-            }
+            //Image imageComponent;
+            //foreach (var instantiatedUICategoryObject in m_CategoryUI.instantiatedUICategoryObjectsDictionary)
+            //{
+            //    if (instantiatedUICategoryObject.Key == activeBuildableObjectUICategorySO)
+            //    {
+            //        if (instantiatedUICategoryObject.Value.TryGetComponent<Image>(out imageComponent)) imageComponent.color = new Color(0.647f, 0.906f, 0.2f);
+            //    }
+            //    else if (instantiatedUICategoryObject.Value.TryGetComponent<Image>(out imageComponent)) imageComponent.color = new Color(0.125f, 0.482f, 1.0f);
+            //}
 
-            foreach (var instantiatedUIBuildableObject in m_BuildableUI.instantiatedUIBuildableObjectsDictionary)
-            {
-                if (instantiatedUIBuildableObject.Key.buildableObjectUICategorySO == activeBuildableObjectUICategorySO)
-                {
-                    instantiatedUIBuildableObject.Value.gameObject.SetActive(true);
-                }
-                else instantiatedUIBuildableObject.Value.gameObject.SetActive(false);
-            }
+            //foreach (var instantiatedUIBuildableObject in m_BuildableUI.instantiatedUIBuildableObjectsDictionary)
+            //{
+            //    if (instantiatedUIBuildableObject.Key.buildableObjectUICategorySO == activeBuildableObjectUICategorySO)
+            //    {
+            //        instantiatedUIBuildableObject.Value.gameObject.SetActive(true);
+            //    }
+            //    else instantiatedUIBuildableObject.Value.gameObject.SetActive(false);
+            //}
         }
 
 
@@ -118,10 +118,10 @@ namespace Johnny.SimDungeon
 
 
 
-        private void RemoveModeValueChanged(bool arg0)
-        {
-            DungeonController.Instance.structureMode = arg0 ? StructureMode.CreateSpace : StructureMode.None;
-        }
+        //private void RemoveModeValueChanged(bool arg0)
+        //{
+        //    DungeonController.Instance.structureMode = arg0 ? StructureMode.CreateSpace : StructureMode.None;
+        //}
         private void ExtendModeValueChanged(bool arg0)
         {
 
@@ -137,8 +137,8 @@ namespace Johnny.SimDungeon
         {
             if (value)
             {
-                EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeTwo);
-                gridManager.SetActiveGridModeInAllGrids(GridMode.BuildMode);
+                //EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeTwo);
+                //gridManager.SetActiveGridModeInAllGrids(GridMode.BuildMode);
             }
         }
 
@@ -146,8 +146,8 @@ namespace Johnny.SimDungeon
         {
             if (value)
             {
-                EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeOne);
-                gridManager.SetActiveGridModeInAllGrids(GridMode.BuildMode);
+                //EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeOne);
+                //gridManager.SetActiveGridModeInAllGrids(GridMode.BuildMode);
             }
         }
 

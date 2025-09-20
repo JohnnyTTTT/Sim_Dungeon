@@ -5,6 +5,23 @@ namespace Johnny.SimDungeon
 {
     public class CameraController : MonoBehaviour
     {
+        public static CameraController Instance
+        {
+            get
+            {
+                if (s_Instances == null)
+                {
+                    s_Instances = FindFirstObjectByType<CameraController>();
+                }
+                return s_Instances;
+            }
+
+        }
+        private static CameraController s_Instances;
+
+        public Camera MainCamera;
+
+
         [Header("Rotation Settings")]
         [SerializeField] private float m_RotateSpeed = 5f;
 
@@ -13,7 +30,7 @@ namespace Johnny.SimDungeon
 
         private Vector3 m_PanStartPoint;
         private bool m_IsPanning;
-        private Plane m_PanPlane;
+        private UnityEngine.Plane m_PanPlane;
 
         [Header("Zoom Settings")]
         [SerializeField] private float m_ZoomSpeed = 10f;      // 滚轮速度
@@ -25,7 +42,7 @@ namespace Johnny.SimDungeon
 
         private void Start()
         {
-            m_PanPlane = new Plane(Vector3.up, new Vector3(0f, m_PlaneHeight, 0f));
+            m_PanPlane = new UnityEngine.Plane(Vector3.up, new Vector3(0f, m_PlaneHeight, 0f));
             m_TargetPosition = transform.position;
         }
 

@@ -19,9 +19,20 @@ namespace Johnny.SimDungeon
 
         public void DrawGizmos()
         {
-            GizmoUnitily.DrawWall(Data.EdgeCoord, Data.HorizontalEdge ? Color.red : Color.blue, Data.HorizontalEdge);
-            GizmoUnitily.DrawLine(DungeonController.Instance.TileCoordToWorldPosition(Data.EdgeCoord)
-                , entity.transform.position + new Vector3(0f, 2f, 0f), Data.HorizontalEdge ? Color.red : Color.blue);
+            if (Data.EdgeType == FlowTilemapEdgeType.Fence || Data.EdgeType == FlowTilemapEdgeType.Wall)
+            {
+                GizmoUnitily.DrawWall(Data.EdgeCoord, Color.red, Data.HorizontalEdge);
+            }
+            else
+            {
+                GizmoUnitily.DrawWall(Data.EdgeCoord, Color.blue, Data.HorizontalEdge);
+            }
+            if (entity != null)
+            {
+                GizmoUnitily.DrawLine(DungeonController.Instance.TileCoordToWorldPosition(Data.EdgeCoord),
+                    entity.transform.position + new Vector3(0f, 2f, 0f), Color.yellow);
+            }
+
         }
 
 

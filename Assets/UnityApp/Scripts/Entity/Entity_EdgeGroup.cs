@@ -6,20 +6,14 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public class Entity_EdgeGroup : Entity
+    public class Entity_EdgeGroup : Entity<Data_Edge>
     {
         public static int CullPlaneHeight = Shader.PropertyToID("_CullPlaneHeight");
         public GameObject modelRoot;
 
-        public Entity_Edge primary;
-        public Entity_Edge secondary;
+        public Entity_SubEdge primary;
+        public Entity_SubEdge secondary;
 
-        public Data_Cell primaryCellData;
-        public Data_Cell secondaryCellData;
-        public Data_Edge parentData;
-
-        private Room primaryRoom;
-        private Room secondaryRoom;
 
         public List<Entity_Corner> corners = new List<Entity_Corner>();
         public bool isHide;
@@ -31,78 +25,74 @@ namespace Johnny.SimDungeon
         private Material secondaryMaterial;
         private Transform m_MainCam;
         private Vector3 m_WallPos;
-        public bool isRim;
 
         private void Start()
         {
             if (m_MainCam == null)
             {
-                m_MainCam = DungeonController.Instance.m_Camera.transform;
+                //m_MainCam = DungeonController.Instance.m_Camera.transform;
             }
             if (Application.isPlaying)
             {
                 primaryMaterial = primary.GetComponentInChildren<Renderer>().material;
                 secondaryMaterial = secondary.GetComponentInChildren<Renderer>().material;
             }
+
         }
 
         private void Update()
         {
-            if (!isRim && (primaryRoom != null || secondaryRoom != null))
-            {
-                var hideA = ShouldHideWith(primaryRoom);
-                var hideB = ShouldHideWith(secondaryRoom);
+            //var primaryRoom = primary.ParentData.parentRoom;
+            //var secondaryRoom = secondary.ParentData.parentRoom;
 
-                bool shouldHide;
-                if (primaryRoom != null && secondaryRoom != null)
-                {
-                    shouldHide = hideA && hideB;
-                }
-                else
-                {
-                    shouldHide = hideA || hideB;
-                }
+            //if (primaryRoom != null || secondaryRoom != null)
+            //{
+            //    var hideA = ShouldHideWith(primaryRoom);
+            //    var hideB = ShouldHideWith(secondaryRoom);
 
-                var value = shouldHide ? 1.01f : 10f;
-                if (parentData.corners.Count > 0)
-                {
-                    foreach (var item in parentData.corners)
-                    {
-                        item.SetWallHide(value);
-                    }
-                }
-                primaryMaterial.SetFloat(CullPlaneHeight, value);
-                secondaryMaterial.SetFloat(CullPlaneHeight, value);
-            }
+            //    bool shouldHide;
+            //    if (primaryRoom != null && secondaryRoom != null)
+            //    {
+            //        shouldHide = hideA && hideB;
+            //    }
+            //    else
+            //    {
+            //        shouldHide = hideA || hideB;
+            //    }
+
+            //    var value = shouldHide ? 1.01f : 10f;
+            //    if (parentData.corners.Count > 0)
+            //    {
+            //        foreach (var item in parentData.corners)
+            //        {
+            //            item.SetWallHide(value);
+            //        }
+            //    }
+            //    primaryMaterial.SetFloat(CullPlaneHeight, value);
+            //    secondaryMaterial.SetFloat(CullPlaneHeight, value);
+            //}
         }
 
         public override void UpdateData()
         {
-            var pPosition = primary.transform.position;
-            primary.relativeEdge = secondary;
-            primary.parent = this;
+            primary.UpdateData();
+            secondary.UpdateData();
 
-            var sPosition = secondary.transform.position;
-            secondary.relativeEdge = primary;
+            primary.parent = this;
             secondary.parent = this;
 
-            primary.direction = DirectionUtility.GetDirection(pPosition, transform.position);
-            secondary.direction = DirectionUtility.GetDirection(sPosition, transform.position);
+            primary.relativeEdge = secondary;
+            secondary.relativeEdge = primary;
+            
+            primary.direction = DirectionUtility.GetDirection(primary.transform.position, transform.position);
+            secondary.direction = DirectionUtility.GetDirection(secondary.transform.position, transform.position);
 
-            //获取相邻两个Cell
-            var pCell = DataManager_Cell.Instance.GetData(pPosition);
-            var sCell = DataManager_Cell.Instance.GetData(sPosition);
-
-            primary.SetParentCellData(pCell);
-            secondary.SetParentCellData(sCell);
+            var pCoord = primary.ParentData.Data.TileCoord;
+            var sCoord = secondary.ParentData.Data.TileCoord;
 
             var orientation = DirectionUtility.GetOrientation(transform);
-
-
-            var pCoord = pCell.Data.TileCoord;
-            var sCoord = sCell.Data.TileCoord;
-
             Data_Edge edgeData = null;
+
             switch (orientation)
             {
                 case Orientation.Horizontal:
@@ -115,7 +105,21 @@ namespace Johnny.SimDungeon
                     break;
             }
 
-            SetCellsAndEdge(pCell, sCell, edgeData);
+            m_WallPos = (primary.transform.position + secondary.transform.position) / 2f;
+            SetParentCellData_JustUseThisFunction(edgeData);
+        }
+
+        public override void SetTransform(Vector3 position, Quaternion rotation, Vector3 scale)
+        {
+            base.SetTransform(position, rotation, scale);
+            primary.SetTransform(primary.transform.position, primary.transform.rotation, primary.transform.localScale);
+            secondary.SetTransform(secondary.transform.position, secondary.transform.rotation, secondary.transform.localScale);
+        }
+
+        public override void ApplyBiomeRule()
+        {
+            primary.ApplyBiomeRule();
+            secondary.ApplyBiomeRule();
         }
 
         private bool ShouldHideWith(Room room)
@@ -136,43 +140,25 @@ namespace Johnny.SimDungeon
             return false;
         }
 
-        public void SetCellsAndEdge(Data_Cell p, Data_Cell s, Data_Edge parent)
+        protected override void SetParentCellData_JustUseThisFunction(Data_Edge data)
         {
-            parentData = parent;
-            parentData.entity = this;
-
-            primaryCellData = p;
-            primaryRoom = primaryCellData.parentRoom;
-
-            secondaryCellData = s;
-            secondaryRoom = secondaryCellData.parentRoom;
-
-            m_WallPos = (primaryCellData.worldPosition + secondaryCellData.worldPosition) / 2f;
-
-            if (primaryCellData.Data.CellType == FlowTilemapCellType.Custom || secondaryCellData.Data.CellType == FlowTilemapCellType.Custom)
-            {
-                isRim = true;
-            }
+            base.SetParentCellData_JustUseThisFunction(data);
+            data.entity = this;
         }
 
+        public override bool TryDestroy()
+        {
+            var p= primary.TryDestroy();
+            var s= secondary.TryDestroy();
+            return p && s;
+        }
 
         public void OnDrawGizmos()
         {
             if (drawGizmos)
             {
-                primaryCellData.DrawGizmos();
-                secondaryCellData.DrawGizmos();
-
-                var parentPosition = DungeonController.Instance.TileCoordToWorldPosition(parentData.Data.EdgeCoord);
+                var parentPosition = DungeonController.Instance.TileCoordToWorldPosition(ParentData.Data.EdgeCoord);
                 GizmoUnitily.DrawLine(transform.position, parentPosition, Color.beige);
-                if (primaryRoom != null)
-                {
-                    GizmoUnitily.DrawLabel(transform.position, $"{primaryRoom.name},IsRim: {isRim.ToString()}");
-                }
-                if (secondaryRoom != null)
-                {
-                    GizmoUnitily.DrawLabel(transform.position + new Vector3(0f, 2f, .0f), secondaryRoom.name);
-                }
             }
         }
 

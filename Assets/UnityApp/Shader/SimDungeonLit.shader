@@ -5,14 +5,12 @@ Shader "SimDungeonLit"
 	Properties
 	{
 		[HideInInspector] _AlphaCutoff("Alpha Cutoff ", Range(0, 1)) = 0.5
-		_CullPlaneHeight( "Cull Plane Height", Float ) = 0
-		[Toggle( _CULLPLANE_ON )] _CullPlane( "Cull Plane", Float ) = 0
 		_MainColor( "MainColor", Color ) = ( 1, 1, 1, 1 )
 		_MainTexture( "MainTexture", 2D ) = "white" {}
 		_Metallic( "Metallic", Range( 0, 1 ) ) = 0
 		_Smoothness( "Smoothness", Range( 0, 1 ) ) = 0
-		_AlphaClipThreshold( "AlphaClipThreshold", Range( 0, 1 ) ) = 0
-		_AlphaClipThresholdShadow( "AlphaClipThresholdShadow", Range( 0, 1 ) ) = 0
+		[Toggle( _CULLPLANE_ON )] _CullPlane( "Cull Plane", Float ) = 0
+		_CullPlaneHeight( "Cull Plane Height", Float ) = 0
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 
 		[HideInInspector] _RenderQueueType("Render Queue Type", Float) = 1
@@ -397,7 +395,6 @@ Shader "SimDungeonLit"
             #pragma instancing_options renderinglayer
             #pragma shader_feature_local _ _ALPHATEST_ON
             #define _ALPHATEST_SHADOW_ON 1
-            #define HAVE_MESH_MODIFICATION
             #define ASE_VERSION 19904
             #define ASE_SRP_VERSION 170200
 
@@ -499,11 +496,9 @@ Shader "SimDungeonLit"
 			CBUFFER_START( UnityPerMaterial )
 			float4 _MainTexture_ST;
 			float4 _MainColor;
-			float _CullPlaneHeight;
 			float _Metallic;
 			float _Smoothness;
-			float _AlphaClipThreshold;
-			float _AlphaClipThresholdShadow;
+			float _CullPlaneHeight;
 			float4 _EmissionColor;
 			float _AlphaCutoff;
 			float _RenderQueueType;
@@ -569,8 +564,6 @@ Shader "SimDungeonLit"
             #endif
 
 			sampler2D _MainTexture;
-			UNITY_INSTANCING_BUFFER_START(SimDungeonLit)
-			UNITY_INSTANCING_BUFFER_END(SimDungeonLit)
 
 
             #ifdef DEBUG_DISPLAY
@@ -592,6 +585,7 @@ Shader "SimDungeonLit"
 			#endif
 
 			#define ASE_NEEDS_TEXTURE_COORDINATES0
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 			#pragma shader_feature_local _CULLPLANE_ON
 
 
@@ -885,19 +879,6 @@ Shader "SimDungeonLit"
 				UNITY_TRANSFER_INSTANCE_ID(inputMesh, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( output );
 
-				float3 ase_positionWS = GetAbsolutePositionWS( TransformObjectToWorld( ( inputMesh.positionOS ).xyz ) );
-				float ifLocalVar21 = 0;
-				if( _CullPlaneHeight >= ase_positionWS.y )
-				ifLocalVar21 = 0.0;
-				else
-				ifLocalVar21 = asfloat( -1 );
-				#ifdef _CULLPLANE_ON
-				float staticSwitch28 = ifLocalVar21;
-				#else
-				float staticSwitch28 = 0.0;
-				#endif
-				float3 temp_cast_0 = (staticSwitch28).xxx;
-				
 				output.ase_texcoord5.xy = inputMesh.uv0.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
@@ -908,7 +889,7 @@ Shader "SimDungeonLit"
 				#else
 				float3 defaultVertexValue = float3( 0, 0, 0 );
 				#endif
-				float3 vertexValue = temp_cast_0;
+				float3 vertexValue = defaultVertexValue;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 				inputMesh.positionOS.xyz = vertexValue;
@@ -1082,6 +1063,17 @@ Shader "SimDungeonLit"
 
 				float2 uv_MainTexture = packedInput.ase_texcoord5.xy * _MainTexture_ST.xy + _MainTexture_ST.zw;
 				
+				float ifLocalVar21 = 0;
+				if( _CullPlaneHeight >= PositionWS.y )
+				ifLocalVar21 = 0.0;
+				else
+				ifLocalVar21 = asfloat( -1 );
+				#ifdef _CULLPLANE_ON
+				float staticSwitch28 = ifLocalVar21;
+				#else
+				float staticSwitch28 = 0.0;
+				#endif
+				
 
 				GlobalSurfaceDescription surfaceDescription = (GlobalSurfaceDescription)0;
 
@@ -1098,14 +1090,14 @@ Shader "SimDungeonLit"
 				surfaceDescription.Smoothness = _Smoothness;
 				surfaceDescription.Occlusion = 1;
 				surfaceDescription.Emission = 0;
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = staticSwitch28;
 
 				#ifdef _ALPHATEST_ON
-				surfaceDescription.AlphaClipThreshold = _AlphaClipThreshold;
+				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
 				#endif
 
 				#ifdef _ALPHATEST_SHADOW_ON
-				surfaceDescription.AlphaClipThresholdShadow = _AlphaClipThresholdShadow;
+				surfaceDescription.AlphaClipThresholdShadow = 0.5;
 				#endif
 
 				surfaceDescription.AlphaClipThresholdDepthPrepass = 0.5;
@@ -1209,7 +1201,6 @@ Shader "SimDungeonLit"
 			#pragma instancing_options renderinglayer
 			#pragma shader_feature_local _ _ALPHATEST_ON
 			#define _ALPHATEST_SHADOW_ON 1
-			#define HAVE_MESH_MODIFICATION
 			#define ASE_VERSION 19904
 			#define ASE_SRP_VERSION 170200
 
@@ -1302,11 +1293,9 @@ Shader "SimDungeonLit"
 			CBUFFER_START( UnityPerMaterial )
 			float4 _MainTexture_ST;
 			float4 _MainColor;
-			float _CullPlaneHeight;
 			float _Metallic;
 			float _Smoothness;
-			float _AlphaClipThreshold;
-			float _AlphaClipThresholdShadow;
+			float _CullPlaneHeight;
 			float4 _EmissionColor;
 			float _AlphaCutoff;
 			float _RenderQueueType;
@@ -1372,8 +1361,6 @@ Shader "SimDungeonLit"
             #endif
 
 			sampler2D _MainTexture;
-			UNITY_INSTANCING_BUFFER_START(SimDungeonLit)
-			UNITY_INSTANCING_BUFFER_END(SimDungeonLit)
 
 
             #ifdef DEBUG_DISPLAY
@@ -1425,6 +1412,7 @@ Shader "SimDungeonLit"
 				float4 LightCoord : TEXCOORD1;
 				#endif
 				float4 ase_texcoord2 : TEXCOORD2;
+				float4 ase_texcoord3 : TEXCOORD3;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				#if defined(SHADER_STAGE_FRAGMENT) && defined(ASE_NEED_CULLFACE)
 				FRONT_FACE_TYPE cullFace : FRONT_FACE_SEMANTIC;
@@ -1697,29 +1685,20 @@ Shader "SimDungeonLit"
 				UNITY_TRANSFER_INSTANCE_ID(inputMesh, output);
 
 				float3 ase_positionWS = GetAbsolutePositionWS( TransformObjectToWorld( ( inputMesh.positionOS ).xyz ) );
-				float ifLocalVar21 = 0;
-				if( _CullPlaneHeight >= ase_positionWS.y )
-				ifLocalVar21 = 0.0;
-				else
-				ifLocalVar21 = asfloat( -1 );
-				#ifdef _CULLPLANE_ON
-				float staticSwitch28 = ifLocalVar21;
-				#else
-				float staticSwitch28 = 0.0;
-				#endif
-				float3 temp_cast_0 = (staticSwitch28).xxx;
+				output.ase_texcoord3.xyz = ase_positionWS;
 				
 				output.ase_texcoord2.xy = inputMesh.uv0.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
 				output.ase_texcoord2.zw = 0;
+				output.ase_texcoord3.w = 0;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 				float3 defaultVertexValue = inputMesh.positionOS.xyz;
 				#else
 				float3 defaultVertexValue = float3( 0, 0, 0 );
 				#endif
-				float3 vertexValue = temp_cast_0;
+				float3 vertexValue = defaultVertexValue;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 				inputMesh.positionOS.xyz = vertexValue;
@@ -1867,6 +1846,18 @@ Shader "SimDungeonLit"
 
 				float2 uv_MainTexture = packedInput.ase_texcoord2.xy * _MainTexture_ST.xy + _MainTexture_ST.zw;
 				
+				float3 ase_positionWS = packedInput.ase_texcoord3.xyz;
+				float ifLocalVar21 = 0;
+				if( _CullPlaneHeight >= ase_positionWS.y )
+				ifLocalVar21 = 0.0;
+				else
+				ifLocalVar21 = asfloat( -1 );
+				#ifdef _CULLPLANE_ON
+				float staticSwitch28 = ifLocalVar21;
+				#else
+				float staticSwitch28 = 0.0;
+				#endif
+				
 
 				GlobalSurfaceDescription surfaceDescription = (GlobalSurfaceDescription)0;
 
@@ -1883,10 +1874,10 @@ Shader "SimDungeonLit"
 				surfaceDescription.Smoothness = _Smoothness;
 				surfaceDescription.Occlusion = 1;
 				surfaceDescription.Emission = 0;
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = staticSwitch28;
 
 				#ifdef _ALPHATEST_ON
-				surfaceDescription.AlphaClipThreshold = _AlphaClipThreshold;
+				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
 				#endif
 
 				#ifdef _ENABLE_GEOMETRIC_SPECULAR_AA
@@ -1977,7 +1968,6 @@ Shader "SimDungeonLit"
 			#pragma instancing_options renderinglayer
 			#pragma shader_feature_local _ _ALPHATEST_ON
 			#define _ALPHATEST_SHADOW_ON 1
-			#define HAVE_MESH_MODIFICATION
 			#define ASE_VERSION 19904
 			#define ASE_SRP_VERSION 170200
 
@@ -2070,11 +2060,9 @@ Shader "SimDungeonLit"
 			CBUFFER_START( UnityPerMaterial )
 			float4 _MainTexture_ST;
 			float4 _MainColor;
-			float _CullPlaneHeight;
 			float _Metallic;
 			float _Smoothness;
-			float _AlphaClipThreshold;
-			float _AlphaClipThresholdShadow;
+			float _CullPlaneHeight;
 			float4 _EmissionColor;
 			float _AlphaCutoff;
 			float _RenderQueueType;
@@ -2139,9 +2127,7 @@ Shader "SimDungeonLit"
 			int _PassValue;
             #endif
 
-			UNITY_INSTANCING_BUFFER_START(SimDungeonLit)
-			UNITY_INSTANCING_BUFFER_END(SimDungeonLit)
-
+			
 
             #ifdef DEBUG_DISPLAY
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
@@ -2161,6 +2147,7 @@ Shader "SimDungeonLit"
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/VisualEffectVertex.hlsl"
         	#endif
 
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 			#pragma shader_feature_local _CULLPLANE_ON
 
 
@@ -2397,18 +2384,6 @@ Shader "SimDungeonLit"
 				UNITY_TRANSFER_INSTANCE_ID(inputMesh, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( output );
 
-				float3 ase_positionWS = GetAbsolutePositionWS( TransformObjectToWorld( ( inputMesh.positionOS ).xyz ) );
-				float ifLocalVar21 = 0;
-				if( _CullPlaneHeight >= ase_positionWS.y )
-				ifLocalVar21 = 0.0;
-				else
-				ifLocalVar21 = asfloat( -1 );
-				#ifdef _CULLPLANE_ON
-				float staticSwitch28 = ifLocalVar21;
-				#else
-				float staticSwitch28 = 0.0;
-				#endif
-				float3 temp_cast_0 = (staticSwitch28).xxx;
 				
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
@@ -2416,7 +2391,7 @@ Shader "SimDungeonLit"
 				#else
 				float3 defaultVertexValue = float3( 0, 0, 0 );
 				#endif
-				float3 vertexValue = temp_cast_0;
+				float3 vertexValue = defaultVertexValue;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 				inputMesh.positionOS.xyz = vertexValue;
@@ -2587,18 +2562,28 @@ Shader "SimDungeonLit"
 				float3 TangentWS = packedInput.tangentWS.xyz;
 				float3 BitangentWS = input.tangentToWorld[ 1 ];
 
+				float ifLocalVar21 = 0;
+				if( _CullPlaneHeight >= PositionWS.y )
+				ifLocalVar21 = 0.0;
+				else
+				ifLocalVar21 = asfloat( -1 );
+				#ifdef _CULLPLANE_ON
+				float staticSwitch28 = ifLocalVar21;
+				#else
+				float staticSwitch28 = 0.0;
+				#endif
 				
 
 				AlphaSurfaceDescription surfaceDescription = (AlphaSurfaceDescription)0;
 
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = staticSwitch28;
 
 				#ifdef _ALPHATEST_ON
-				surfaceDescription.AlphaClipThreshold = _AlphaClipThreshold;
+				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
 				#endif
 
 				#ifdef _ALPHATEST_SHADOW_ON
-				surfaceDescription.AlphaClipThresholdShadow = _AlphaClipThresholdShadow;
+				surfaceDescription.AlphaClipThresholdShadow = 0.5;
 				#endif
 
 				#if defined( ASE_CHANGES_WORLD_POS )
@@ -2666,7 +2651,6 @@ Shader "SimDungeonLit"
 			#pragma instancing_options renderinglayer
 			#pragma shader_feature_local _ _ALPHATEST_ON
 			#define _ALPHATEST_SHADOW_ON 1
-			#define HAVE_MESH_MODIFICATION
 			#define ASE_VERSION 19904
 			#define ASE_SRP_VERSION 170200
 
@@ -2758,11 +2742,9 @@ Shader "SimDungeonLit"
 			CBUFFER_START( UnityPerMaterial )
 			float4 _MainTexture_ST;
 			float4 _MainColor;
-			float _CullPlaneHeight;
 			float _Metallic;
 			float _Smoothness;
-			float _AlphaClipThreshold;
-			float _AlphaClipThresholdShadow;
+			float _CullPlaneHeight;
 			float4 _EmissionColor;
 			float _AlphaCutoff;
 			float _RenderQueueType;
@@ -2827,9 +2809,7 @@ Shader "SimDungeonLit"
 			int _PassValue;
             #endif
 
-			UNITY_INSTANCING_BUFFER_START(SimDungeonLit)
-			UNITY_INSTANCING_BUFFER_END(SimDungeonLit)
-
+			
 
             #ifdef DEBUG_DISPLAY
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
@@ -2850,6 +2830,7 @@ Shader "SimDungeonLit"
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/VisualEffectVertex.hlsl"
         	#endif
 
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 			#pragma shader_feature_local _CULLPLANE_ON
 
 
@@ -3089,18 +3070,6 @@ Shader "SimDungeonLit"
 				UNITY_TRANSFER_INSTANCE_ID(inputMesh, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( output );
 
-				float3 ase_positionWS = GetAbsolutePositionWS( TransformObjectToWorld( ( inputMesh.positionOS ).xyz ) );
-				float ifLocalVar21 = 0;
-				if( _CullPlaneHeight >= ase_positionWS.y )
-				ifLocalVar21 = 0.0;
-				else
-				ifLocalVar21 = asfloat( -1 );
-				#ifdef _CULLPLANE_ON
-				float staticSwitch28 = ifLocalVar21;
-				#else
-				float staticSwitch28 = 0.0;
-				#endif
-				float3 temp_cast_0 = (staticSwitch28).xxx;
 				
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
@@ -3108,7 +3077,7 @@ Shader "SimDungeonLit"
 				#else
 				float3 defaultVertexValue = float3( 0, 0, 0 );
 				#endif
-				float3 vertexValue = temp_cast_0;
+				float3 vertexValue = defaultVertexValue;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 				inputMesh.positionOS.xyz = vertexValue;
@@ -3262,14 +3231,24 @@ Shader "SimDungeonLit"
 				float3 TangentWS = packedInput.tangentWS.xyz;
 				float3 BitangentWS = input.tangentToWorld[ 1 ];
 
+				float ifLocalVar21 = 0;
+				if( _CullPlaneHeight >= PositionWS.y )
+				ifLocalVar21 = 0.0;
+				else
+				ifLocalVar21 = asfloat( -1 );
+				#ifdef _CULLPLANE_ON
+				float staticSwitch28 = ifLocalVar21;
+				#else
+				float staticSwitch28 = 0.0;
+				#endif
 				
 
 				SceneSurfaceDescription surfaceDescription = (SceneSurfaceDescription)0;
 
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = staticSwitch28;
 
 				#ifdef _ALPHATEST_ON
-				surfaceDescription.AlphaClipThreshold = _AlphaClipThreshold;
+				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
 				#endif
 
 				#if defined( ASE_CHANGES_WORLD_POS )
@@ -3327,7 +3306,6 @@ Shader "SimDungeonLit"
 			#pragma instancing_options renderinglayer
 			#pragma shader_feature_local _ _ALPHATEST_ON
 			#define _ALPHATEST_SHADOW_ON 1
-			#define HAVE_MESH_MODIFICATION
 			#define ASE_VERSION 19904
 			#define ASE_SRP_VERSION 170200
 
@@ -3421,11 +3399,9 @@ Shader "SimDungeonLit"
 			CBUFFER_START( UnityPerMaterial )
 			float4 _MainTexture_ST;
 			float4 _MainColor;
-			float _CullPlaneHeight;
 			float _Metallic;
 			float _Smoothness;
-			float _AlphaClipThreshold;
-			float _AlphaClipThresholdShadow;
+			float _CullPlaneHeight;
 			float4 _EmissionColor;
 			float _AlphaCutoff;
 			float _RenderQueueType;
@@ -3490,9 +3466,7 @@ Shader "SimDungeonLit"
 			int _PassValue;
             #endif
 
-			UNITY_INSTANCING_BUFFER_START(SimDungeonLit)
-			UNITY_INSTANCING_BUFFER_END(SimDungeonLit)
-
+			
 
             #ifdef DEBUG_DISPLAY
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
@@ -3516,6 +3490,7 @@ Shader "SimDungeonLit"
 				#define ENABLE_TERRAIN_PERPIXEL_NORMAL
 			#endif
 
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 			#pragma shader_feature_local _CULLPLANE_ON
 
 
@@ -3763,18 +3738,6 @@ Shader "SimDungeonLit"
 				UNITY_TRANSFER_INSTANCE_ID(inputMesh, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( output );
 
-				float3 ase_positionWS = GetAbsolutePositionWS( TransformObjectToWorld( ( inputMesh.positionOS ).xyz ) );
-				float ifLocalVar21 = 0;
-				if( _CullPlaneHeight >= ase_positionWS.y )
-				ifLocalVar21 = 0.0;
-				else
-				ifLocalVar21 = asfloat( -1 );
-				#ifdef _CULLPLANE_ON
-				float staticSwitch28 = ifLocalVar21;
-				#else
-				float staticSwitch28 = 0.0;
-				#endif
-				float3 temp_cast_0 = (staticSwitch28).xxx;
 				
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
@@ -3782,7 +3745,7 @@ Shader "SimDungeonLit"
 				#else
 				float3 defaultVertexValue = float3( 0, 0, 0 );
 				#endif
-				float3 vertexValue = temp_cast_0;
+				float3 vertexValue = defaultVertexValue;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 				inputMesh.positionOS.xyz = vertexValue;
@@ -3969,16 +3932,26 @@ Shader "SimDungeonLit"
 					BitangentWS = input.tangentToWorld[ 1 ];
 				#endif
 
+				float ifLocalVar21 = 0;
+				if( _CullPlaneHeight >= PositionWS.y )
+				ifLocalVar21 = 0.0;
+				else
+				ifLocalVar21 = asfloat( -1 );
+				#ifdef _CULLPLANE_ON
+				float staticSwitch28 = ifLocalVar21;
+				#else
+				float staticSwitch28 = 0.0;
+				#endif
 				
 
 				SmoothSurfaceDescription surfaceDescription = (SmoothSurfaceDescription)0;
 
 				surfaceDescription.Normal = float3( 0, 0, 1 );
 				surfaceDescription.Smoothness = _Smoothness;
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = staticSwitch28;
 
 				#ifdef _ALPHATEST_ON
-				surfaceDescription.AlphaClipThreshold = _AlphaClipThreshold;
+				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
 				#endif
 
 				#if defined( ASE_CHANGES_WORLD_POS )
@@ -4067,7 +4040,6 @@ Shader "SimDungeonLit"
 			#pragma instancing_options renderinglayer
 			#pragma shader_feature_local _ _ALPHATEST_ON
 			#define _ALPHATEST_SHADOW_ON 1
-			#define HAVE_MESH_MODIFICATION
 			#define ASE_VERSION 19904
 			#define ASE_SRP_VERSION 170200
 
@@ -4165,11 +4137,9 @@ Shader "SimDungeonLit"
 			CBUFFER_START( UnityPerMaterial )
 			float4 _MainTexture_ST;
 			float4 _MainColor;
-			float _CullPlaneHeight;
 			float _Metallic;
 			float _Smoothness;
-			float _AlphaClipThreshold;
-			float _AlphaClipThresholdShadow;
+			float _CullPlaneHeight;
 			float4 _EmissionColor;
 			float _AlphaCutoff;
 			float _RenderQueueType;
@@ -4234,9 +4204,7 @@ Shader "SimDungeonLit"
 			int _PassValue;
             #endif
 
-			UNITY_INSTANCING_BUFFER_START(SimDungeonLit)
-			UNITY_INSTANCING_BUFFER_END(SimDungeonLit)
-
+			
 
             #ifdef DEBUG_DISPLAY
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
@@ -4256,6 +4224,7 @@ Shader "SimDungeonLit"
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/VisualEffectVertex.hlsl"
         	#endif
 
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 			#pragma shader_feature_local _CULLPLANE_ON
 
 
@@ -4496,18 +4465,6 @@ Shader "SimDungeonLit"
 				float3 currentTimeParams = _TimeParameters.xyz;
 				_TimeParameters.xyz = timeParameters;
 
-				float3 ase_positionWS = GetAbsolutePositionWS( TransformObjectToWorld( ( inputMesh.positionOS ).xyz ) );
-				float ifLocalVar21 = 0;
-				if( _CullPlaneHeight >= ase_positionWS.y )
-				ifLocalVar21 = 0.0;
-				else
-				ifLocalVar21 = asfloat( -1 );
-				#ifdef _CULLPLANE_ON
-				float staticSwitch28 = ifLocalVar21;
-				#else
-				float staticSwitch28 = 0.0;
-				#endif
-				float3 temp_cast_0 = (staticSwitch28).xxx;
 				
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
@@ -4515,7 +4472,7 @@ Shader "SimDungeonLit"
 				#else
 				float3 defaultVertexValue = float3( 0, 0, 0 );
 				#endif
-				float3 vertexValue = temp_cast_0;
+				float3 vertexValue = defaultVertexValue;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 				inputMesh.positionOS.xyz = vertexValue;
@@ -4756,14 +4713,24 @@ Shader "SimDungeonLit"
 
 				SmoothSurfaceDescription surfaceDescription = (SmoothSurfaceDescription)0;
 
+				float ifLocalVar21 = 0;
+				if( _CullPlaneHeight >= PositionWS.y )
+				ifLocalVar21 = 0.0;
+				else
+				ifLocalVar21 = asfloat( -1 );
+				#ifdef _CULLPLANE_ON
+				float staticSwitch28 = ifLocalVar21;
+				#else
+				float staticSwitch28 = 0.0;
+				#endif
 				
 
 				surfaceDescription.Normal = float3( 0, 0, 1 );
 				surfaceDescription.Smoothness = _Smoothness;
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = staticSwitch28;
 
 				#ifdef _ALPHATEST_ON
-				surfaceDescription.AlphaClipThreshold = _AlphaClipThreshold;
+				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
 				#endif
 
 				#if defined( ASE_CHANGES_WORLD_POS )
@@ -4867,7 +4834,6 @@ Shader "SimDungeonLit"
 			#pragma instancing_options renderinglayer
 			#pragma shader_feature_local _ _ALPHATEST_ON
 			#define _ALPHATEST_SHADOW_ON 1
-			#define HAVE_MESH_MODIFICATION
 			#define ASE_VERSION 19904
 			#define ASE_SRP_VERSION 170200
 
@@ -4982,11 +4948,9 @@ Shader "SimDungeonLit"
 			CBUFFER_START( UnityPerMaterial )
 			float4 _MainTexture_ST;
 			float4 _MainColor;
-			float _CullPlaneHeight;
 			float _Metallic;
 			float _Smoothness;
-			float _AlphaClipThreshold;
-			float _AlphaClipThresholdShadow;
+			float _CullPlaneHeight;
 			float4 _EmissionColor;
 			float _AlphaCutoff;
 			float _RenderQueueType;
@@ -5052,8 +5016,6 @@ Shader "SimDungeonLit"
             #endif
 
 			sampler2D _MainTexture;
-			UNITY_INSTANCING_BUFFER_START(SimDungeonLit)
-			UNITY_INSTANCING_BUFFER_END(SimDungeonLit)
 
 
             #ifdef DEBUG_DISPLAY
@@ -5082,6 +5044,7 @@ Shader "SimDungeonLit"
 			#endif
 
 			#define ASE_NEEDS_TEXTURE_COORDINATES0
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 			#pragma shader_feature_local _CULLPLANE_ON
 
 
@@ -5376,19 +5339,6 @@ Shader "SimDungeonLit"
 				float3 currentTimeParams = _TimeParameters.xyz;
 				_TimeParameters.xyz = timeParameters;
 
-				float3 ase_positionWS = GetAbsolutePositionWS( TransformObjectToWorld( ( inputMesh.positionOS ).xyz ) );
-				float ifLocalVar21 = 0;
-				if( _CullPlaneHeight >= ase_positionWS.y )
-				ifLocalVar21 = 0.0;
-				else
-				ifLocalVar21 = asfloat( -1 );
-				#ifdef _CULLPLANE_ON
-				float staticSwitch28 = ifLocalVar21;
-				#else
-				float staticSwitch28 = 0.0;
-				#endif
-				float3 temp_cast_0 = (staticSwitch28).xxx;
-				
 				output.ase_texcoord7.xy = inputMesh.uv0.xy;
 				
 				//setting value to unused interpolator channels and avoid initialization warnings
@@ -5399,7 +5349,7 @@ Shader "SimDungeonLit"
 				#else
 				float3 defaultVertexValue = float3( 0, 0, 0 );
 				#endif
-				float3 vertexValue = temp_cast_0;
+				float3 vertexValue = defaultVertexValue;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 				inputMesh.positionOS.xyz = vertexValue;
@@ -5686,6 +5636,17 @@ Shader "SimDungeonLit"
 
 				float2 uv_MainTexture = packedInput.ase_texcoord7.xy * _MainTexture_ST.xy + _MainTexture_ST.zw;
 				
+				float ifLocalVar21 = 0;
+				if( _CullPlaneHeight >= PositionWS.y )
+				ifLocalVar21 = 0.0;
+				else
+				ifLocalVar21 = asfloat( -1 );
+				#ifdef _CULLPLANE_ON
+				float staticSwitch28 = ifLocalVar21;
+				#else
+				float staticSwitch28 = 0.0;
+				#endif
+				
 
 				GlobalSurfaceDescription surfaceDescription = (GlobalSurfaceDescription)0;
 
@@ -5702,10 +5663,10 @@ Shader "SimDungeonLit"
 				surfaceDescription.Smoothness = _Smoothness;
 				surfaceDescription.Occlusion = 1;
 				surfaceDescription.Emission = 0;
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = staticSwitch28;
 
 				#ifdef _ALPHATEST_ON
-				surfaceDescription.AlphaClipThreshold = _AlphaClipThreshold;
+				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
 				#endif
 
 				#ifdef _SPECULAR_OCCLUSION_CUSTOM
@@ -5909,7 +5870,6 @@ Shader "SimDungeonLit"
 			#pragma instancing_options renderinglayer
 			#pragma shader_feature_local _ _ALPHATEST_ON
 			#define _ALPHATEST_SHADOW_ON 1
-			#define HAVE_MESH_MODIFICATION
 			#define ASE_VERSION 19904
 			#define ASE_SRP_VERSION 170200
 
@@ -6005,11 +5965,9 @@ Shader "SimDungeonLit"
             CBUFFER_START( UnityPerMaterial )
 			float4 _MainTexture_ST;
 			float4 _MainColor;
-			float _CullPlaneHeight;
 			float _Metallic;
 			float _Smoothness;
-			float _AlphaClipThreshold;
-			float _AlphaClipThresholdShadow;
+			float _CullPlaneHeight;
 			float4 _EmissionColor;
 			float _AlphaCutoff;
 			float _RenderQueueType;
@@ -6074,9 +6032,7 @@ Shader "SimDungeonLit"
             int _PassValue;
             #endif
 
-			UNITY_INSTANCING_BUFFER_START(SimDungeonLit)
-			UNITY_INSTANCING_BUFFER_END(SimDungeonLit)
-
+			
 
             #ifdef DEBUG_DISPLAY
             #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Debug/DebugDisplay.hlsl"
@@ -6092,6 +6048,7 @@ Shader "SimDungeonLit"
 
 			#include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Decal/DecalUtilities.hlsl"
 
+			#define ASE_NEEDS_FRAG_WORLD_POSITION
 			#pragma shader_feature_local _CULLPLANE_ON
 
 
@@ -6189,18 +6146,6 @@ Shader "SimDungeonLit"
 				UNITY_TRANSFER_INSTANCE_ID(inputMesh, output);
 				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( output );
 
-				float3 ase_positionWS = GetAbsolutePositionWS( TransformObjectToWorld( ( inputMesh.positionOS ).xyz ) );
-				float ifLocalVar21 = 0;
-				if( _CullPlaneHeight >= ase_positionWS.y )
-				ifLocalVar21 = 0.0;
-				else
-				ifLocalVar21 = asfloat( -1 );
-				#ifdef _CULLPLANE_ON
-				float staticSwitch28 = ifLocalVar21;
-				#else
-				float staticSwitch28 = 0.0;
-				#endif
-				float3 temp_cast_0 = (staticSwitch28).xxx;
 				
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
@@ -6208,7 +6153,7 @@ Shader "SimDungeonLit"
 				#else
 				float3 defaultVertexValue = float3( 0, 0, 0 );
 				#endif
-				float3 vertexValue = temp_cast_0;
+				float3 vertexValue = defaultVertexValue;
 
 				#ifdef ASE_ABSOLUTE_VERTEX_POS
 				inputMesh.positionOS.xyz = vertexValue;
@@ -6379,14 +6324,24 @@ Shader "SimDungeonLit"
 				float3 TangentWS = packedInput.tangentWS.xyz;
 				float3 BitangentWS = input.tangentToWorld[ 1 ];
 
+				float ifLocalVar21 = 0;
+				if( _CullPlaneHeight >= PositionWS.y )
+				ifLocalVar21 = 0.0;
+				else
+				ifLocalVar21 = asfloat( -1 );
+				#ifdef _CULLPLANE_ON
+				float staticSwitch28 = ifLocalVar21;
+				#else
+				float staticSwitch28 = 0.0;
+				#endif
 				
 
 				PickingSurfaceDescription surfaceDescription = (PickingSurfaceDescription)0;
 
-				surfaceDescription.Alpha = 1;
+				surfaceDescription.Alpha = staticSwitch28;
 
 				#ifdef _ALPHATEST_ON
-				surfaceDescription.AlphaClipThreshold = _AlphaClipThreshold;
+				surfaceDescription.AlphaClipThreshold = _AlphaCutoff;
 				#endif
 
 				#if defined( ASE_DEPTH_WRITE_ON )
@@ -6694,18 +6649,25 @@ Node;AmplifyShaderEditor.CommentaryNode, AmplifyShaderEditor, Version=0.0.0.0, C
 Node;AmplifyShaderEditor.WorldPosInputsNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;17;-1648,1216;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;19;-1616,1440;Inherit;False;Constant;_Float1;Float 0;0;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.NaNNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;20;-1584,1520;Inherit;False;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;18;-1680,1376;Inherit;False;Property;_CullPlaneHeight;Cull Plane Height;0;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;18;-1680,1376;Inherit;False;Property;_CullPlaneHeight;Cull Plane Height;9;0;Create;True;0;0;0;False;0;False;0;10;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.ConditionalIfNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;21;-1360,1264;Inherit;False;False;5;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;4;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.ObjectPositionNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;44;-1792,688;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.Vector2Node, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;42;-1568,560;Inherit;False;Property;_HoleScale;HoleScale;10;0;Create;True;0;0;0;False;0;False;1,1;0,0;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
+Node;AmplifyShaderEditor.DynamicAppendNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;38;-1584,912;Inherit;False;FLOAT2;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT2;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;43;-1392,816;Inherit;False;2;2;0;FLOAT2;0,0;False;1;FLOAT2;0,0;False;1;FLOAT2;0
+Node;AmplifyShaderEditor.Vector2Node, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;40;-1376,640;Inherit;False;Property;_HoleOffset;HoleOffset;7;0;Create;True;0;0;0;False;0;False;0,0;0,0;0;3;FLOAT2;0;FLOAT;1;FLOAT;2
+Node;AmplifyShaderEditor.SimpleAddOpNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;41;-1184,768;Inherit;False;2;2;0;FLOAT2;0,0;False;1;FLOAT2;0,0;False;1;FLOAT2;0
+Node;AmplifyShaderEditor.WorldPosInputsNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;36;-1808,880;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.StickyNoteNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;24;-1376,1440;Inherit;False;269.3334;149.3333;;;0,0,0,1;cull entire triangles by assigning a NaN value to one of the vertices. This doesn't skip vertex processing but it does skip fragment processing;0;0
-Node;AmplifyShaderEditor.IntNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;27;236.8685,-879.3375;Inherit;False;InstancedProperty;_Int0;Int 0;1;0;Create;True;0;0;0;False;0;False;0;0;False;0;1;INT;0
-Node;AmplifyShaderEditor.StaticSwitch, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;28;-784,1072;Inherit;False;Property;_CullPlane;Cull Plane;2;0;Create;True;0;0;0;False;0;False;0;0;0;True;;Toggle;2;Key0;Key1;Create;True;True;All;9;1;FLOAT;0;False;0;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT;0;False;7;FLOAT;0;False;8;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SamplerNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;30;-1095.305,-215.4068;Inherit;True;Property;_MainTexture;MainTexture;4;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;False;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;31;-705.8269,-125.5379;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.ColorNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;29;-1040,32;Inherit;False;Property;_MainColor;MainColor;3;0;Create;True;0;0;0;False;0;False;1,1,1,1;0,0,0,0;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
-Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;32;-416,96;Inherit;False;Property;_Metallic;Metallic;5;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;35;-416,352;Inherit;False;Property;_AlphaClipThresholdShadow;AlphaClipThresholdShadow;8;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;34;-416,256;Inherit;False;Property;_AlphaClipThreshold;AlphaClipThreshold;7;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;33;-416,176;Inherit;False;Property;_Smoothness;Smoothness;6;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.ColorNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;29;-1040,32;Inherit;False;Property;_MainColor;MainColor;0;0;Create;True;0;0;0;False;0;False;1,1,1,1;1,1,1,1;True;True;0;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;32;-416,96;Inherit;False;Property;_Metallic;Metallic;2;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;35;-416,352;Inherit;False;Property;_AlphaClipThresholdShadow;AlphaClipThresholdShadow;5;0;Create;True;0;0;0;False;0;False;0;0.5;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;34;-416,256;Inherit;False;Property;_AlphaClipThreshold;AlphaClipThreshold;4;0;Create;True;0;0;0;False;0;False;0;0.5;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;33;-416,176;Inherit;False;Property;_Smoothness;Smoothness;3;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SamplerNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;30;-1095.305,-215.4068;Inherit;True;Property;_MainTexture;MainTexture;1;0;Create;True;0;0;0;False;0;False;-1;None;b24b57e0cfed05643be34b0256df875e;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;False;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.SamplerNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;39;-1056,704;Inherit;True;Property;_HoleTexture;HoleTexture;6;0;Create;True;0;0;0;False;0;False;-1;None;b24b57e0cfed05643be34b0256df875e;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;False;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;6;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT3;5
+Node;AmplifyShaderEditor.StaticSwitch, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;28;-960,1248;Inherit;False;Property;_CullPlane;Cull Plane;8;0;Create;True;0;0;0;False;0;False;0;0;0;True;;Toggle;2;Key0;Key1;Create;True;True;All;9;1;FLOAT;0;False;0;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT;0;False;7;FLOAT;0;False;8;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;1;0,0;Float;False;False;-1;3;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;META;0;1;META;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;7;d3d11;metal;vulkan;xboxone;xboxseries;playstation;switch;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=Meta;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;2;0,0;Float;False;False;-1;3;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;ShadowCaster;0;2;ShadowCaster;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;7;d3d11;metal;vulkan;xboxone;xboxseries;playstation;switch;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;0;True;_CullMode;False;True;False;False;False;False;0;False;;False;False;False;False;False;False;False;False;False;True;1;False;;True;3;False;;False;True;1;LightMode=ShadowCaster;False;False;0;;0;0;Standard;0;False;0
 Node;AmplifyShaderEditor.TemplateMultiPassMasterNode, AmplifyShaderEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null;3;0,0;Float;False;False;-1;3;Rendering.HighDefinition.LightingShaderGraphGUI;0;1;New Amplify Shader;53b46d85872c5b24c8f4f0a1c3fe4c87;True;SceneSelectionPass;0;3;SceneSelectionPass;0;False;False;False;False;False;False;False;False;False;False;False;False;True;0;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;3;RenderPipeline=HDRenderPipeline;RenderType=Opaque=RenderType;Queue=Geometry=Queue=0;True;5;True;7;d3d11;metal;vulkan;xboxone;xboxseries;playstation;switch;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;1;LightMode=SceneSelectionPass;False;False;0;;0;0;Standard;0;False;0
@@ -6722,14 +6684,19 @@ WireConnection;21;1;17;2
 WireConnection;21;2;19;0
 WireConnection;21;3;19;0
 WireConnection;21;4;20;0
-WireConnection;28;0;21;0
+WireConnection;38;0;44;3
+WireConnection;38;1;44;2
+WireConnection;43;0;42;0
+WireConnection;43;1;38;0
+WireConnection;41;0;40;0
+WireConnection;41;1;43;0
 WireConnection;31;0;30;5
 WireConnection;31;1;29;5
+WireConnection;39;1;41;0
+WireConnection;28;0;21;0
 WireConnection;0;0;31;0
 WireConnection;0;4;32;0
 WireConnection;0;7;33;0
-WireConnection;0;10;34;0
-WireConnection;0;30;35;0
-WireConnection;0;11;28;0
+WireConnection;0;9;28;0
 ASEEND*/
-//CHKSM=B07E9D257FB1C5E0E667E2FF0A8331F00E69D870
+//CHKSM=BAF960B18C1279068D143BFCA73C89AED40A8BBD

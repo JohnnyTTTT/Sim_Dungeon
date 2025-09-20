@@ -881,7 +881,7 @@ MonoBehaviour:
   indexCounter:
     index: 112
   topZIndex:
-    index: 657
+    index: 658
   nodes:
   - {fileID: 11423626}
   - {fileID: 11435484}
@@ -1232,8 +1232,8 @@ MonoBehaviour:
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
-  selected: 0
-  zIndex: 508
+  selected: 1
+  zIndex: 658
   inputPins:
   - {fileID: 11436042}
   outputPins:

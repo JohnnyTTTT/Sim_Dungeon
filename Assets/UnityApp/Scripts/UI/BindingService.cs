@@ -19,7 +19,9 @@ namespace Johnny.SimDungeon
         }
         private static BindingService s_Instance;
 
-        public static MainPanelViewModel MainPanelViewModel;
+        public static MainGameViewModel MainPanelViewModel;
+        public static BuildableObjectsPanelViewModel BuildableObjectsPanelViewModel;
+        public static CategoryObjectsPanelViewModel CategoryObjectsPanelViewModel;
 
 
         private BindingServiceBundle m_BindingServiceBundle;
@@ -31,7 +33,9 @@ namespace Johnny.SimDungeon
             m_BindingServiceBundle = new BindingServiceBundle(context.GetContainer());
             m_BindingServiceBundle.Start();
 
-            MainPanelViewModel = new MainPanelViewModel();
+            MainPanelViewModel = new MainGameViewModel();
+            BuildableObjectsPanelViewModel = new BuildableObjectsPanelViewModel();
+            CategoryObjectsPanelViewModel = new CategoryObjectsPanelViewModel();
 
         }
 

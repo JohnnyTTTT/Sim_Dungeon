@@ -20,7 +20,7 @@ namespace Johnny.SimDungeon
     [CreateAssetMenu(menuName = "Johnny/Build System/Biome", order = 100)]
     public class BiomeSO : ScriptableObject
     {
-        public BuildableGridObjectSO[] grounds;
+        public BuildableFreeObjectSO[] grounds;
         public BuildableFreeObjectSO[] walls;
         public BiomeSpawnObject[] prefabs;
     }

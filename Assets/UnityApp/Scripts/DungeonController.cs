@@ -15,14 +15,6 @@ using UnityEngine.InputSystem;
 
 namespace Johnny.SimDungeon
 {
-    public enum StructureMode
-    {
-        None,
-        CreateSpace,
-
-    }
-
-
     public class DungeonController : DungeonEventListener
     {
         public static DungeonController Instance
@@ -67,7 +59,7 @@ namespace Johnny.SimDungeon
         public StructureMode structureMode = StructureMode.None;
         private List<FlowTilemapCell> m_WillCreateSpaces = new List<FlowTilemapCell>();
         public float wallDotThreshold;
-
+        public bool worldDataInited;
         private void Start()
         {
             m_RuntimeSimSceneObjectInstantiator = new RuntimeSimSceneObjectInstantiator();
@@ -94,7 +86,7 @@ namespace Johnny.SimDungeon
             yield return new WaitForEndOfFrame();
             BuildDungeon();
             yield return new WaitForEndOfFrame();
-
+            worldDataInited = true;
             SpawnManager.Instance.SpawnWorld();
         }
 
@@ -139,7 +131,7 @@ namespace Johnny.SimDungeon
         }
         #endregion
 
-        private NeighborData[] GetNeighbourData(FlowTilemapCell cell)
+        public NeighborData[] GetNeighbourData(FlowTilemapCell cell)
         {
             var tilemap = dungeonModel.Tilemap;
             var coord = cell.TileCoord;
@@ -221,11 +213,11 @@ namespace Johnny.SimDungeon
         {
 
 
-            if (structureMode == StructureMode.CreateSpace)
-            {
-                StructureModeTest();
+            //if (structureMode == StructureMode.CreateSpace)
+            //{
+            //    StructureModeTest();
 
-            }
+            //}
             //UpdateHighlight();
             //CheckClick();
         }
@@ -277,9 +269,9 @@ namespace Johnny.SimDungeon
                 //left
                 var left = neighbourData[0].cell;
                 var edgeLeft = neighbourData[0].edge;
-
+                var roomLeft = DataManager_Room.Instance.GetData(left.TileCoord);
                 if (left.CellType == FlowTilemapCellType.Custom ||
-                    (left.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(left.TileCoord).parentRoom != room))
+                    (left.CellType == FlowTilemapCellType.Floor && roomLeft != room))
                 {
                     edgeLeft.EdgeType = FlowTilemapEdgeType.Fence;
                     edgeLeft.HorizontalEdge = false;
@@ -288,8 +280,9 @@ namespace Johnny.SimDungeon
                 //up
                 var up = neighbourData[1].cell;
                 var edgeUp = neighbourData[1].edge;
+                var roomUp = DataManager_Room.Instance.GetData(up.TileCoord);
                 if (up.CellType == FlowTilemapCellType.Custom ||
-                    (up.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(up.TileCoord).parentRoom != room))
+                    (up.CellType == FlowTilemapCellType.Floor && roomUp != room))
                 {
                     edgeUp.EdgeType = FlowTilemapEdgeType.Fence;
                 }
@@ -297,8 +290,9 @@ namespace Johnny.SimDungeon
                 //right
                 var right = neighbourData[2].cell;
                 var edgeRight = neighbourData[2].edge;
+                var roomRight = DataManager_Room.Instance.GetData(right.TileCoord);
                 if (right.CellType == FlowTilemapCellType.Custom ||
-                    (right.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(right.TileCoord).parentRoom != room))
+                    (right.CellType == FlowTilemapCellType.Floor && roomRight != room))
                 {
                     edgeRight.EdgeType = FlowTilemapEdgeType.Fence;
                     edgeRight.HorizontalEdge = false;
@@ -307,8 +301,9 @@ namespace Johnny.SimDungeon
                 //down
                 var down = neighbourData[3].cell;
                 var edgeDown = neighbourData[3].edge;
+                var roomDown = DataManager_Room.Instance.GetData(down.TileCoord);
                 if (down.CellType == FlowTilemapCellType.Custom ||
-                    (down.CellType == FlowTilemapCellType.Floor && cellEntitiyManager.GetData(down.TileCoord).parentRoom != room))
+                    (down.CellType == FlowTilemapCellType.Floor && roomDown != room))
                 {
                     edgeDown.EdgeType = FlowTilemapEdgeType.Fence;
                 }
@@ -331,60 +326,7 @@ namespace Johnny.SimDungeon
                     var cell = gridFlowDungeonQuery.WorldCoordToTile(position);
                     cell.CellType = FlowTilemapCellType.Floor;
 
-                    var neighbourData = GetNeighbourData(cell);
-                    for (int i = 0; i < 4; i++)
-                    {
-                        //left
-                        var left = neighbourData[0].cell;
-                        var edgeLeft = neighbourData[0].edge;
-                        if (left.CellType == FlowTilemapCellType.Custom)
-                        {
-                            edgeLeft.EdgeType = FlowTilemapEdgeType.Fence;
-                        }
-                        else if (left.CellType == FlowTilemapCellType.Floor)
-                        {
-                            edgeLeft.EdgeType = FlowTilemapEdgeType.Empty;
-                        }
-
-                        //up
-                        var up = neighbourData[1].cell;
-                        var edgeUp = neighbourData[1].edge;
-                        if (up.CellType == FlowTilemapCellType.Custom)
-                        {
-                            edgeUp.EdgeType = FlowTilemapEdgeType.Fence;
-                        }
-                        else if (up.CellType == FlowTilemapCellType.Floor)
-                        {
-                            edgeUp.EdgeType = FlowTilemapEdgeType.Empty;
-                        }
-
-                        //right
-                        var right = neighbourData[2].cell;
-                        var edgeRight = neighbourData[2].edge;
-                        if (right.CellType == FlowTilemapCellType.Custom)
-                        {
-                            edgeRight.EdgeType = FlowTilemapEdgeType.Fence;
-                        }
-                        else if (right.CellType == FlowTilemapCellType.Floor)
-                        {
-                            edgeRight.EdgeType = FlowTilemapEdgeType.Empty;
-                        }
-
-                        //down
-                        var down = neighbourData[3].cell;
-                        var edgeDown = neighbourData[3].edge;
-                        if (down.CellType == FlowTilemapCellType.Custom)
-                        {
-                            edgeDown.EdgeType = FlowTilemapEdgeType.Fence;
-                        }
-                        else if (down.CellType == FlowTilemapCellType.Floor)
-                        {
-                            edgeDown.EdgeType = FlowTilemapEdgeType.Empty;
-                        }
-                        Debug.Log($"вС : <{left.CellType}> , ио : <{up.CellType}> , ср : <{right.CellType}> , об : <{down.CellType}>");
-                    }
-
-                    dungeon.ApplyTheme(new RuntimeDungeonSceneObjectInstantiator());
+                   
                 }
                 if (Mouse.current.rightButton.wasReleasedThisFrame)
                 {
@@ -603,7 +545,7 @@ namespace Johnny.SimDungeon
 
         }
 
-        private struct NeighborData
+        public struct NeighborData
         {
             public FlowTilemapCell cell;
             public FlowTilemapEdge edge;
@@ -677,6 +619,7 @@ namespace Johnny.SimDungeon
             DataManager_Tile.Instance.Init(EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize1);
             Debug.Log("[-----System-----] : OnDungeonMarkersEmitted");
         }
+
         public override void OnPostDungeonBuild(Dungeon dungeon, DungeonModel model)
         {
             //CellEntitiesData.Instance.CheckCellEntites();
@@ -687,7 +630,6 @@ namespace Johnny.SimDungeon
 
 
             //StartCoroutine(PostStart());
-
 
             Debug.Log("[-----System-----] : OnPostDungeonBuild");
         }

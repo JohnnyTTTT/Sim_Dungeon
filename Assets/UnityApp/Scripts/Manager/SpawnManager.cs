@@ -30,7 +30,7 @@ namespace Johnny.SimDungeon
         private static SpawnManager s_Instance;
 
         public SpawnRulee[] spawnRules;
-        private Dictionary<RoomType, SpawnRulee> spawnRulesDic = new Dictionary<RoomType, SpawnRulee>();
+        public Dictionary<RoomType, SpawnRulee> spawnRulesDic = new Dictionary<RoomType, SpawnRulee>();
 
         private void Start()
         {
@@ -45,9 +45,8 @@ namespace Johnny.SimDungeon
             if (!Application.isPlaying) return;
 
             RandomUtility.SetSeed((int)DungeonController.Instance.dungeon.Config.Seed);
-
-            EasyGridBuilderProController.Instance.ChangeCurrentGrid(GridType.SizeTwo);
-            EasyGridBuilderProController.Instance.ChangeCurrentMode(GridMode.BuildMode);
+            BindingService.MainPanelViewModel.GridType = GridType.SizeTwo;
+            BindingService.MainPanelViewModel.GridMode = GridMode.BuildMode;
 
             var rooms = DataManager_Room.Instance.roomList;
             foreach (var room in rooms)
@@ -57,8 +56,8 @@ namespace Johnny.SimDungeon
                     ApplyRule(room, rule);
                 }
             }
-            EasyGridBuilderProController.Instance.ChangeCurrentMode(GridMode.None);
-
+            BindingService.MainPanelViewModel.GridMode = GridMode.None;
+            Debug.Log("[-----System-----] : World Spawned");
             //var rooms = DataManager_Room.Instance.roomList;
             //foreach (var item in rooms)
             //{
@@ -71,21 +70,15 @@ namespace Johnny.SimDungeon
         private bool a;
         private void ApplyRule(Room room, SpawnRulee rule)
         {
+            room.biome = rule.Biome;
             var cells = room.containedCells;
             foreach (var cell in cells)
             {
-                var groundTemplete = RandomUtility.GetRandomElement(rule.Biome.grounds);
-                if (groundTemplete != null)
-                {
-                    cell.entity.TryReplace(groundTemplete);
-                }
+                cell.entity.ApplyBiomeRule();
+
                 foreach (var edge in cell.edges)
                 {
-                    var wallTemplete = RandomUtility.GetRandomElement(rule.Biome.walls);
-                    if (wallTemplete != null)
-                    {
-                        edge.TryReplace(wallTemplete);
-                    }
+                    edge.ApplyBiomeRule();
                 }
             }
         }

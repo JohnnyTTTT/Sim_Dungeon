@@ -9,8 +9,8 @@ namespace Johnny.SimDungeon
     public static class GizmoUnitily
     {
 
-        public static Vector3 TwoSize = new Vector3(2f, 0.01f, 2f);
-        public static Vector3 OneSize = new Vector3(1f, 0.01f, 1f);
+        public static Vector3 TwoSize = new Vector3(1.9f, 0.01f, 1.9f);
+        public static Vector3 OneSize = new Vector3(0.9f, 0.01f, 0.9f);
 
         public static void DrawLine(Vector3 from, Vector3 to, Color color)
         {

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Free Object SO - StoneWall_Corner_001
   m_EditorClassIdentifier: Assembly-CSharp::SoulGames.EasyGridBuilderPro.BuildableFreeObjectSO
   objectName: StoneWall_Corner_001
-  objectIcon: {fileID: 1239350156046317824, guid: 0cd7a0f2fc236f647ae80a68741b8f66, type: 3}
+  objectIcon: {fileID: 351382980409588647, guid: 0cd7a0f2fc236f647ae80a68741b8f66, type: 3}
   buildableObjectUICategorySO: {fileID: 11400000, guid: d5df4609c54749a45955d4dafe275e11, type: 2}
   randomPrefabs:
   - objectPrefab: {fileID: 8128397093128452917, guid: 494eccbbb247ae645945f70726598b3a, type: 3}
@@ -26,7 +26,7 @@ MonoBehaviour:
   spawnedObjectLayer:
     serializedVersion: 2
     m_Bits: 0
-  setGridSystemAsParent: 1
+  setGridSystemAsParent: 0
   useObjectGridCustomAlphaMaskScale: 0
   objectGridCustomAlphaMaskScale: {x: 0, y: 0}
   customSurfaceLayerMask:
@@ -42,7 +42,7 @@ MonoBehaviour:
   replacingObjectIgnoreCustomConditions: 1
   isObjectSelectable: 0
   isSelectedObjectRotatable: 0
-  isObjectDestructable: 0
+  isObjectDestructable: 1
   isObjectMovable: 0
   enableTerrainInteractions: 0
   flattenTerrain: 0
@@ -60,7 +60,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   buildableFreeObjectCategorySO: {fileID: 11400000, guid: b638143e4203c6f49acaa4e1984139da, type: 2}
-  rotationType: 0
+  rotationType: 2
   freeRotationSpeed: 100
   freezeRotation: 0
   fourDirectionalRotation: 0

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: _Object UI Category SO - Wall
   m_EditorClassIdentifier: Assembly-CSharp::SoulGames.EasyGridBuilderPro.BuildableObjectUICategorySO
   categoryName: Ground
-  categoryIcon: {fileID: 8002204934701931823, guid: 0cd7a0f2fc236f647ae80a68741b8f66, type: 3}
+  categoryIcon: {fileID: 21300286, guid: fbbbfbc518928864a8ad9db4adc8001a, type: 3}

@@ -1,32 +1,41 @@
 using SoulGames.EasyGridBuilderPro;
+using System;
 using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public class Entity_Ground : Entity
+    public class Entity_Ground : Entity<Data_Cell>
     {
-        private Data_Cell m_data;
-        private BuildableGridObject currentObject;
-
-        public override bool TryReplace(BuildableObjectSO temelpte, BuildableObjectSO.RandomPrefabs prefabs = null)
+        public override void ApplyBiomeRule()
         {
-            if (temelpte is BuildableGridObjectSO buildableFreeObject)
-            {
-                if (currentObject == null || currentObject.GetBuildableObjectSO() != buildableFreeObject)
-                {
-                    if (EasyGridBuilderProController.Instance.ReplaceGround(this, buildableFreeObject, out var buildable))
-                    {
-                        currentObject = buildable;
-                        return true;
-                    }
-                }
-            }
-            return false;
+            var room = DataManager_Room.Instance.GetData(ParentData.Data.TileCoord);
+            var groundTemplete = RandomUtility.GetRandomElement(room.biome.grounds);
+
+            TryReplace(groundTemplete);
         }
+
         public override void UpdateData()
         {
-            m_data = DataManager_Cell.Instance.GetData(lastCoord);
-            m_data.entity = this;
+           var data = DataManager_Cell.Instance.GetData(lastCoord);
+            SetParentCellData_JustUseThisFunction(data);
         }
+
+        protected override void SetParentCellData_JustUseThisFunction(Data_Cell data)
+        {
+            base.SetParentCellData_JustUseThisFunction(data);
+            data.entity = this;
+            name = $"{GetType()} - {data.Data.TileCoord.x},{data.Data.TileCoord.y}";
+        }
+
+        public override void SetTransform(Vector3 position, Quaternion rotation, Vector3 scale)
+        {
+            base.SetTransform(position, rotation, scale);
+            if (currentObject != null)
+            {
+                currentObject.transform.position = position;
+                currentObject.transform.rotation = rotation;
+            }
+        }
+
     }
 }

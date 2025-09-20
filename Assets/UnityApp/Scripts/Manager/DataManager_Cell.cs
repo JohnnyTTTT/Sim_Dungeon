@@ -15,8 +15,7 @@ namespace Johnny.SimDungeon
         public Entity_Ground entity;
         public Data_Edge horizontalEdge;
         public Data_Edge verticalEdge;
-        public List<Entity_Edge> edges = new List<Entity_Edge>();
-        public Room parentRoom;
+        public List<Entity_SubEdge> edges = new List<Entity_SubEdge>();
         public List<Data_Tile> tiles = new List<Data_Tile>();
         public Vector3 worldPosition;
 
@@ -24,68 +23,6 @@ namespace Johnny.SimDungeon
         {
             worldPosition = DungeonController.Instance.TileCoordToWorldPosition(data.TileCoord);
         }
-
-        //public void AddEdge(Entity_Edge entity)
-        //{
-        //    var direction = GetEdgeDirection(entity.transform.position);
-        //    switch (direction)
-        //    {
-        //        case Direction.Left:
-        //            edgeDatas[0] = entity;
-        //            break;
-        //        case Direction.Up:
-        //            edgeDatas[1] = entity;
-        //            break;
-        //        case Direction.Right:
-        //            edgeDatas[2] = entity;
-        //            break;
-        //        case Direction.Down:
-        //            edgeDatas[3] = entity;
-        //            break;
-        //    }
-        //    CalculateSubCells();
-        //}
-
-        //public void RomoveEdge(Entity_Edge entity)
-        //{
-        //    var direction = GetEdgeDirection(entity.transform.position);
-        //    switch (direction)
-        //    {
-        //        case Direction.Left:
-        //            edgeDatas[0] = null;
-        //            break;
-        //        case Direction.Up:
-        //            edgeDatas[1] = null;
-        //            break;
-        //        case Direction.Right:
-        //            edgeDatas[2] = null;
-        //            break;
-        //        case Direction.Down:
-        //            edgeDatas[3] = null;
-        //            break;
-        //    }
-        //    CalculateSubCells();
-        //}
-
-        private void CalculateSubCells()
-        {
-
-            //foreach (var item in subCells)
-            //{
-            //    item.isEdge = edgeDatas[0] != null && item.direction == Direction.Left;
-            //    item.isEdge = edgeDatas[1] != null && item.direction == Direction.Up;
-            //    item.isEdge = edgeDatas[2] != null && item.direction == Direction.Right;
-            //    item.isEdge = edgeDatas[3] != null && item.direction == Direction.Down;
-            //    Debug.Log(item.isEdge);
-            //}
-
-        }
-
-        public List<Entity_Edge> GetEdgeEntities()
-        {
-            return edges;
-        }
-
 
         private FourDirectionalRotation GetEdgeDirection(Vector3 edge)
         {
@@ -110,7 +47,6 @@ namespace Johnny.SimDungeon
                 {
                     GizmoUnitily.DrawLine(worldPosition, item.transform.position + new Vector3(0f, 1.5f, 0f), Color.gold);
                 }
-
             }
             var origin = worldPosition - new Vector3(2, -0.1f, 2);
             //foreach (var item in subCells)

@@ -30,8 +30,8 @@ namespace Johnny.SimDungeon
         private bool multipleSelection;
 
         [SerializeField] private BuildableObjectSO currentBuildable;
-        [SerializeField] private Entity_Edge m_LastPreviewEdge;
-        [SerializeField] private List<Entity_Edge> m_LastPreviewRoomEdges;
+        [SerializeField] private Entity_SubEdge m_LastPreviewEdge;
+        [SerializeField] private List<Entity_SubEdge> m_LastPreviewRoomEdges;
 
         private void OnEnable()
         {
@@ -69,11 +69,11 @@ namespace Johnny.SimDungeon
                 var ray = DungeonController.Instance.m_Camera.ScreenPointToRay(mousePos);
                 var mask = DungeonController.Instance.m_GroundMask;
 
-                Entity_Edge newHitEdge = null;
+                Entity_SubEdge newHitEdge = null;
 
                 if (Physics.Raycast(ray, out var hit, 1000f, mask))
                 {
-                    if (hit.transform.TryGetComponent<Entity>(out var entity) && entity is Entity_Edge edgeEntity)
+                    if (hit.transform.TryGetComponent<Entity>(out var entity) && entity is Entity_SubEdge edgeEntity)
                     {
                         newHitEdge = edgeEntity;
                     }
@@ -103,7 +103,7 @@ namespace Johnny.SimDungeon
                 var room = DataManager_Room.Instance.GetData(m_LastPreviewEdge.transform.position);
                 foreach (var cellData in room.containedCells)
                 {
-                    foreach (var edge in cellData.GetEdgeEntities())
+                    foreach (var edge in cellData.edges)
                     {
                         if (edge != m_LastPreviewEdge)
                         {

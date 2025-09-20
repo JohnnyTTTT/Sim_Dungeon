@@ -14,7 +14,6 @@ namespace Johnny.SimDungeon
 
         public void Hide()
         {
-            Debug.Log(222,gameObject);
             proxy.gameObject.SetActive(false);
         }
     }

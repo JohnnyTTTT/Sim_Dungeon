@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Biome - Empty Room
   m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.BiomeSO
   grounds:
-  - {fileID: 11400000, guid: ea529d3f372b2534ea37c8de9e041e2a, type: 2}
+  - {fileID: 11400000, guid: 1b062b4b59b583c479b3ef0e9a55507d, type: 2}
   walls:
   - {fileID: 11400000, guid: 2ade5d34b27c0c24195b8499a7b70398, type: 2}
   prefabs: []
