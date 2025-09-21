@@ -1,36 +1,86 @@
+using DungeonArchitect;
 using SoulGames.EasyGridBuilderPro;
+using System;
 using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
     public static class RandomUtility
     {
+        private static int s_Seed = 0;
         private static System.Random s_Rng;
 
         public static void SetSeed(int seed)
         {
-            var intSeed = unchecked(seed);
-            s_Rng = new System.Random(intSeed);
+            s_Seed = seed;
+            s_Rng = new System.Random(s_Seed);
         }
 
-        public static float NextFloat()
+        private static float NextFloat()
         {
             return (float)s_Rng.NextDouble();
         }
 
-        public static float GetRandomFloat(float max)
+        public static float GetRandomFloat(IntVector2 coord, float max)
         {
-            return (float)(s_Rng.NextDouble() * max);
+            if (max < 0f)
+                throw new ArgumentOutOfRangeException(nameof(max), "max must be >= 0");
+
+            var hash = s_Seed;
+            hash = HashCombine(hash, coord.x.GetHashCode());
+            hash = HashCombine(hash, coord.y.GetHashCode());
+
+            var rng = new System.Random(hash);
+
+            return (float)rng.NextDouble() * max;
         }
 
-        public static BuildableObjectSO.RandomPrefabs UpdateBuildableObjectSORandomPrefab(BuildableObjectSO buildableObjectSO)
+        public static int GetRandomInt(IntVector2 coord, int max)
+        {
+            if (max < 0)
+                throw new ArgumentOutOfRangeException(nameof(max), "max must be >= 0");
+
+            var hash = s_Seed;
+            hash = HashCombine(hash, coord.x.GetHashCode());
+            hash = HashCombine(hash, coord.y.GetHashCode());
+
+            var rng = new System.Random(hash);
+
+            return rng.Next(max + 1);
+        }
+
+        public static Quaternion GetRandomDirection(IntVector2 coord)
+        {
+            var dirIndex = GetRandomInt(coord, 4);
+
+            Vector3 dir = Vector3.forward;
+            switch (dirIndex)
+            {
+                case 0: dir = DirectionUtility.dirUp; break;
+                case 1: dir = DirectionUtility.dirDown; break;
+                case 2: dir = DirectionUtility.dirRight; break;
+                case 3: dir = DirectionUtility.dirLeft; break;
+            }
+
+            return Quaternion.LookRotation(dir, Vector3.up);
+        }
+
+        private static int HashCombine(int h1, int h2)
+        {
+            unchecked
+            {
+                return ((h1 << 5) + h1) ^ h2;
+            }
+        }
+
+        public static BuildableObjectSO.RandomPrefabs UpdateBuildableObjectSORandomPrefab(IntVector2 coord, BuildableObjectSO buildableObjectSO)
         {
             var totalProbability = 0f;
             foreach (var randomPrefab in buildableObjectSO.randomPrefabs)
             {
                 totalProbability += randomPrefab.probability;
             }
-            var randomPoint = GetRandomFloat(totalProbability);
+            var randomPoint = GetRandomFloat(coord, totalProbability);
 
             var currentProbability = 0f;
             foreach (var randomPrefab in buildableObjectSO.randomPrefabs)
@@ -41,26 +91,24 @@ namespace Johnny.SimDungeon
             return null;
         }
 
-        public static FourDirectionalRotation GetRandomFourDirectionalRotation()
+        public static FourDirectionalRotation GetRandomFourDirectionalRotation(IntVector2 coord)
         {
             var values = System.Enum.GetValues(typeof(FourDirectionalRotation));
-            return (FourDirectionalRotation)values.GetValue(UnityEngine.Random.Range(0, values.Length));
+            var index = GetRandomInt(coord,values.Length);
+            return (FourDirectionalRotation)values.GetValue(index);
         }
 
-        public static bool Chance(float probability)
-        {
-            return UnityEngine.Random.value < probability;
-        }
-
-        public static T GetRandomElement<T>(T[] array)
+        public static T GetRandomElement<T>(IntVector2 coord, T[] array)
         {
             if (array == null || array.Length == 0)
             {
                 throw new System.Exception("数组为空，无法随机取值");
             }
 
-            var index = UnityEngine.Random.Range(0, array.Length);
+            var index = GetRandomInt(coord, array.Length-1);
             return array[index];
         }
+
+
     }
 }

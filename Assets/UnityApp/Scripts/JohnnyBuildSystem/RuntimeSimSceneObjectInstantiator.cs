@@ -43,10 +43,8 @@ namespace Johnny.SimDungeon
         }
         public GameObject InstantiatePrefab(GameObject template, Vector3 position, Quaternion rotation, Vector3 scale, Transform parent)
         {
-            var gameObj = MonoBehaviour.Instantiate(template) as GameObject;
+            var gameObj = Object.Instantiate(template, position, rotation);
             gameObj.transform.SetParent(parent);
-            gameObj.transform.position = position;
-            gameObj.transform.rotation = rotation;
             gameObj.transform.localScale = scale;
             return gameObj;
         }

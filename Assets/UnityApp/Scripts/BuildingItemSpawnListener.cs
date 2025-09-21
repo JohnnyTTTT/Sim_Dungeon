@@ -38,23 +38,23 @@ namespace Johnny.SimDungeon
         //public float test;
         public override void SetMetadata(GameObject dungeonItem, DungeonNodeSpawnData spawnData)
         {
-            if (dungeonItem != null)
-            {
-                var entity = dungeonItem.GetComponent<Entity>();
-                if (entity != null)
-                {
-                    var currentCoord = DungeonController.Instance.WorldPositionToTileCoord(entity.transform.position);
-                    if (entity.lastCoord != currentCoord)
-                    {
-                        entity.lastCoord = currentCoord;
-                        entity.UpdateData();
-                        if (DungeonController.Instance.worldDataInited)
-                        {
-                            entity.ApplyBiomeRule();
-                        }
-                    }
-                }
-            }
+            //if (dungeonItem != null)
+            //{
+            //    var entity = dungeonItem.GetComponent<Entity>();
+            //    if (entity != null)
+            //    {
+            //        var currentCoord = DungeonController.Instance.WorldPositionToTileCoord(entity.transform.position);
+            //        if (entity.lastCoord != currentCoord)
+            //        {
+            //            entity.lastCoord = currentCoord;
+            //            entity.UpdateData();
+            //            if (DungeonController.Instance.worldDataInited)
+            //            {
+            //                entity.ApplyBiomeRule();
+            //            }
+            //        }
+            //    }
+            //}
             //{
             //    var cell = DungeonController.Instance.GetCellFromWorldPosition(dungeonItem.transform.position);
             //    Debug.Log(cell.NodeCoord.ToVector2());

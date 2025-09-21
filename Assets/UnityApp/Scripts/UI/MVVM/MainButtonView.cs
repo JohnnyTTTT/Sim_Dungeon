@@ -12,7 +12,7 @@ namespace Johnny.SimDungeon
     {
         public override void OnClick(GameMode gameMode)
         {
-            BindingService.MainPanelViewModel.GameMode = gameMode;
+            BindingService.MainGameViewModel.GameMode = gameMode;
         }
     }
 
@@ -59,7 +59,7 @@ namespace Johnny.SimDungeon
 
         protected override void StaticBinding(BindingSet<ViewBase<MainButtonViewModel>> staticBindingSet)
         {
-            staticBindingSet.Bind(this).For(v => v.isCurrentMode).ToExpression(() => BindingService.MainPanelViewModel.GameMode == m_BingdingedGameMode).OneWay();
+            staticBindingSet.Bind(this).For(v => v.isCurrentMode).ToExpression(() => BindingService.MainGameViewModel.GameMode == m_BingdingedGameMode).OneWay();
         }
     }
 }

@@ -6,10 +6,9 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public class Entity_SubEdge : Entity<Data_Cell>
+    public class Entity_SubEdge : Entity
     {
         public static int DirectionHash = Shader.PropertyToID("_Direction");
-        public FourDirectionalRotation direction;
         public Entity_EdgeGroup parent;
         public Entity_SubEdge relativeEdge;
 
@@ -17,64 +16,57 @@ namespace Johnny.SimDungeon
 
         public override void UpdateData()
         {
-            var data = DataManager_Cell.Instance.GetData(transform.position);
-            SetParentCellData_JustUseThisFunction(data);
+            Direction = DirectionUtility.GetDirection(transform.position, parent.transform.position);
+            var element = ElementManager_Cell.Instance.GetElement(transform.position);
+            SetParentCellElement_JustUseThisFunction(element);
         }
 
-        protected override void SetParentCellData_JustUseThisFunction(Data_Cell cell)
+        public override void CreateOrUpdateModel()
+        {
+            var room = ElementManager_Cell.Instance.GetElement(ParentElement.Data.TileCoord).room;
+            BuildableFreeObjectSO wallTemplete = null;
+            if (room == null)
+            {
+                wallTemplete = SpawnManager.Instance.defaultWall;
+            }
+            //wallTemplete = RandomUtility.GetRandomElement(ParentElement.Data.TileCoord, room.biome.walls);
+            if (wallTemplete != null)
+            {
+                TryAddOrUpdateModel(wallTemplete);
+            }
+        }
+
+
+        protected override void SetParentCellElement_JustUseThisFunction(Element_Cell element)
         {
             //Old
-            if (ParentData != null)
+            var horizontal = Direction == FourDirectionalRotation.North || Direction == FourDirectionalRotation.South;
+
+            if (ParentElement != null)
             {
-                ParentData.edges.Remove(this);
+                if (horizontal)
+                {
+                    ParentElement.horizontalSubEdge = null;
+                }
+                else
+                {
+                    ParentElement.verticalSubEdge = null;
+                }
             }
 
-            base.SetParentCellData_JustUseThisFunction(cell);
+
+            base.SetParentCellElement_JustUseThisFunction(element);
 
             //New
-            if (ParentData != null)
+            if (horizontal)
             {
-                ParentData.edges.Add(this);
+                ParentElement.horizontalSubEdge = this;
+            }
+            else
+            {
+                ParentElement.verticalSubEdge = this;
             }
         }
-
-        protected override bool TryReplace(BuildableFreeObjectSO temelpte)
-        {
-            var reslut = base.TryReplace(temelpte);
-            if (reslut)
-            {
-                var relativeRoom = DataManager_Room.Instance.GetData(relativeEdge.ParentData.Data.TileCoord);
-                if (relativeRoom == null)
-                {
-                    relativeEdge.TryReplace(temelpte);
-                }
-            }
-            return reslut;
-        }
-
-        public override void ApplyBiomeRule()
-        {
-            var room = DataManager_Room.Instance.GetData(ParentData.Data.TileCoord);
-            if (room != null)
-            {
-                var wallTemplete = RandomUtility.GetRandomElement(room.biome.walls);
-                if (wallTemplete != null)
-                {
-                    TryReplace(wallTemplete);
-                }
-            }
-        }
-
-        public override void SetTransform(Vector3 position, Quaternion rotation, Vector3 scale)
-        {
-            if (currentObject != null)
-            {
-                currentObject.transform.position = position;
-                currentObject.transform.rotation = rotation;
-            }
-        }
-
-
 
         public void Preview(BuildableObjectSO buildableObjectSO)
         {

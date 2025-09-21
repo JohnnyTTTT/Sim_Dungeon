@@ -6,7 +6,13 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public class Entity_EdgeGroup : Entity<Data_Edge>
+    [System.Serializable]
+    public class RoomA
+    {
+        public Room room;
+        public FourDirectionalRotation directional;
+    }
+    public class Entity_EdgeGroup : Entity
     {
         public static int CullPlaneHeight = Shader.PropertyToID("_CullPlaneHeight");
         public GameObject modelRoot;
@@ -26,100 +32,114 @@ namespace Johnny.SimDungeon
         private Transform m_MainCam;
         private Vector3 m_WallPos;
 
-        private void Start()
+        public List<Vector3> floorPos = new List<Vector3>();
+
+        protected override void Start()
         {
+            base.Start();
             if (m_MainCam == null)
             {
-                //m_MainCam = DungeonController.Instance.m_Camera.transform;
+                m_MainCam = CameraController.Instance.MainCamera.transform;
             }
             if (Application.isPlaying)
             {
                 primaryMaterial = primary.GetComponentInChildren<Renderer>().material;
                 secondaryMaterial = secondary.GetComponentInChildren<Renderer>().material;
             }
-
         }
 
         private void Update()
         {
-            //var primaryRoom = primary.ParentData.parentRoom;
-            //var secondaryRoom = secondary.ParentData.parentRoom;
+            //bool hide = false;
 
-            //if (primaryRoom != null || secondaryRoom != null)
+            //foreach (var floorPo in floorPos)
             //{
-            //    var hideA = ShouldHideWith(primaryRoom);
-            //    var hideB = ShouldHideWith(secondaryRoom);
+            //    Vector3 camDir = m_MainCam.position - floorPo;
+            //    camDir.y = 0; // 只考虑 XZ 平面
 
-            //    bool shouldHide;
-            //    if (primaryRoom != null && secondaryRoom != null)
-            //    {
-            //        shouldHide = hideA && hideB;
-            //    }
-            //    else
-            //    {
-            //        shouldHide = hideA || hideB;
-            //    }
+            //    Vector3 wallToCam = transform.position - floorPo;
+            //    wallToCam.y = 0;
 
-            //    var value = shouldHide ? 1.01f : 10f;
-            //    if (parentData.corners.Count > 0)
+            //    float dot = Vector3.Dot(camDir.normalized, wallToCam.normalized);
+
+            //    if (dot > 0f)
             //    {
-            //        foreach (var item in parentData.corners)
-            //        {
-            //            item.SetWallHide(value);
-            //        }
+            //        hide = true;
+            //        break; // 一旦摄像机在正面，整面墙隐藏
             //    }
-            //    primaryMaterial.SetFloat(CullPlaneHeight, value);
-            //    secondaryMaterial.SetFloat(CullPlaneHeight, value);
             //}
+
+            //if (primary.currentObject)
+            //{
+            //    primary.currentObject.gameObject.SetActive(!hide);
+            //}
+            //if (secondary.currentObject)
+            //{
+            //    secondary.currentObject.gameObject.SetActive(!hide);
+            //}
+
+            //gameObject.SetActive(!hide);
         }
 
         public override void UpdateData()
         {
-            primary.UpdateData();
-            secondary.UpdateData();
+            Direction = DirectionUtility.GetDirectionForWorld(transform.rotation);
 
-            primary.parent = this;
-            secondary.parent = this;
+            var pElement = ElementManager_Cell.Instance.GetElement(primary.transform.position);
+            var sElement = ElementManager_Cell.Instance.GetElement(secondary.transform.position);
+            floorPos.Clear();
 
-            primary.relativeEdge = secondary;
-            secondary.relativeEdge = primary;
-            
-            primary.direction = DirectionUtility.GetDirection(primary.transform.position, transform.position);
-            secondary.direction = DirectionUtility.GetDirection(secondary.transform.position, transform.position);
-
-            var pCoord = primary.ParentData.Data.TileCoord;
-            var sCoord = secondary.ParentData.Data.TileCoord;
-
-            var orientation = DirectionUtility.GetOrientation(transform);
-            Data_Edge edgeData = null;
-
-            switch (orientation)
+            if (pElement.room != null && pElement.room.roomType != RoomType.OriginaCave 
+                && sElement.room != null && sElement.room.roomType != RoomType.OriginaCave)
             {
-                case Orientation.Horizontal:
-                    var parentCoordHorizontal = pCoord.y > sCoord.y ? pCoord : sCoord;
-                    edgeData = DataManager_Edge.Instance.GetHorizontal(parentCoordHorizontal);
-                    break;
-                case Orientation.Vertical:
-                    var parentCoordVertical = pCoord.x > sCoord.x ? pCoord : sCoord;
-                    edgeData = DataManager_Edge.Instance.GetVertical(parentCoordVertical);
-                    break;
+                if (pElement.room != null)
+                {
+                    //var a = new RoomA();
+                    //a.room = pElement.room;
+                    //a.directional = DirectionUtility.GetDirection(transform.position, a.room.center);
+                    floorPos.Add(DungeonController.Instance.TileCoordToWorldPosition(pElement.Data.TileCoord));
+                }
+                if (sElement.room != null)
+                {
+                    //var b = new RoomA();
+                    //b.room = sElement.room;
+                    //b.directional = DirectionUtility.GetDirection(transform.position, b.room.center);
+                    floorPos.Add(DungeonController.Instance.TileCoordToWorldPosition(sElement.Data.TileCoord));
+                }
+            }
+
+
+
+
+            Element_Edge edgeElement;
+            Element_Cell parentElement;
+            if (Direction == FourDirectionalRotation.North || Direction == FourDirectionalRotation.South)
+            {
+                parentElement = pElement.Data.TileCoord.y > sElement.Data.TileCoord.y ? pElement : sElement;
+                edgeElement = parentElement.horizontalEdge;
+
+            }
+            else
+            {
+                parentElement = pElement.Data.TileCoord.x > sElement.Data.TileCoord.x ? pElement : sElement;
+                edgeElement = parentElement.verticalEdge;
             }
 
             m_WallPos = (primary.transform.position + secondary.transform.position) / 2f;
-            SetParentCellData_JustUseThisFunction(edgeData);
+            SetParentCellElement_JustUseThisFunction(parentElement);
+            edgeElement.wall = this;
         }
 
-        public override void SetTransform(Vector3 position, Quaternion rotation, Vector3 scale)
+        public override void CreateOrUpdateModel()
         {
-            base.SetTransform(position, rotation, scale);
-            primary.SetTransform(primary.transform.position, primary.transform.rotation, primary.transform.localScale);
-            secondary.SetTransform(secondary.transform.position, secondary.transform.rotation, secondary.transform.localScale);
+            primary.CreateOrUpdateModel();
+            secondary.CreateOrUpdateModel();
         }
 
-        public override void ApplyBiomeRule()
+        protected override void SetParentCellElement_JustUseThisFunction(Element_Cell element)
         {
-            primary.ApplyBiomeRule();
-            secondary.ApplyBiomeRule();
+            base.SetParentCellElement_JustUseThisFunction(element);
+            name = $"WallGroup - {element.Data.TileCoord.x},{element.Data.TileCoord.y} - {Direction}";
         }
 
         private bool ShouldHideWith(Room room)
@@ -140,28 +160,26 @@ namespace Johnny.SimDungeon
             return false;
         }
 
-        protected override void SetParentCellData_JustUseThisFunction(Data_Edge data)
-        {
-            base.SetParentCellData_JustUseThisFunction(data);
-            data.entity = this;
-        }
-
         public override bool TryDestroy()
         {
-            var p= primary.TryDestroy();
-            var s= secondary.TryDestroy();
-            return p && s;
+            var p = primary.TryDestroy();
+            var s = secondary.TryDestroy();
+            if (p && s)
+            {
+                Destroy(gameObject);
+                return true;
+            }
+            Debug.LogError($"TryDestroy fail - <{gameObject.name}>", gameObject);
+            return false;
         }
 
         public void OnDrawGizmos()
         {
             if (drawGizmos)
             {
-                var parentPosition = DungeonController.Instance.TileCoordToWorldPosition(ParentData.Data.EdgeCoord);
+                var parentPosition = DungeonController.Instance.TileCoordToWorldPosition(ParentElement.Data.TileCoord);
                 GizmoUnitily.DrawLine(transform.position, parentPosition, Color.beige);
             }
         }
-
-
     }
 }

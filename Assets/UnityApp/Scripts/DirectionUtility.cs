@@ -1,20 +1,23 @@
+using DungeonArchitect;
 using SoulGames.EasyGridBuilderPro;
 using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public enum Orientation
-    {
-        Horizontal,
-        Vertical
-    }
-
     public static class DirectionUtility
     {
-        private static Vector3 dirUp = Vector3.forward;    // 世界前
-        private static Vector3 dirDown = Vector3.back;     // 世界后
-        private static Vector3 dirRight = Vector3.right;   // 世界右
-        private static Vector3 dirLeft = Vector3.left;     // 世界左
+        public static Vector3 dirUp = Vector3.forward;    // 世界前
+        public static Vector3 dirDown = Vector3.back;     // 世界后
+        public static Vector3 dirRight = Vector3.right;   // 世界右
+        public static Vector3 dirLeft = Vector3.left;     // 世界左
+
+        public static readonly IntVector2[] CardinalDirections ={
+            new IntVector2(1, 0),
+            new IntVector2(-1, 0),
+            new IntVector2(0, 1),
+            new IntVector2(0, -1)};
+
+
 
 
         public static FourDirectionalRotation GetDirectionForWorld(Quaternion rotation)
@@ -52,19 +55,19 @@ namespace Johnny.SimDungeon
             }
         }
 
-        public static Orientation GetOrientation(Transform t)
-        {
-            var forward = t.forward;
-            var dir = new Vector2(forward.x, forward.z).normalized;
+        //public static Orientation GetOrientation(Transform t)
+        //{
+        //    var forward = t.forward;
+        //    var dir = new Vector2(forward.x, forward.z).normalized;
 
-            if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
-            {
-                return Orientation.Vertical;
-            }
-            else
-            {
-                return Orientation.Horizontal;
-            }
-        }
+        //    if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
+        //    {
+        //        return Orientation.Vertical;
+        //    }
+        //    else
+        //    {
+        //        return Orientation.Horizontal;
+        //    }
+        //}
     }
 }

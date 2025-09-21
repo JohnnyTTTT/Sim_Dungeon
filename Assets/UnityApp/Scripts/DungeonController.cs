@@ -40,6 +40,8 @@ namespace Johnny.SimDungeon
         public BuildingItemSpawnListener buildingItemSpawnListener;
         public EasyGridBuilderProController easyGridBuilderProController;
 
+        public List<Entity> entities = new List<Entity>();
+
         public Camera m_Camera;
         [SerializeField] private GameObject m_HighlightPrefab;
         public LayerMask m_GroundMask;
@@ -60,6 +62,8 @@ namespace Johnny.SimDungeon
         private List<FlowTilemapCell> m_WillCreateSpaces = new List<FlowTilemapCell>();
         public float wallDotThreshold;
         public bool worldDataInited;
+        public RuntimeSimSceneObjectInstantiator runtimeSimSceneObjectInstantiator;
+
         private void Start()
         {
             m_RuntimeSimSceneObjectInstantiator = new RuntimeSimSceneObjectInstantiator();
@@ -87,7 +91,18 @@ namespace Johnny.SimDungeon
             BuildDungeon();
             yield return new WaitForEndOfFrame();
             worldDataInited = true;
-            SpawnManager.Instance.SpawnWorld();
+            RandomUtility.SetSeed((int)DungeonController.Instance.dungeon.Config.Seed);
+            var entities = FindObjectsByType<Entity>(FindObjectsSortMode.InstanceID);
+            foreach (var item in entities)
+            {
+                item.UpdateData();
+            }
+            foreach (var item in entities)
+            {
+                item.CreateOrUpdateModel();
+            }
+
+            //SpawnManager.Instance.SpawnWorld();
         }
 
         #region GetCell
@@ -231,87 +246,11 @@ namespace Johnny.SimDungeon
         }
 
 
-        public static readonly IntVector2[] CardinalDirections ={
-            new IntVector2(1, 0),
-            new IntVector2(-1, 0),
-            new IntVector2(0, 1),
-            new IntVector2(0, -1)};
 
-        //在一堆连续的单元格找出边缘的格子
-        public static List<Data_Cell> FindEdgeCells(List<Data_Cell> cells)
-        {
-            var cellCoords = cells.Select(x => x.Data.TileCoord);
-            var edgeCells = new List<Data_Cell>();
 
-            foreach (var cell in cells)
-            {
-                foreach (var dir in CardinalDirections)
-                {
-                    var neighbor = cell.Data.TileCoord + dir;
-                    if (!cellCoords.Contains(neighbor))
-                    {
-                        edgeCells.Add(cell);
-                        break;
-                    }
-                }
-            }
-            return edgeCells;
-        }
+ 
 
-        public void AddEdgeForCells(List<Data_Cell> cellEntitlies, Room room)
-        {
-            var edgeCellEntitlies = FindEdgeCells(cellEntitlies);
-            var cellEntitiyManager = DataManager_Cell.Instance;
-            foreach (var cellEntitly in edgeCellEntitlies)
-            {
-                var neighbourData = GetNeighbourData(cellEntitly.Data);
 
-                //left
-                var left = neighbourData[0].cell;
-                var edgeLeft = neighbourData[0].edge;
-                var roomLeft = DataManager_Room.Instance.GetData(left.TileCoord);
-                if (left.CellType == FlowTilemapCellType.Custom ||
-                    (left.CellType == FlowTilemapCellType.Floor && roomLeft != room))
-                {
-                    edgeLeft.EdgeType = FlowTilemapEdgeType.Fence;
-                    edgeLeft.HorizontalEdge = false;
-                }
-
-                //up
-                var up = neighbourData[1].cell;
-                var edgeUp = neighbourData[1].edge;
-                var roomUp = DataManager_Room.Instance.GetData(up.TileCoord);
-                if (up.CellType == FlowTilemapCellType.Custom ||
-                    (up.CellType == FlowTilemapCellType.Floor && roomUp != room))
-                {
-                    edgeUp.EdgeType = FlowTilemapEdgeType.Fence;
-                }
-
-                //right
-                var right = neighbourData[2].cell;
-                var edgeRight = neighbourData[2].edge;
-                var roomRight = DataManager_Room.Instance.GetData(right.TileCoord);
-                if (right.CellType == FlowTilemapCellType.Custom ||
-                    (right.CellType == FlowTilemapCellType.Floor && roomRight != room))
-                {
-                    edgeRight.EdgeType = FlowTilemapEdgeType.Fence;
-                    edgeRight.HorizontalEdge = false;
-                }
-
-                //down
-                var down = neighbourData[3].cell;
-                var edgeDown = neighbourData[3].edge;
-                var roomDown = DataManager_Room.Instance.GetData(down.TileCoord);
-                if (down.CellType == FlowTilemapCellType.Custom ||
-                    (down.CellType == FlowTilemapCellType.Floor && roomDown != room))
-                {
-                    edgeDown.EdgeType = FlowTilemapEdgeType.Fence;
-                }
-                //Debug.Log($"左 : <{left.CellType}> , 上 : <{up.CellType}> , 右 : <{right.CellType}> , 下 : <{down.CellType}>");
-
-            }
-            ApplyTheme();
-        }
 
         private void StructureModeTest()
         {
@@ -556,8 +495,8 @@ namespace Johnny.SimDungeon
         {
             if (Application.isPlaying)
             {
-
-                dungeon.Build(new RuntimeSimSceneObjectInstantiator());
+                runtimeSimSceneObjectInstantiator = new RuntimeSimSceneObjectInstantiator();
+                dungeon.Build(runtimeSimSceneObjectInstantiator);
             }
             else
             {
@@ -613,33 +552,33 @@ namespace Johnny.SimDungeon
         public override void OnDungeonMarkersEmitted(Dungeon dungeon, DungeonModel model, LevelMarkerList markers)
         {
             var gridFlowDungeonModel = model as GridFlowDungeonModel;
-            DataManager_Cell.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
-            DataManager_Edge.Instance.Init(gridFlowDungeonModel.Tilemap.Edges);
-            DataManager_Room.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
-            DataManager_Tile.Instance.Init(EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize1);
+            ElementManager_Cell.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
+            //ElementManager_Edge.Instance.Init(gridFlowDungeonModel.Tilemap.Edges);
+            ElementManager_Room.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
+            ElementManager_Tile.Instance.Init(EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize1);
             Debug.Log("[-----System-----] : OnDungeonMarkersEmitted");
         }
 
         public override void OnPostDungeonBuild(Dungeon dungeon, DungeonModel model)
         {
-            //CellEntitiesData.Instance.CheckCellEntites();
-
-
-
-            //Debug.Log("Dungeon build complete");
-
-
-            //StartCoroutine(PostStart());
+            if (!Application.isPlaying)
+            {
+                var entities = FindObjectsByType<Entity>(FindObjectsSortMode.InstanceID);
+                foreach (var item in entities)
+                {
+                    item.UpdateData();
+                }
+            }
 
             Debug.Log("[-----System-----] : OnPostDungeonBuild");
         }
 
         public override void OnDungeonDestroyed(Dungeon dungeon)
         {
-            DataManager_Cell.Instance.UnInit();
-            DataManager_Edge.Instance.UnInit();
-            DataManager_Room.Instance.UnInit();
-            DataManager_Tile.Instance.UnInit();
+            ElementManager_Cell.Instance.UnInit();
+            //ElementManager_Edge.Instance.UnInit();
+            ElementManager_Room.Instance.UnInit();
+            ElementManager_Tile.Instance.UnInit();
 
         }
 

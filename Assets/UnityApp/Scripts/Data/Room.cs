@@ -7,17 +7,17 @@ using UnityEditor;
 #endif
 namespace Johnny.SimDungeon
 {
-    public class Room : ElementData
+    public class Room : Element
     {
         public string name;
-        public List<Data_Cell> containedCells = new List<Data_Cell>();
-        public RoomType roomType
-        {
-            get
-            {
-                return m_RoomType;
-            }
-        }
+        public List<Element_Cell> containedCells = new List<Element_Cell>();
+        public RoomType roomType;
+        //{
+        //    get
+        //    {
+        //        return m_RoomType;
+        //    }
+        //}
 
         public BiomeSO biome;
 
@@ -27,18 +27,24 @@ namespace Johnny.SimDungeon
         public Color roomColor;
         public Bounds bounds;
         public Vector3 center;
+
+
+        private List<GameObject> wallUpSegments = new List<GameObject>();
+        private List<GameObject> wallDownSegments = new List<GameObject>();
+        private List<GameObject> wallLeftSegments = new List<GameObject>();
+        private List<GameObject> wallRightSegments = new List<GameObject>();
+
         public void Init(string n, RoomType type)
         {
             name = n;
             m_RoomType = type;
-
-
             roomColor = Random.ColorHSV();
         }
 
-        public void AddCell(Data_Cell cellData)
+        public void AddCell(Element_Cell cellElement)
         {
-            containedCells.Add(cellData);
+            containedCells.Add(cellElement);
+            cellElement.room = this;
             CalculateBounds();
         }
 
@@ -64,7 +70,7 @@ namespace Johnny.SimDungeon
             center = new Vector3(bounds.center.x, 0f, bounds.center.z);
         }
 
-        public void RemoveCell(Data_Cell cellData)
+        public void RemoveCell(Element_Cell cellData)
         {
             containedCells.Remove(cellData);
         }

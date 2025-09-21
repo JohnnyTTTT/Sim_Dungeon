@@ -29,7 +29,10 @@ namespace Johnny.SimDungeon
         }
         private bool active;
 
-        public CategoryObjectItemViewModel(Loxodon.Framework.Commands.ICommand selectCommand, BuildableObjectUICategorySO categorySO) : base(selectCommand)
+        public CategoryObjectItemViewModel(Loxodon.Framework.Commands.ICommand selectCommand,
+            Loxodon.Framework.Commands.ICommand clickCommand,
+            BuildableObjectUICategorySO categorySO) :
+            base(selectCommand, clickCommand)
         {
             Data = categorySO;
             Icon = categorySO.categoryIcon;

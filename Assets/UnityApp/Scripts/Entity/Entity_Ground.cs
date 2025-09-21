@@ -4,37 +4,31 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public class Entity_Ground : Entity<Data_Cell>
+    public class Entity_Ground : Entity
     {
-        public override void ApplyBiomeRule()
-        {
-            var room = DataManager_Room.Instance.GetData(ParentData.Data.TileCoord);
-            var groundTemplete = RandomUtility.GetRandomElement(room.biome.grounds);
-
-            TryReplace(groundTemplete);
-        }
-
         public override void UpdateData()
         {
-           var data = DataManager_Cell.Instance.GetData(lastCoord);
-            SetParentCellData_JustUseThisFunction(data);
+            var cellElement = ElementManager_Cell.Instance.GetElement(transform.position);
+            transform.rotation = RandomUtility.GetRandomDirection(cellElement.Data.TileCoord);
+            SetParentCellElement_JustUseThisFunction(cellElement);
         }
 
-        protected override void SetParentCellData_JustUseThisFunction(Data_Cell data)
+        public override void CreateOrUpdateModel()
         {
-            base.SetParentCellData_JustUseThisFunction(data);
-            data.entity = this;
-            name = $"{GetType()} - {data.Data.TileCoord.x},{data.Data.TileCoord.y}";
-        }
-
-        public override void SetTransform(Vector3 position, Quaternion rotation, Vector3 scale)
-        {
-            base.SetTransform(position, rotation, scale);
-            if (currentObject != null)
+            var room = ParentElement.room;
+            BuildableFreeObjectSO groundTemplete = null;
+            if (room == null)
             {
-                currentObject.transform.position = position;
-                currentObject.transform.rotation = rotation;
+                groundTemplete = SpawnManager.Instance.defaultGround;
             }
+            TryAddOrUpdateModel(groundTemplete);
+        }
+
+        protected override void SetParentCellElement_JustUseThisFunction(Element_Cell element)
+        {
+            base.SetParentCellElement_JustUseThisFunction(element);
+            ParentElement.ground = this;
+            name = $"Ground - {element.Data.TileCoord.x},{element.Data.TileCoord.y}";
         }
 
     }

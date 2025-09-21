@@ -28,9 +28,19 @@ namespace Johnny.SimDungeon
         }
         private ICommand m_SelectCommand;
 
-        public SelectableItemViewModel(ICommand selectCommand)
+        public ICommand ClickCommand
+        {
+            get
+            {
+                return this.m_ClickCommand;
+            }
+        }
+        private ICommand m_ClickCommand;
+
+        public SelectableItemViewModel(ICommand selectCommand, ICommand clickCommand)
         {
             this.m_SelectCommand = selectCommand;
+            this.m_ClickCommand = clickCommand;
         }
 
     }

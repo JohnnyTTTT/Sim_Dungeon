@@ -37,7 +37,10 @@ namespace Johnny.SimDungeon
         }
         private bool active;
 
-        public BuildableObjectItemViewModel(Loxodon.Framework.Commands.ICommand selectCommand, BuildableObjectSO buildableObjectSO) : base(selectCommand)
+        public BuildableObjectItemViewModel(Loxodon.Framework.Commands.ICommand selectCommand,
+            Loxodon.Framework.Commands.ICommand clickCommand,
+            BuildableObjectSO buildableObjectSO) :
+            base(selectCommand, clickCommand)
         {
             Data = buildableObjectSO;
             Icon = buildableObjectSO.objectIcon;
@@ -45,20 +48,19 @@ namespace Johnny.SimDungeon
         }
     }
 
-    public class BuildableObjectItemView : ListButtonView<BuildableObjectItemViewModel>
+    public class BuildableObjectItemView : ViewBase<BuildableObjectItemViewModel>
     {
         [SerializeField] private Button m_Button;
         [SerializeField] private Image[] m_Icons;
 
         protected override void Binding(BindingSet<ViewBase<BuildableObjectItemViewModel>, BuildableObjectItemViewModel> bindingSet)
         {
-            base.Binding(bindingSet);
             foreach (var item in m_Icons)
             {
                 bindingSet.Bind(item).For(v => v.sprite).To(vm => vm.Icon).OneWay();
             }
             bindingSet.Bind(this).For(v => v.name).To(vm => vm.Title).OneWay();
-            bindingSet.Bind(this.m_Button).For(v => v.onClick).To(vm => vm.SelectCommand).CommandParameter(this.ViewModel);
+            bindingSet.Bind(this.m_Button).For(v => v.onClick).To(vm => vm.ClickCommand).CommandParameter(this.ViewModel);
         }
     }
 }

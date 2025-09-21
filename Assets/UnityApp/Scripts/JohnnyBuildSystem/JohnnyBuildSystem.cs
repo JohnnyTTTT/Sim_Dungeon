@@ -11,6 +11,7 @@ namespace Johnny.SimDungeon
     {
         private const string KEYBOARD = "Keyboard";
         private const string MULTI_SELECTION = "Multi Selection";
+        private const string CANCEL_INPUTBUILABLE = "Cancle Input Buildable";
         public static JohnnyBuildSystem Instance
         {
             get
@@ -27,6 +28,7 @@ namespace Johnny.SimDungeon
 
         [SerializeField] private InputActionAsset inputActionsAsset;
         private InputAction multipleSelectionAction;
+        private InputAction cancleInputBuildableAction;
         private bool multipleSelection;
 
         [SerializeField] private BuildableObjectSO currentBuildable;
@@ -36,10 +38,22 @@ namespace Johnny.SimDungeon
         private void OnEnable()
         {
             var map = inputActionsAsset.FindActionMap(KEYBOARD);
+
             multipleSelectionAction = map.FindAction(MULTI_SELECTION);
             multipleSelectionAction.performed += MultiSelectionHoldActionPerformed;
             multipleSelectionAction.canceled += MultiSelectionHoldActionCancelled;
             multipleSelectionAction.Enable();
+
+
+            //cancleInputBuildableAction = map.FindAction(CANCEL_INPUTBUILABLE);
+            //cancleInputBuildableAction.started += CancleInputBuildableActionPerformed;
+        }
+
+        private void CancleInputBuildableActionPerformed(InputAction.CallbackContext obj)
+        {
+            Debug.Log(99);
+            //GridManager.Instance.getinpu().getinput
+            //if ()
         }
 
         public void SetInputActiveBuildableObjectSO(BuildableObjectSO buildableObjectSO)
@@ -98,38 +112,38 @@ namespace Johnny.SimDungeon
 
         private void Preview(bool value)
         {
-            if (multipleSelection)
-            {
-                var room = DataManager_Room.Instance.GetData(m_LastPreviewEdge.transform.position);
-                foreach (var cellData in room.containedCells)
-                {
-                    foreach (var edge in cellData.edges)
-                    {
-                        if (edge != m_LastPreviewEdge)
-                        {
-                            if (value)
-                            {
-                                edge.Preview(currentBuildable);
-                            }
-                            else
-                            {
-                                edge.CancelPreview();
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (value)
-                {
-                    m_LastPreviewEdge.Preview(currentBuildable);
-                }
-                else
-                {
-                    m_LastPreviewEdge.CancelPreview();
-                }
-            }
+            //if (multipleSelection)
+            //{
+            //    var room = DataManager_Room.Instance.GetElement(m_LastPreviewEdge.transform.position);
+            //    foreach (var cellData in room.containedCells)
+            //    {
+            //        foreach (var edge in cellData.edges)
+            //        {
+            //            if (edge != m_LastPreviewEdge)
+            //            {
+            //                if (value)
+            //                {
+            //                    edge.Preview(currentBuildable);
+            //                }
+            //                else
+            //                {
+            //                    edge.CancelPreview();
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    if (value)
+            //    {
+            //        m_LastPreviewEdge.Preview(currentBuildable);
+            //    }
+            //    else
+            //    {
+            //        m_LastPreviewEdge.CancelPreview();
+            //    }
+            //}
         }
     }
 }

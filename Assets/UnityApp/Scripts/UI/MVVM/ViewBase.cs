@@ -32,7 +32,7 @@ namespace Johnny.SimDungeon
 
         private void StaticBinding()
         {
-            var staticBindingSet = this.CreateBindingSet<ViewBase<VM>>();
+            var staticBindingSet = this.CreateBindingSet();
             StaticBinding(staticBindingSet);
             staticBindingSet.Build();
         }

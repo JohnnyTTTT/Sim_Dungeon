@@ -45,9 +45,10 @@ namespace Johnny.SimDungeon
         private void SetPooledTransform(Transform target, Matrix4x4 matrix)
         {
             Matrix.DecomposeMatrix(ref matrix, out var position, out var rotation, out var scale);
+            //var old
             if (target.TryGetComponent<Entity>(out var entity))
             {
-                entity.SetTransform(position, rotation, scale);
+                //entity.SetTransform(position, rotation, scale);
             }
             else
             {
@@ -103,7 +104,6 @@ namespace Johnny.SimDungeon
                                 Debug.Log($"Destroy entity error - {entity}", entity);
                             }
                         }
-                        Destroy(obj);
                     }
                     else
                     {

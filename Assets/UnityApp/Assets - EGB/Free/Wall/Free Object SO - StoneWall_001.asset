@@ -68,7 +68,7 @@ MonoBehaviour:
   surfaceNormalDirectionLayerMask:
     serializedVersion: 2
     m_Bits: 0
-  buildableFreeObjectCategorySO: {fileID: 11400000, guid: b638143e4203c6f49acaa4e1984139da, type: 2}
+  buildableFreeObjectCategorySO: {fileID: 11400000, guid: c4749859d17451b4bb93e62567e11642, type: 2}
   rotationType: 2
   freeRotationSpeed: 100
   freezeRotation: 0

@@ -22,7 +22,7 @@ namespace Johnny.SimDungeon
 
         protected override void StaticBinding(BindingSet<ViewBase<LandManagementViewModel>> staticBindingSet)
         {
-            staticBindingSet.Bind(this.gameObject).For(v => v.activeSelf).ToExpression(() => BindingService.MainPanelViewModel.GameMode == GameMode.Structure);
+            staticBindingSet.Bind(this.gameObject).For(v => v.activeSelf).ToExpression(() => BindingService.MainGameViewModel.GameMode == GameMode.Structure);
         }
     }
 }

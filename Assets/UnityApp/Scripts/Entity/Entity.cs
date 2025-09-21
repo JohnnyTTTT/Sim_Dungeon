@@ -1,4 +1,5 @@
 using DungeonArchitect;
+using Sirenix.OdinInspector;
 using SoulGames.EasyGridBuilderPro;
 using System;
 using UnityEngine;
@@ -7,16 +8,34 @@ namespace Johnny.SimDungeon
 {
     public abstract class Entity : MonoBehaviour
     {
-        public IntVector2 lastCoord;
+        [ShowInInspector] [ReadOnly] public Element_Cell ParentElement { get; private set; }
         public bool drawGizmos;
         public GameObject telempte;
-        protected BuildableFreeObject currentObject;
-        public virtual void SetTransform(Vector3 position, Quaternion rotation, Vector3 scale)
+        public BuildableFreeObject currentObject;
+        protected FourDirectionalRotation Direction;
+
+        private void OnEnable()
         {
-            transform.position = position;
-            transform.rotation = rotation;
+            if (DungeonController.Instance.worldDataInited)
+            {
+                UpdateData();
+            }
         }
-        public virtual void ApplyBiomeRule()
+
+        protected virtual void Start()
+        {
+            if (DungeonController.Instance.worldDataInited)
+            {
+                CreateOrUpdateModel();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            //DungeonController.Instance.entities.Remove(this);
+        }
+
+        public virtual void CreateOrUpdateModel()
         {
 
         }
@@ -34,7 +53,12 @@ namespace Johnny.SimDungeon
             }
         }
 
-        protected virtual bool TryReplace(BuildableFreeObjectSO temelpte)
+        protected virtual void SetParentCellElement_JustUseThisFunction(Element_Cell element)
+        {
+            ParentElement = element;
+        }
+
+        protected bool TryAddOrUpdateModel(BuildableFreeObjectSO temelpte)
         {
             var needUpdate = false;
             if (currentObject == null)
@@ -52,7 +76,11 @@ namespace Johnny.SimDungeon
 
             if (needUpdate)
             {
-                if (EasyGridBuilderProController.Instance.TryInitializeBuildableFreeObjectSinglePlacement(this, temelpte, out var buildableFree))
+                //if (ParentElement.randomPrefabsIndex == -1)
+                //{
+                var randomPrefabsIndex = RandomUtility.UpdateBuildableObjectSORandomPrefab(ParentElement.Data.TileCoord, temelpte);
+                //}
+                if (EasyGridBuilderProController.Instance.TryInitializeBuildableFreeObjectSinglePlacement(this, temelpte, randomPrefabsIndex, out var buildableFree))
                 {
                     currentObject = buildableFree;
                     DestroyTelempte();
@@ -64,31 +92,16 @@ namespace Johnny.SimDungeon
 
         public virtual bool TryDestroy()
         {
-            Debug.Log(currentObject, currentObject);
             if (currentObject == null)
             {
                 return true;
             }
             if (EasyGridBuilderProController.Instance.TryDestroyBuildableFreeObject(currentObject))
             {
-                Debug.Log(currentObject, currentObject);
                 return true;
             }
             return false;
         }
-
-
-    }
-
-    public abstract class Entity<T> : Entity where T : ElementData
-    {
-        public T ParentData { get; private set; }
-        protected virtual void SetParentCellData_JustUseThisFunction(T data)
-        {
-            ParentData = data;
-        }
-
-
     }
 
 }

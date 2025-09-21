@@ -49,21 +49,21 @@ namespace Johnny.SimDungeon
 
         private void Update()
         {
-            if (DataManager_Cell.Instance!= null && DataManager_Cell.Instance.drawGizmos != showCellGizmo)
+            if (ElementManager_Cell.Instance!= null && ElementManager_Cell.Instance.drawGizmos != showCellGizmo)
             {
-                DataManager_Cell.Instance.drawGizmos = showCellGizmo;
+                ElementManager_Cell.Instance.drawGizmos = showCellGizmo;
             }
-            if (DataManager_Edge.Instance != null && DataManager_Edge.Instance.drawGizmos != showEdgeGizmo)
+            //if (ElementManager_Edge.Instance != null && ElementManager_Edge.Instance.drawGizmos != showEdgeGizmo)
+            //{
+            //    ElementManager_Edge.Instance.drawGizmos = showEdgeGizmo;
+            //}
+            if (ElementManager_Room.Instance != null && ElementManager_Room.Instance.drawGizmos != showRoomGizmo)
             {
-                DataManager_Edge.Instance.drawGizmos = showEdgeGizmo;
+                ElementManager_Room.Instance.drawGizmos = showRoomGizmo;
             }
-            if (DataManager_Room.Instance != null && DataManager_Room.Instance.drawGizmos != showRoomGizmo)
+            if (ElementManager_Tile.Instance != null && ElementManager_Tile.Instance.drawGizmos != showTileGizmo)
             {
-                DataManager_Room.Instance.drawGizmos = showRoomGizmo;
-            }
-            if (DataManager_Tile.Instance != null && DataManager_Tile.Instance.drawGizmos != showTileGizmo)
-            {
-                DataManager_Tile.Instance.drawGizmos = showTileGizmo;
+                ElementManager_Tile.Instance.drawGizmos = showTileGizmo;
             }
         }
     }

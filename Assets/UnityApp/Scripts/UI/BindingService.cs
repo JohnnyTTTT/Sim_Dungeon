@@ -1,9 +1,12 @@
 using Loxodon.Framework.Binding;
 using Loxodon.Framework.Contexts;
+using Loxodon.Framework.ViewModels;
+using SoulGames.EasyGridBuilderPro;
 using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
+
     public class BindingService : MonoBehaviour
     {
         public static BindingService Instance
@@ -19,12 +22,13 @@ namespace Johnny.SimDungeon
         }
         private static BindingService s_Instance;
 
-        public static MainGameViewModel MainPanelViewModel;
+        public static MainGameViewModel MainGameViewModel;
         public static BuildableObjectsPanelViewModel BuildableObjectsPanelViewModel;
         public static CategoryObjectsPanelViewModel CategoryObjectsPanelViewModel;
 
-
         private BindingServiceBundle m_BindingServiceBundle;
+
+        public bool Init;
 
         private void Awake()
         {
@@ -33,10 +37,11 @@ namespace Johnny.SimDungeon
             m_BindingServiceBundle = new BindingServiceBundle(context.GetContainer());
             m_BindingServiceBundle.Start();
 
-            MainPanelViewModel = new MainGameViewModel();
+            MainGameViewModel = new MainGameViewModel();
             BuildableObjectsPanelViewModel = new BuildableObjectsPanelViewModel();
             CategoryObjectsPanelViewModel = new CategoryObjectsPanelViewModel();
 
+            Init = true;
         }
 
         private void OnDestroy()

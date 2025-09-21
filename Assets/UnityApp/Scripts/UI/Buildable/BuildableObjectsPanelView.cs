@@ -12,18 +12,17 @@ namespace Johnny.SimDungeon
 
     public class BuildableObjectsPanelViewModel : ListViewModel<BuildableObjectItemViewModel>
     {
-        protected override void OnItemSelect(BuildableObjectItemViewModel item)
+        protected override void OnItemClick(BuildableObjectItemViewModel item)
         {
-            base.OnItemSelect(item);
-            if (item != null && item.IsSelected)
+            foreach (var easyGridBuilderPro in GridManager.Instance.GetEasyGridBuilderProSystemsList())
             {
-                BindingService.MainPanelViewModel.InputActiveBuildableObjectSO = item.Data;
+                easyGridBuilderPro.SetInputActiveBuildableObjectSO(item.Data, onlySetBuildableExistInBuildablesList: true);
             }
         }
 
         public BuildableObjectItemViewModel CreateItem(BuildableObjectSO buildableObjectSO)
         {
-            var item = new BuildableObjectItemViewModel(this.ItemSelectCommand, buildableObjectSO);
+            var item = new BuildableObjectItemViewModel(ItemSelectCommand, ItemClickCommand, buildableObjectSO);
             return item;
         }
     }
@@ -45,7 +44,6 @@ namespace Johnny.SimDungeon
                 if (m_activeCategoryObjectItemView != value)
                 {
                     m_activeCategoryObjectItemView = value;
-
                     if (m_activeCategoryObjectItemView! != null)
                     {
                         if (AllItems.TryGetValue(m_activeCategoryObjectItemView.Data, out var datas))
@@ -63,7 +61,7 @@ namespace Johnny.SimDungeon
         protected override void Start()
         {
             ViewModel = BindingService.BuildableObjectsPanelViewModel;
-            GridManager.Instance.OnActiveBuildableSOChanged += OnActiveBuildableSOChanged;
+            //GridManager.Instance.OnActiveBuildableSOChanged += OnActiveBuildableSOChanged;
             base.Start();
         }
 
@@ -74,9 +72,9 @@ namespace Johnny.SimDungeon
 
         protected override void StaticBinding(BindingSet<ViewBase<BuildableObjectsPanelViewModel>> staticBindingSet)
         {
-            staticBindingSet.Bind(this.m_CanvasGroup).For(v => v.alpha).ToExpression(() => BindingService.MainPanelViewModel.ActiveCategoryObjectItemView != null ? 1f : 0f).OneWay();
+            staticBindingSet.Bind(this.m_CanvasGroup).For(v => v.alpha).ToExpression(() => BindingService.MainGameViewModel.ActiveCategoryObjectItemView != null ? 1f : 0f).OneWay();
 
-            staticBindingSet.Bind(this).For(v => v.ActiveCategoryObjectItemView).To(() => BindingService.MainPanelViewModel.ActiveCategoryObjectItemView).OneWay();
+            staticBindingSet.Bind(this).For(v => v.ActiveCategoryObjectItemView).To(() => BindingService.MainGameViewModel.ActiveCategoryObjectItemView).OneWay();
         }
 
         public void Init(EasyGridBuilderPro activeEasyGridBuilderPro)
@@ -85,6 +83,10 @@ namespace Johnny.SimDungeon
             foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableGridObjectSOList())
             {
                 buildableObjectSOs.Add(buildableObjectSO);
+            }
+            foreach (var buildableFreeObjectSO in activeEasyGridBuilderPro.GetBuildableEdgeObjectSOList())
+            {
+                buildableObjectSOs.Add(buildableFreeObjectSO);
             }
             foreach (var buildableFreeObjectSO in activeEasyGridBuilderPro.GetBuildableFreeObjectSOList())
             {
@@ -109,12 +111,11 @@ namespace Johnny.SimDungeon
 
         private void OnActiveBuildableSOChanged(EasyGridBuilderPro easyGridBuilderPro, BuildableObjectSO buildableObjectSO)
         {
-            if (BindingService.MainPanelViewModel.ActiveEasyGridBuilderPro != easyGridBuilderPro) return;
-            if (buildableObjectSO == null && ViewModel.SelectedItem != null)
-            {
-                Debug.Log(11);
-                ViewModel.SetSelectItem(null);
-            }
+            //if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro != easyGridBuilderPro) return;
+            //if (buildableObjectSO == null && ViewModel.SelectedItem != null)
+            //{
+            //    //ViewModel.SelectedItem = null;
+            //}
         }
     }
 }
