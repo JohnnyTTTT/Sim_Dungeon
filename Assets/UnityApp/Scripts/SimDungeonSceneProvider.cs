@@ -89,30 +89,30 @@ namespace Johnny.SimDungeon
 
         public override void OnDungeonBuildStop()
         {
-            // Destroy all unused objects from the pool
-            foreach (var objects in pooledObjects.Values)
-            {
-                foreach (var obj in objects)
-                {
-                    if (Application.isPlaying)
-                    {
-                        if (obj.TryGetComponent<Entity>(out var entity))
-                        {
-                            Debug.Log(entity.name, entity);
-                            if (!entity.TryDestroy())
-                            {
-                                Debug.Log($"Destroy entity error - {entity}", entity);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        DestroyImmediate(obj);
-                    }
-                }
-            }
+            //// Destroy all unused objects from the pool
+            //foreach (var objects in pooledObjects.Values)
+            //{
+            //    foreach (var obj in objects)
+            //    {
+            //        if (Application.isPlaying)
+            //        {
+            //            if (obj.TryGetComponent<Entity>(out var entity))
+            //            {
+            //                Debug.Log(entity.name, entity);
+            //                if (!entity.TryDestroy())
+            //                {
+            //                    Debug.Log($"Destroy entity error - {entity}", entity);
+            //                }
+            //            }
+            //        }
+            //        else
+            //        {
+            //            DestroyImmediate(obj);
+            //        }
+            //    }
+            //}
 
-            pooledObjects.Clear();
+            //pooledObjects.Clear();
         }
 
         public override void InvalidateNodeCache(string NodeId)

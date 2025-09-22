@@ -9,17 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 778207c9cf632c047b538a11bf345d18, type: 3}
-  m_Name: Corner SO - Base Corner
-  m_EditorClassIdentifier: 
-  objectName: Pillar
-  objectIcon: {fileID: 21300000, guid: 6806c7c4de6f4c74da6563e939757650, type: 3}
-  buildableObjectUICategorySO: {fileID: 11400000, guid: 84b44d7bb9ba03a4f935b90509b0478d, type: 2}
+  m_Script: {fileID: 11500000, guid: beba53afc14c86a4fbf61783aa1f213f, type: 3}
+  m_Name: Grid Object SO - LandExpand
+  m_EditorClassIdentifier: Assembly-CSharp::SoulGames.EasyGridBuilderPro.BuildableGridObjectSO
+  objectName: Room
+  objectIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  buildableObjectUICategorySO: {fileID: 11400000, guid: 92f10d87512552a4888b2191c0453699, type: 2}
   randomPrefabs:
-  - objectPrefab: {fileID: 7803159104911250065, guid: c4b90f2d17090fd48af15c5e4cb060f7, type: 3}
-    ghostObjectPrefab: {fileID: 7803159104911250065, guid: 5d8b04bef0525714c9cc0fe7cf75cb8f, type: 3}
+  - objectPrefab: {fileID: 4549288026964822154, guid: cf8fb8408c270b24a937a8b5998efe19, type: 3}
+    ghostObjectPrefab: {fileID: 4549288026964822154, guid: cf8fb8408c270b24a937a8b5998efe19, type: 3}
     probability: 0
-  eachPlacementUseRandomPrefab: 0
+  eachPlacementUseRandomPrefab: 1
   validPlacementMaterial: {fileID: 2100000, guid: 60b6e8cab158bd44dbdf258b7527565a, type: 2}
   invalidPlacementMaterial: {fileID: 2100000, guid: 1a665553bd032b84f8122a81c18ba378, type: 2}
   setSpawnedObjectLayer: 0
@@ -31,18 +31,18 @@ MonoBehaviour:
   objectGridCustomAlphaMaskScale: {x: 0, y: 0}
   customSurfaceLayerMask:
     serializedVersion: 2
-    m_Bits: 1073741824
+    m_Bits: 64
   raiseObjectWithVerticalGrids: 0
-  enablePlaceAndDeselect: 0
+  enablePlaceAndDeselect: 1
   affectByBasicAreaDisablers: 1
   affectByAreaDisablers: 1
   affectByBasicAreaEnablers: 1
   affectByAreaEnablers: 1
-  isObjectReplacable: 1
+  isObjectReplacable: 0
   replacingObjectIgnoreCustomConditions: 1
   isObjectSelectable: 0
   isSelectedObjectRotatable: 0
-  isObjectDestructable: 1
+  isObjectDestructable: 0
   isObjectMovable: 0
   enableTerrainInteractions: 0
   flattenTerrain: 0
@@ -55,15 +55,11 @@ MonoBehaviour:
   painterBrushType: 1
   painterBrushOpacity: 1
   painterBrushFallOff: 0
-  buildableCornerObjectCategorySO: {fileID: 11400000, guid: f0c7ae1ea8881014b8cd8bb7495f697d, type: 2}
+  buildableGridObjectCategorySO: {fileID: 11400000, guid: afd2ad9611661c941a6ab85cc6103f6c, type: 2}
   snapToTheClosestVerticalGridHeight: 0
   minimumHeightThresholdPercentage: 25
-  rotationType: 0
-  freeRotationSpeed: 100
   freezeRotation: 1
   fourDirectionalRotation: 0
-  eightDirectionalRotation: 0
-  freeRotation: 0
-  placementType: 0
+  placementType: 2
   intervalBetweenEachPlacement: 0
-  spawnOnlyAtEndPoints: 1
+  spawnOnlyAtEndPoints: 0

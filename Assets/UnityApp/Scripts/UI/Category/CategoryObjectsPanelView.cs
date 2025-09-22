@@ -25,7 +25,7 @@ namespace Johnny.SimDungeon
 
         public CategoryObjectItemViewModel CreateItem(BuildableObjectUICategorySO buildableObjectUICategorySO)
         {
-            var item = new CategoryObjectItemViewModel(this.ItemSelectCommand, ItemClickCommand,buildableObjectUICategorySO);
+            var item = new CategoryObjectItemViewModel(this.ItemSelectCommand, ItemClickCommand, buildableObjectUICategorySO);
             return item;
         }
 
@@ -62,11 +62,17 @@ namespace Johnny.SimDungeon
         protected override void Start()
         {
             ViewModel = BindingService.CategoryObjectsPanelViewModel;
-            //GridManager.Instance.OnActiveBuildableSOChanged += OnActiveBuildableSOChanged;
+            GridManager.Instance.OnActiveGridModeChanged += OnActiveGridModeChanged;
             base.Start();
         }
 
-
+        private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)
+        {
+            if (gridMode != GridMode.BuildMode)
+            {
+                ViewModel.SelectedItem = null;
+            }
+        }
 
         protected override void Binding(BindingSet<ViewBase<CategoryObjectsPanelViewModel>, CategoryObjectsPanelViewModel> bindingSet)
         {
@@ -75,10 +81,7 @@ namespace Johnny.SimDungeon
 
         protected override void StaticBinding(BindingSet<ViewBase<CategoryObjectsPanelViewModel>> staticBindingSet)
         {
-            staticBindingSet.Bind(this.m_CanvasGroup).For(v => v.alpha).ToExpression(() =>
-            BindingService.MainGameViewModel.GameMode == GameMode.Placement ||
-            BindingService.MainGameViewModel.GameMode == GameMode.Structure ? 1f : 0f).OneWay();
-
+            staticBindingSet.Bind(this.gameObject).For(v => v.activeSelf).To(() => BindingService.MainGameViewModel.ShouldShowCategoryUI).OneWay();
             staticBindingSet.Bind(this).For(v => v.ActiveEasyGridBuilderPro).To(() => BindingService.MainGameViewModel.ActiveEasyGridBuilderPro).OneWay();
 
         }

@@ -72,8 +72,7 @@ namespace Johnny.SimDungeon
 
         protected override void StaticBinding(BindingSet<ViewBase<BuildableObjectsPanelViewModel>> staticBindingSet)
         {
-            staticBindingSet.Bind(this.m_CanvasGroup).For(v => v.alpha).ToExpression(() => BindingService.MainGameViewModel.ActiveCategoryObjectItemView != null ? 1f : 0f).OneWay();
-
+            staticBindingSet.Bind(this.gameObject).For(v => v.activeSelf).To(() => BindingService.MainGameViewModel.ShouldShowBuildableUI).OneWay();
             staticBindingSet.Bind(this).For(v => v.ActiveCategoryObjectItemView).To(() => BindingService.MainGameViewModel.ActiveCategoryObjectItemView).OneWay();
         }
 

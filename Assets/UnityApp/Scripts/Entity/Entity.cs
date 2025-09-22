@@ -8,12 +8,9 @@ namespace Johnny.SimDungeon
 {
     public abstract class Entity : MonoBehaviour
     {
-        [ShowInInspector] [ReadOnly] public Element_Cell ParentElement { get; private set; }
         public bool drawGizmos;
-        public GameObject telempte;
-        public BuildableFreeObject currentObject;
         public Direction Direction;
-        public BuildableObjectSO currentSO;
+        public BuildableObjectSO buildableObjectSO;
 
         private void OnEnable()
         {
@@ -46,61 +43,41 @@ namespace Johnny.SimDungeon
 
         }
 
-        public void DestroyTelempte()
-        {
-            if (telempte != null)
-            {
-                Destroy(telempte);
-            }
-        }
 
         protected virtual void SetParentCellElement_JustUseThisFunction(Element_Cell element)
         {
-            ParentElement = element;
+            //ParentElement = element;
         }
 
         protected bool TryAddOrUpdateModel(BuildableFreeObjectSO temelpte)
         {
-            var needUpdate = false;
-            if (currentObject == null)
-            {
-                needUpdate = true;
-            }
-            else if (currentObject.GetBuildableObjectSO() != temelpte)
-            {
-                needUpdate = true;
-                if (EasyGridBuilderProController.Instance.TryDestroyBuildableFreeObject(currentObject))
-                {
-                    currentObject = null;
-                }
-            }
+            //var needUpdate = false;
+            //if (currentObject == null)
+            //{
+            //    needUpdate = true;
+            //}
+            //else if (currentObject.GetBuildableObjectSO() != temelpte)
+            //{
+            //    needUpdate = true;
+            //    if (EasyGridBuilderProController.Instance.TryDestroyBuildableFreeObject(currentObject))
+            //    {
+            //        currentObject = null;
+            //    }
+            //}
 
-            if (needUpdate)
-            {
-                //if (ParentElement.randomPrefabsIndex == -1)
-                //{
-                var randomPrefabsIndex = RandomUtility.UpdateBuildableObjectSORandomPrefab(ParentElement.Data.TileCoord, temelpte);
-                //}
-                if (EasyGridBuilderProController.Instance.TryInitializeBuildableFreeObjectSinglePlacement(this, temelpte, randomPrefabsIndex, out var buildableFree))
-                {
-                    currentObject = buildableFree;
-                    DestroyTelempte();
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public virtual bool TryDestroy()
-        {
-            if (currentObject == null)
-            {
-                return true;
-            }
-            if (EasyGridBuilderProController.Instance.TryDestroyBuildableFreeObject(currentObject))
-            {
-                return true;
-            }
+            //if (needUpdate)
+            //{
+            //    //if (ParentElement.randomPrefabsIndex == -1)
+            //    //{
+            //    var randomPrefabsIndex = RandomUtility.UpdateBuildableObjectSORandomPrefab(ParentElement.Data.TileCoord, temelpte);
+            //    //}
+            //    if (EasyGridBuilderProController.Instance.TryInitializeBuildableFreeObjectSinglePlacement(this, temelpte, randomPrefabsIndex, out var buildableFree))
+            //    {
+            //        currentObject = buildableFree;
+            //        DestroyTelempte();
+            //        return true;
+            //    }
+            //}
             return false;
         }
     }

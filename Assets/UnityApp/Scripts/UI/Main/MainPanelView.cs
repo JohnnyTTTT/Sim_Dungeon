@@ -27,19 +27,19 @@ namespace Johnny.SimDungeon
     }
 
 
-
     public class MainPanelView : ViewBase<MainGameViewModel>
     {
-
+        [SerializeField] private Toggle m_LandExpandToggle;
+        [SerializeField] private Toggle m_DestroyToggle;
         [SerializeField] private CategoryObjectsPanelView m_CategoryObjectsPanelView;
         [SerializeField] private BuildableObjectsPanelView m_BuildableObjectsPanelView;
-
+        private GridManager m_GridManager;
 
         protected override void Start()
         {
             ViewModel = BindingService.MainGameViewModel;
-            //GridManager.Instance.OnActiveEasyGridBuilderProChanged += OnActiveEasyGridBuilderProChanged;
-            GridManager.Instance.OnActiveGridModeChanged += OnActiveGridModeChanged;
+            m_GridManager = GridManager.Instance;
+            m_GridManager.OnActiveGridModeChanged += OnActiveGridModeChanged;
 
             base.Start();
             StartCoroutine(PostStart());
@@ -61,7 +61,8 @@ namespace Johnny.SimDungeon
 
         protected override void Binding(BindingSet<ViewBase<MainGameViewModel>, MainGameViewModel> bindingSet)
         {
-
+            bindingSet.Bind(this.m_DestroyToggle).For(v => v.isOn, v => v.onValueChanged).To(vm => vm.IsDestroyMode).TwoWay();
+            bindingSet.Bind(this.m_LandExpandToggle).For(v => v.isOn, v => v.onValueChanged).To(vm => vm.IsLandExpandMode).TwoWay();
         }
 
         private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)

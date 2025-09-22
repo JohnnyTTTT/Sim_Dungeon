@@ -89,19 +89,19 @@ namespace Johnny.SimDungeon
 
         public Room CreateRoom(RoomType roomType, IntVector2? spawnNodeCoord = null)
         {
-            var room = new Room();
-            room.Init($"{roomType} - {s_RommID}", roomType);
-            if (spawnNodeCoord != null)
-            {
-                room.spawnNodeCoord = spawnNodeCoord.Value;
-            }
-            if (Application.isPlaying)
-            {
-                room.biome = SpawnManager.Instance.spawnRulesDic[roomType].Biome;
-            }
-            roomList.Add(room);
-            s_RommID++;
-            return room;
+            //var room = new Room();
+            //room.Init($"{roomType} - {s_RommID}", roomType);
+            //if (spawnNodeCoord != null)
+            //{
+            //    room.spawnNodeCoord = spawnNodeCoord.Value;
+            //}
+            //if (Application.isPlaying)
+            //{
+            //    room.biome = SpawnManager.Instance.spawnRulesDic[roomType].Biome;
+            //}
+            //roomList.Add(room);
+            //s_RommID++;
+            return null;
         }
 
         public Room CreateSingleCellRoom(Element_Cell cell, RoomType roomType)

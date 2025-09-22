@@ -15,26 +15,10 @@ namespace Johnny.SimDungeon
 
         private void Start()
         {
-            if (m_BuildableGridObject.GetIsInstantiatedByGhostObject())
-            {
-                SpawnManager.Instance.m_CandidateRoomGhostProxies.AddRoomProxy(this);
-            }
-            else
-            {
-                SpawnManager.Instance.m_CandidateRoomProxies.AddRoomProxy(this);
-            }
         }
 
         private void OnDestroy()
         {
-            if (m_BuildableGridObject.GetIsInstantiatedByGhostObject())
-            {
-                SpawnManager.Instance.m_CandidateRoomGhostProxies.RemoveRoomProxy(this);
-            }
-            else
-            {
-                SpawnManager.Instance.m_CandidateRoomProxies.RemoveRoomProxy(this);
-            }
         }
 
 

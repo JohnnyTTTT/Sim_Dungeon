@@ -1,0 +1,2383 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8999053425763487372
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa7153bb1aa84dba85ea6134e334fb0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.MarkerGenRuleActionList
+  actionList: []
+  hints:
+    emitsMarker: 0
+--- !u!114 &-8976632347565573702
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-8927304876798296386
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa7153bb1aa84dba85ea6134e334fb0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.MarkerGenRuleActionList
+  actionList: []
+  hints:
+    emitsMarker: 0
+--- !u!114 &-8770642855345350283
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b5a756503e41b08075c746275d0c7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.MarkerGenRuleNodeOnPass
+  id: b2240a96-6419-437b-88a0-242e30aed79d
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 120
+    y: 0
+    width: 81.45
+    height: 54.53
+  canBeDeleted: 0
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 0
+  inputPins: []
+  outputPins:
+  - {fileID: 7546700141415680257}
+  graph: {fileID: 0}
+--- !u!114 &-8722697686800539439
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Groun
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-8624446061460031434
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65d6af1551d84882ad36eb7d9e94265e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.MarkerGenRuleProgram
+  instructions:
+  - opcode: 10
+    arg0: 1
+    arg1: 0
+  - opcode: 1000
+    arg0: 0
+    arg1: 0
+  stringTable: []
+  compiled: 1
+--- !u!114 &-8328697982340850498
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a33889324bb430cb014ed964e0e1ba7, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinExec
+  pinType: 1
+  node: {fileID: 6240941471677149448}
+  position: {x: 81.44995, y: 39.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -18
+    y: -9
+    width: 18
+    height: 18
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: Exec
+--- !u!114 &-8297955075753224929
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0598e0e629a44aa5923f6507cf63ba6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Condition.MarkerGenRuleNodeResult
+  id: b4411e8c-2564-4a3b-a75f-8db633ad15be
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 96.18
+    height: 56.53
+  canBeDeleted: 0
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 11
+  inputPins:
+  - {fileID: -5053510212733837998}
+  outputPins: []
+  graph: {fileID: 7151948658271810491}
+--- !u!114 &-8040227235224700784
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_2
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 2
+  input: {fileID: 267349448692276223}
+  output: {fileID: 7957406220602459710}
+  graph: {fileID: 3357271764550208153}
+--- !u!114 &-7961124098948548500
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0598e0e629a44aa5923f6507cf63ba6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Condition.MarkerGenRuleNodeResult
+  id: 1f179c1e-8d1e-4391-91f9-6d021296c4d0
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 96.18
+    height: 56.53
+  canBeDeleted: 0
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 0
+  inputPins:
+  - {fileID: 6440622036122863276}
+  outputPins: []
+  graph: {fileID: -506842928466112595}
+--- !u!114 &-7883260950034643775
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0598e0e629a44aa5923f6507cf63ba6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Condition.MarkerGenRuleNodeResult
+  id: 9fcf6264-e9e1-4828-82d2-369b26d992bc
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 96.18
+    height: 56.53
+  canBeDeleted: 0
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 0
+  inputPins:
+  - {fileID: 3315486846534610171}
+  outputPins: []
+  graph: {fileID: 3357271764550208153}
+--- !u!114 &-7835567963603289000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65d6af1551d84882ad36eb7d9e94265e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.MarkerGenRuleProgram
+  instructions:
+  - opcode: 10
+    arg0: 1
+    arg1: 0
+  - opcode: 1000
+    arg0: 0
+    arg1: 0
+  stringTable: []
+  compiled: 1
+--- !u!114 &-7576743764090854878
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Cor
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-7571591591932040861
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 1
+  node: {fileID: -2892311321232357070}
+  position: {x: 80.119995, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -20
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: 
+  defaultValue: 1
+--- !u!114 &-7514279713918627715
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: C
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-7374350274575672233
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Co
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-7367389029772782873
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 1
+  node: {fileID: 1149430819928287076}
+  position: {x: 129.22998, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -20
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: 
+  defaultValue: 1
+--- !u!114 &-7323672543834368154
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-7300379551896744902
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Grou
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-7049205346068904138
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0598e0e629a44aa5923f6507cf63ba6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Condition.MarkerGenRuleNodeResult
+  id: 1b343b78-875f-45b2-832f-b2c6c99c5a17
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 96.18
+    height: 56.53
+  canBeDeleted: 0
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 0
+  inputPins:
+  - {fileID: -954055247118026103}
+  outputPins: []
+  graph: {fileID: 0}
+--- !u!114 &-7005448044777985512
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455b3b28dd3a4d41a5654db8b9f48cfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.Grid.GridMarkerGenRule
+  ruleGraph: {fileID: 7151948658271810491}
+  program: {fileID: -4332670771660393867}
+  actions: {fileID: 9000937538495487683}
+  previewTextCondition: True
+  previewTextActions:
+  - ADD Corner
+  color: {r: 0.9478369, g: 0.5, b: 1, a: 1}
+  visuallyDominant: 1
+  coord: {x: 1, y: 0}
+  ruleType: 3
+  hintWillInsertAssetHere: 0
+--- !u!114 &-6748784697751991335
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a33889324bb430cb014ed964e0e1ba7, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinExec
+  pinType: 1
+  node: {fileID: 7527040782954712714}
+  position: {x: 123.52002, y: 39.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -18
+    y: -9
+    width: 18
+    height: 18
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: 
+--- !u!114 &-6686156234935529267
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a33889324bb430cb014ed964e0e1ba7, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinExec
+  pinType: 1
+  node: {fileID: -867101801319538933}
+  position: {x: 81.44995, y: 39.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -18
+    y: -9
+    width: 18
+    height: 18
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: Exec
+--- !u!114 &-6405480971733369400
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Cor
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-6194240296860341426
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-6116072678067209863
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: 
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-5756920729405011517
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Ground
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-5457586952246137215
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-5242951811711284833
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Co
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-5053510212733837998
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 0
+  node: {fileID: -8297955075753224929}
+  position: {x: 0, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: 0
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: -1, y: 0}
+  tangentStrength: 50
+  text: Result
+  defaultValue: 1
+--- !u!114 &-4901258449564743563
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c8e567a70dc4cffa297d6f8a6fcbec6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Grid.GridMarkerGenPattern
+  patternName: Pattern
+  probability: 1
+  rotateToFit: 1
+  randomizeFittingOrder: 1
+  allowInsertionOverlaps: 0
+  rules:
+  - {fileID: -526741910449030210}
+  - {fileID: 4792140770155252726}
+  - {fileID: -7005448044777985512}
+  sameHeightMarkers: []
+  expandMarkerDomain: 0
+  expandMarkerDomainAmount: 0
+--- !u!114 &-4759907228920581397
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_3
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 3
+  input: {fileID: 3315486846534610171}
+  output: {fileID: -7571591591932040861}
+  graph: {fileID: 3357271764550208153}
+--- !u!114 &-4347499337374055499
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-4332670771660393867
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65d6af1551d84882ad36eb7d9e94265e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.MarkerGenRuleProgram
+  instructions:
+  - opcode: 10
+    arg0: 1
+    arg1: 0
+  - opcode: 1000
+    arg0: 0
+    arg1: 0
+  stringTable: []
+  compiled: 1
+--- !u!114 &-4244700704012340272
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-3862144668049604470
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_1
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 1
+  input: {fileID: 6440622036122863276}
+  output: {fileID: -1880870497572324799}
+  graph: {fileID: -506842928466112595}
+--- !u!114 &-3760337589840926178
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-3546510114595554867
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Cor
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-3027988398754913152
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a33889324bb430cb014ed964e0e1ba7, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinExec
+  pinType: 0
+  node: {fileID: 7527040782954712714}
+  position: {x: 0, y: 39.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: 0
+    y: -9
+    width: 18
+    height: 18
+  tangent: {x: -1, y: 0}
+  tangentStrength: 50
+  text: 
+--- !u!114 &-2892311321232357070
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1665843c1a847a295f660c122b24803, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Condition.MarkerGenRuleNodeOr
+  id: dcc5278b-b85a-482b-8c17-ba461b0f7c1d
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: -110.59253
+    y: -31.735
+    width: 80.119995
+    height: 80.53
+  canBeDeleted: 1
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 11
+  inputPins:
+  - {fileID: 5881089939086083692}
+  - {fileID: 267349448692276223}
+  outputPins:
+  - {fileID: -7571591591932040861}
+  graph: {fileID: 3357271764550208153}
+--- !u!114 &-2879963872490194652
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa7153bb1aa84dba85ea6134e334fb0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.MarkerGenRuleActionList
+  actionList: []
+  hints:
+    emitsMarker: 0
+--- !u!114 &-2353020143340087072
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-2285007517464747015
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183aefbe986844c0a0d8e710b0042ff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Condition.MarkerGenRuleNodeMarkerExists
+  id: fff830c5-6d92-426b-9a60-26321e2a2e46
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: -291.59253
+    y: 27.265
+    width: 129.23001
+    height: 56.53
+  canBeDeleted: 1
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 12
+  inputPins: []
+  outputPins:
+  - {fileID: 7957406220602459710}
+  graph: {fileID: 3357271764550208153}
+  markerName: Fence
+--- !u!114 &-2229341982443530542
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: 
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-2065533309247541094
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 0
+  node: {fileID: 1441613397041962484}
+  position: {x: 0, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: 0
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: -1, y: 0}
+  tangentStrength: 50
+  text: Result
+  defaultValue: 1
+--- !u!114 &-2036369201936428608
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-1880870497572324799
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 1
+  node: {fileID: 3147907803250136940}
+  position: {x: 118.20001, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -20
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: 
+  defaultValue: 1
+--- !u!114 &-1527821511913828218
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corn
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-1467020342688897642
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a33889324bb430cb014ed964e0e1ba7, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinExec
+  pinType: 1
+  node: {fileID: 6093148986916607976}
+  position: {x: 81.44995, y: 39.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -18
+    y: -9
+    width: 18
+    height: 18
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: Exec
+--- !u!114 &-1331887677969939721
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Gro
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-1162468058368772789
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-1128804908898947003
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b5a756503e41b08075c746275d0c7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.MarkerGenRuleNodeOnPass
+  id: 5d66330e-0760-443a-b50c-8f2ffc7840f5
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 120
+    y: 0
+    width: 81.45
+    height: 54.53
+  canBeDeleted: 0
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 0
+  inputPins: []
+  outputPins:
+  - {fileID: -240195886562332714}
+  graph: {fileID: -506842928466112595}
+--- !u!114 &-1068711924130909054
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corn
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-987107412066522446
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-954055247118026103
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 0
+  node: {fileID: -7049205346068904138}
+  position: {x: 0, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: 0
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: -1, y: 0}
+  tangentStrength: 50
+  text: Result
+  defaultValue: 1
+--- !u!114 &-867101801319538933
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b5a756503e41b08075c746275d0c7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.MarkerGenRuleNodeOnPass
+  id: 3063a839-d7de-47ba-8d46-e73951ab0456
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 120
+    y: -1
+    width: 81.45
+    height: 54.53
+  canBeDeleted: 0
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 15
+  inputPins: []
+  outputPins:
+  - {fileID: -6686156234935529267}
+  graph: {fileID: 3357271764550208153}
+--- !u!114 &-526741910449030210
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455b3b28dd3a4d41a5654db8b9f48cfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.Grid.GridMarkerGenRule
+  ruleGraph: {fileID: -506842928466112595}
+  program: {fileID: 133588657894804612}
+  actions: {fileID: -8927304876798296386}
+  previewTextCondition: Wall OR Fence
+  previewTextActions: []
+  color: {r: 0.8603463, g: 0.5, b: 1, a: 1}
+  visuallyDominant: 1
+  coord: {x: 0, y: 0}
+  ruleType: 1
+  hintWillInsertAssetHere: 0
+--- !u!114 &-506842928466112595
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f712e62250a84e678bb9c51b8f3bc3f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.MarkerGenRuleGraph
+  indexCounter:
+    index: 4
+  topZIndex:
+    index: 19
+  nodes:
+  - {fileID: -7961124098948548500}
+  - {fileID: -1128804908898947003}
+  - {fileID: 3147907803250136940}
+  - {fileID: 1149430819928287076}
+  - {fileID: 5797016690235291785}
+  links:
+  - {fileID: 327900660778294349}
+  - {fileID: 1844359233814744179}
+  - {fileID: 3094807546163372188}
+  resultNode: {fileID: -7961124098948548500}
+  passNode: {fileID: -1128804908898947003}
+--- !u!114 &-240195886562332714
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a33889324bb430cb014ed964e0e1ba7, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinExec
+  pinType: 1
+  node: {fileID: -1128804908898947003}
+  position: {x: 81.44995, y: 39.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -18
+    y: -9
+    width: 18
+    height: 18
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: Exec
+--- !u!114 &-126781015107252182
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corne
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-126255079658477810
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &-38487686613458731
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa7153bb1aa84dba85ea6134e334fb0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.MarkerGenRuleActionList
+  actionList: []
+  hints:
+    emitsMarker: 0
+--- !u!114 &-36789197784982364
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2db24979bc3947958de6e8cb53183706, type: 3}
+  m_Name: PatternMatcher
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.MarkerGeneratorAsset
+  patterns:
+  - {fileID: -4901258449564743563}
+  layoutType: 0
+--- !u!114 &133588657894804612
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65d6af1551d84882ad36eb7d9e94265e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.MarkerGenRuleProgram
+  instructions:
+  - opcode: 10
+    arg0: 0
+    arg1: 0
+  - opcode: 200
+    arg0: 0
+    arg1: 0
+  - opcode: 10
+    arg0: 1
+    arg1: 0
+  - opcode: 200
+    arg0: 0
+    arg1: 0
+  - opcode: 101
+    arg0: 0
+    arg1: 0
+  - opcode: 1000
+    arg0: 0
+    arg1: 0
+  stringTable:
+  - Wall
+  - Fence
+  compiled: 1
+--- !u!114 &243196938229876850
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 1
+  node: {fileID: 2756137257080757623}
+  position: {x: 118.20001, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -20
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: 
+  defaultValue: 1
+--- !u!114 &267349448692276223
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 0
+  node: {fileID: -2892311321232357070}
+  position: {x: 0, y: 64.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: 0
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: -1, y: 0}
+  tangentStrength: 50
+  text: B
+  defaultValue: 1
+--- !u!114 &327900660778294349
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_2
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 2
+  input: {fileID: 7680325640778372633}
+  output: {fileID: -1880870497572324799}
+  graph: {fileID: -506842928466112595}
+--- !u!114 &420491215121337214
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Gr
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &632655159694114517
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &882395741049253973
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corn
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &1011229143085463921
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: C
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &1092470611398791565
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &1149430819928287076
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183aefbe986844c0a0d8e710b0042ff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Condition.MarkerGenRuleNodeMarkerExists
+  id: 9c9b8d4a-5957-48ab-9b5f-c3f4f642dbef
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: -354.59253
+    y: 78.265
+    width: 129.23001
+    height: 56.53
+  canBeDeleted: 1
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 18
+  inputPins: []
+  outputPins:
+  - {fileID: -7367389029772782873}
+  graph: {fileID: -506842928466112595}
+  markerName: Fence
+--- !u!114 &1441613397041962484
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0598e0e629a44aa5923f6507cf63ba6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Condition.MarkerGenRuleNodeResult
+  id: 36f07c2f-00d6-4644-b343-f83e264c600b
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 96.18
+    height: 56.53
+  canBeDeleted: 0
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 0
+  inputPins:
+  - {fileID: -2065533309247541094}
+  outputPins: []
+  graph: {fileID: 0}
+--- !u!114 &1481103647376644781
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &1562037607182309080
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &1844359233814744179
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_3
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 3
+  input: {fileID: 4733955995825282122}
+  output: {fileID: -7367389029772782873}
+  graph: {fileID: -506842928466112595}
+--- !u!114 &1982516223700339948
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 1
+  node: {fileID: 5797016690235291785}
+  position: {x: 80.119995, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -20
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: 
+  defaultValue: 1
+--- !u!114 &1985219029250764252
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &2423965335260353659
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Gron
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &2558979016591478818
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &2756137257080757623
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183aefbe986844c0a0d8e710b0042ff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Condition.MarkerGenRuleNodeMarkerExists
+  id: ea45ad09-be68-4138-a99f-e6b33a6764cf
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: -269.59253
+    y: -66.735
+    width: 118.2
+    height: 56.53
+  canBeDeleted: 1
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 13
+  inputPins: []
+  outputPins:
+  - {fileID: 243196938229876850}
+  graph: {fileID: 3357271764550208153}
+  markerName: Wall
+--- !u!114 &3011931377300586149
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &3094807546163372188
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_4
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 4
+  input: {fileID: 6440622036122863276}
+  output: {fileID: 1982516223700339948}
+  graph: {fileID: -506842928466112595}
+--- !u!114 &3147907803250136940
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183aefbe986844c0a0d8e710b0042ff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Condition.MarkerGenRuleNodeMarkerExists
+  id: 91679088-89a3-49ed-b770-be35e0797aad
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: -347.59253
+    y: -31.735
+    width: 118.2
+    height: 56.53
+  canBeDeleted: 1
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 1
+  zIndex: 19
+  inputPins: []
+  outputPins:
+  - {fileID: -1880870497572324799}
+  graph: {fileID: -506842928466112595}
+  markerName: Wall
+--- !u!114 &3315486846534610171
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 0
+  node: {fileID: -7883260950034643775}
+  position: {x: 0, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: 0
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: -1, y: 0}
+  tangentStrength: 50
+  text: Result
+  defaultValue: 1
+--- !u!114 &3357271764550208153
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f712e62250a84e678bb9c51b8f3bc3f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.MarkerGenRuleGraph
+  indexCounter:
+    index: 3
+  topZIndex:
+    index: 15
+  nodes:
+  - {fileID: -7883260950034643775}
+  - {fileID: -867101801319538933}
+  - {fileID: -2285007517464747015}
+  - {fileID: 2756137257080757623}
+  - {fileID: -2892311321232357070}
+  links:
+  - {fileID: 7272729580884176230}
+  - {fileID: -8040227235224700784}
+  - {fileID: -4759907228920581397}
+  resultNode: {fileID: -7883260950034643775}
+  passNode: {fileID: -867101801319538933}
+--- !u!114 &3740677813064166304
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: G
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &3913013207358497144
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &4489014274475268575
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Gro
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &4733955995825282122
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 0
+  node: {fileID: 5797016690235291785}
+  position: {x: 0, y: 64.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: 0
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: -1, y: 0}
+  tangentStrength: 50
+  text: B
+  defaultValue: 1
+--- !u!114 &4792140770155252726
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 455b3b28dd3a4d41a5654db8b9f48cfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.Grid.GridMarkerGenRule
+  ruleGraph: {fileID: 3357271764550208153}
+  program: {fileID: 5338087521614502748}
+  actions: {fileID: -8999053425763487372}
+  previewTextCondition: Wall OR Fence
+  previewTextActions: []
+  color: {r: 1, g: 0.5, b: 0.71140313, a: 1}
+  visuallyDominant: 1
+  coord: {x: 1, y: 0}
+  ruleType: 2
+  hintWillInsertAssetHere: 0
+--- !u!114 &5264857358726665781
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &5338087521614502748
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65d6af1551d84882ad36eb7d9e94265e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.MarkerGenRuleProgram
+  instructions:
+  - opcode: 10
+    arg0: 0
+    arg1: 0
+  - opcode: 200
+    arg0: 0
+    arg1: 0
+  - opcode: 10
+    arg0: 1
+    arg1: 0
+  - opcode: 200
+    arg0: 0
+    arg1: 0
+  - opcode: 101
+    arg0: 0
+    arg1: 0
+  - opcode: 1000
+    arg0: 0
+    arg1: 0
+  stringTable:
+  - Wall
+  - Fence
+  compiled: 1
+--- !u!114 &5520091632360375169
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &5757653545594213443
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: 
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &5797016690235291785
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1665843c1a847a295f660c122b24803, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Condition.MarkerGenRuleNodeOr
+  id: 2d79c54d-148f-4eee-a812-a73c22477542
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: -127.59253
+    y: 3.2649994
+    width: 80.119995
+    height: 80.53
+  canBeDeleted: 1
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 17
+  inputPins:
+  - {fileID: 7680325640778372633}
+  - {fileID: 4733955995825282122}
+  outputPins:
+  - {fileID: 1982516223700339948}
+  graph: {fileID: -506842928466112595}
+--- !u!114 &5881089939086083692
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 0
+  node: {fileID: -2892311321232357070}
+  position: {x: 0, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: 0
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: -1, y: 0}
+  tangentStrength: 50
+  text: A
+  defaultValue: 1
+--- !u!114 &6093148986916607976
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b5a756503e41b08075c746275d0c7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.MarkerGenRuleNodeOnPass
+  id: 2e08b1e4-98f7-478b-92b2-1924ff4722ee
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 120
+    y: 0
+    width: 81.45
+    height: 54.53
+  canBeDeleted: 0
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 0
+  inputPins: []
+  outputPins:
+  - {fileID: -1467020342688897642}
+  graph: {fileID: 0}
+--- !u!114 &6105582530772816187
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corne
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &6240941471677149448
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b5a756503e41b08075c746275d0c7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.MarkerGenRuleNodeOnPass
+  id: 1eb5fb77-2e44-40d8-88a1-1c1ffb9d0aef
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 295
+    y: -54
+    width: 81.45
+    height: 54.53
+  canBeDeleted: 0
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 0
+  zIndex: 24
+  inputPins: []
+  outputPins:
+  - {fileID: -8328697982340850498}
+  graph: {fileID: 7151948658271810491}
+--- !u!114 &6308905777485374055
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Co
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &6440622036122863276
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 0
+  node: {fileID: -7961124098948548500}
+  position: {x: 0, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: 0
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: -1, y: 0}
+  tangentStrength: 50
+  text: Result
+  defaultValue: 1
+--- !u!114 &6662873725954485049
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corne
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &6714980781646315253
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: C
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &6901208321368940410
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &7151948658271810491
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f712e62250a84e678bb9c51b8f3bc3f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.MarkerGenRuleGraph
+  indexCounter:
+    index: 4
+  topZIndex:
+    index: 26
+  nodes:
+  - {fileID: -8297955075753224929}
+  - {fileID: 6240941471677149448}
+  - {fileID: 7527040782954712714}
+  links:
+  - {fileID: 8209540986774266262}
+  resultNode: {fileID: -8297955075753224929}
+  passNode: {fileID: 6240941471677149448}
+--- !u!114 &7242579767435041327
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &7259339538893364099
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &7272729580884176230
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_1
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 1
+  input: {fileID: 5881089939086083692}
+  output: {fileID: 243196938229876850}
+  graph: {fileID: 3357271764550208153}
+--- !u!114 &7527040782954712714
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53b73dbb7a2b4f4d8239648c4c2b49d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.MarkerGenRuleNodeAddMarker
+  id: fe62be6c-9ce3-4bac-ac5b-e56ca2ea4e81
+  caption: 
+  bounds:
+    serializedVersion: 2
+    x: 461.99414
+    y: -62.479996
+    width: 123.52
+    height: 54.53
+  canBeDeleted: 1
+  canBeSelected: 1
+  canBeMoved: 1
+  selected: 1
+  zIndex: 26
+  inputPins:
+  - {fileID: -3027988398754913152}
+  outputPins:
+  - {fileID: -6748784697751991335}
+  graph: {fileID: 7151948658271810491}
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &7546700141415680257
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a33889324bb430cb014ed964e0e1ba7, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinExec
+  pinType: 1
+  node: {fileID: -8770642855345350283}
+  position: {x: 81.44995, y: 39.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -18
+    y: -9
+    width: 18
+    height: 18
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: Exec
+--- !u!114 &7680325640778372633
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _InputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 0
+  node: {fileID: 5797016690235291785}
+  position: {x: 0, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: 0
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: -1, y: 0}
+  tangentStrength: 50
+  text: A
+  defaultValue: 1
+--- !u!114 &7957406220602459710
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b26b17c51d1b467cad6081f203299116, type: 3}
+  m_Name: _OutputPin
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Pins.MarkerGenRuleGraphPinBool
+  pinType: 1
+  node: {fileID: -2285007517464747015}
+  position: {x: 129.22998, y: 40.53}
+  boundsOffset:
+    serializedVersion: 2
+    x: -20
+    y: -10
+    width: 20
+    height: 20
+  tangent: {x: 1, y: 0}
+  tangentStrength: 50
+  text: 
+  defaultValue: 1
+--- !u!114 &8209540986774266262
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1574844e380142bb9f5e4a8003b85a1, type: 3}
+  m_Name: Link_4
+  m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.GraphLink
+  id: 4
+  input: {fileID: -3027988398754913152}
+  output: {fileID: -8328697982340850498}
+  graph: {fileID: 7151948658271810491}
+--- !u!114 &8736821657495584731
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []
+--- !u!114 &9000937538495487683
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa7153bb1aa84dba85ea6134e334fb0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Rule.MarkerGenRuleActionList
+  actionList:
+  - {fileID: -4347499337374055499}
+  hints:
+    emitsMarker: 1
+--- !u!114 &9171041856497337174
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5431f0d84e444de89f9259fa863dc1a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DungeonArchitect.Core::DungeonArchitect.MarkerGenerator.Nodes.Actions.Info.MarkerGenRuleActionInfoAddMarker
+  markerName: Corner
+  copyRotationFromMarkers: []
+  copyHeightFromMarkers: []

@@ -8,7 +8,7 @@ namespace Johnny.SimDungeon
     {
         public override void OnClick(StructureMode item)
         {
-            BindingService.MainGameViewModel.StructureMode = item;
+            //BindingService.MainGameViewModel.StructureMode = item;
         }
     }
     public class LandManagementItemView : ViewBase<LandManagementItemViewModel>
@@ -55,7 +55,7 @@ namespace Johnny.SimDungeon
 
         protected override void StaticBinding(BindingSet<ViewBase<LandManagementItemViewModel>> staticBindingSet)
         {
-            staticBindingSet.Bind(this).For(v => v.isCurrentMode).ToExpression(() => BindingService.MainGameViewModel.StructureMode == m_BingdingedStructureMode).OneWay();
+            //staticBindingSet.Bind(this).For(v => v.isCurrentMode).ToExpression(() => BindingService.MainGameViewModel.StructureMode == m_BingdingedStructureMode).OneWay();
         }
 
     }

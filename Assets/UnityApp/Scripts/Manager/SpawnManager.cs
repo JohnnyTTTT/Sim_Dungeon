@@ -120,12 +120,6 @@ namespace Johnny.SimDungeon
 
         [Title("spawnRules")]
         public SpawnRulee[] spawnRules;
-        public Dictionary<RoomType, SpawnRulee> spawnRulesDic = new Dictionary<RoomType, SpawnRulee>();
-
-        private AreaSpawnProxy m_CurrentAreaSpawnProxy;
-
-        public CandidateRoomProxies m_CandidateRoomGhostProxies = new CandidateRoomProxies();
-        public CandidateRoomProxies m_CandidateRoomProxies = new CandidateRoomProxies();
 
         public bool IsLandExpand
         {
@@ -157,51 +151,18 @@ namespace Johnny.SimDungeon
         }
         private bool m_IsLandExpand;
 
-        private bool isEdgeBoxPlacementMode;
-        private List<Entity_Edge> newWalls = new List<Entity_Edge>();
+
+        private GridManager m_GridManager;
+
         private void Start()
         {
             var staticBindingSet = this.CreateBindingSet();
-            staticBindingSet.Bind(this).For(v => v.IsLandExpand).ToExpression(() => BindingService.MainGameViewModel.StructureMode == StructureMode.LandExpand).OneWay();
+            //staticBindingSet.Bind(this).For(v => v.IsLandExpand).ToExpression(() => BindingService.MainGameViewModel.StructureMode == StructureMode.LandExpand).OneWay();
             staticBindingSet.Build();
-
-            foreach (var item in spawnRules)
-            {
-                spawnRulesDic[item.roomType] = item;
-            }
-            GridManager.Instance.OnEdgeObjectBoxPlacementStarted -= OnEdgeObjectBoxPlacementStarted;
-            GridManager.Instance.OnGridObjectBoxPlacementUpdated -= OnGridObjectBoxPlacementUpdated;
-            GridManager.Instance.OnEdgeObjectBoxPlacementFinalized += OnEdgeObjectBoxPlacementFinalized;
-            GridManager.Instance.OnBuildableObjectPlaced += OnBuildableObjectPlaced;
+            m_GridManager = GridManager.Instance;
            
         }
 
-
-        private void OnEdgeObjectBoxPlacementStarted(EasyGridBuilderPro easyGridBuilderPro, Vector3 boxPlacementStartPosition, EdgeObjectPlacementType placementType)
-        {
-
-        }
-
-        private void OnGridObjectBoxPlacementUpdated(EasyGridBuilderPro easyGridBuilderPro, Vector3 boxPlacementEndPosition)
-        {
-            
-        }
-
-        private void OnEdgeObjectBoxPlacementFinalized(EasyGridBuilderPro easyGridBuilderPro)
-        {
-
-            //StartCoroutine(OnPostEdgeObjectBoxPlacementFinalized());
-        }
-
-        //private IEnumerator OnPostEdgeObjectBoxPlacementFinalized()
-        //{
-        //    yield return new WaitForEndOfFrame();
-        //    yield return new WaitForEndOfFrame();
-        //    var lastBuilded = newWalls[newWalls.Count - 1];
-        //    //DetectorUtility.HandleWallPlacedIncremental(lastBuilded);
-        //    newWalls.Clear();
-        //    //GridManager.Instance.TryGetBuildableEdgeObjectGhost
-        //}
 
         private void OnBuildableObjectPlaced(EasyGridBuilderPro easyGridBuilderPro, BuildableObject buildableObject)
         {
@@ -222,26 +183,7 @@ namespace Johnny.SimDungeon
 
         private void Update()
         {
-            if (m_CandidateRoomGhostProxies.candidateRoomProxies.Count > 0)
-            {
-                m_CandidateRoomGhostProxies.CalculateCandidateRoomEdges();
-            }
 
-            if (BindingService.MainGameViewModel.StructureMode != StructureMode.LandExpand) return;
-            if (PhysicsUtility.MouseRaycastHit(m_GroundMask, out var raycastHit))
-            {
-                var position = raycastHit.point;
-                position.y = 0f;
-                if (Mouse.current.leftButton.wasPressedThisFrame)
-                {
-                    var cellElement = ElementManager_Cell.Instance.GetElement(position);
-                    cellElement.Data.CellType = FlowTilemapCellType.Floor;
-                    UpdateOrCreateGroundEntity(cellElement);
-
-                    var newRoom = ElementManager_Room.Instance.CreateSingleCellRoom(cellElement, RoomType.EmptyRoom);
-                    CreateWallForCells(new List<Element_Cell>() { cellElement }, newRoom);
-                }
-            }
         }
 
 
@@ -326,90 +268,10 @@ namespace Johnny.SimDungeon
                     downEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
                     edges.Add(downEdge);
                 }
-
-                foreach (var edge in edges)
-                {
-                    UpdateOrCreateEdgeEntity(edge);
-                }
-
-            }
-        }
-
-        public void UpdateOrCreateGroundEntity(Element_Cell cell)
-        {
-            var runtimeSimSceneObjectInstantiator = DungeonController.Instance.runtimeSimSceneObjectInstantiator;
-            var postion = DungeonController.Instance.TileCoordToWorldPosition(cell.Data.TileCoord);
-            var rotation = Quaternion.identity;
-            runtimeSimSceneObjectInstantiator.Instantiate(groundBase, postion, rotation, Vector3.one, null);
-            if (cell.ceiling != null)
-            {
-                cell.ceiling.TryDestroy();
-            }
-        }
-
-        public void UpdateOrCreateEdgeEntity(Element_Edge edge)
-        {
-            if (edge.wall != null)
-            {
-                if (edge.Data.HorizontalEdge)
-                {
-                    edge.wall.CreateOrUpdateModel();
-                }
-            }
-            else
-            {
-                var runtimeSimSceneObjectInstantiator = DungeonController.Instance.runtimeSimSceneObjectInstantiator;
-                var postion = DungeonController.Instance.TileCoordToWorldPosition(edge.Data.EdgeCoord);
-                Quaternion rotation;
-                if (edge.Data.HorizontalEdge)
-                {
-                    postion += new Vector3(0f, 0f, -1f);
-                    rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-                }
-                else
-                {
-                    postion += new Vector3(-1f, 0f, 0f);
-                    rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
-                }
-                runtimeSimSceneObjectInstantiator.Instantiate(WallBase, postion, rotation, Vector3.one, null);
-            }
-        }
-
-        public void DestroyCeilingEntity(Element_Cell cell)
-        {
-            cell.ceiling.TryDestroy();
-        }
-
-        public void DestroyEdgeEntity(Element_Edge edge)
-        {
-            edge.wall.TryDestroy();
-        }
-
-        public void SetCurrentAreaProxy(AreaSpawnProxy areaSpawnProxy)
-        {
-            if (m_CurrentAreaSpawnProxy != areaSpawnProxy)
-            {
-                m_CurrentAreaSpawnProxy = areaSpawnProxy;
-            }
-        }
-
-        public void CancelCurrentAreaProxy(AreaSpawnProxy areaSpawnProxy)
-        {
-            if (m_CurrentAreaSpawnProxy == areaSpawnProxy)
-            {
-                m_CurrentAreaSpawnProxy = null;
             }
         }
 
 
-
-        public void CancelCurrentRoomProxy(RoomSpawnProxy roomSpawnProxy)
-        {
-            //if (m_CandidateRoomProxies == roomSpawnProxy.roomType)
-            //{
-            //    m_CandidateRoomProxies = RoomType.Undefined;
-            //}
-        }
 
 
     }

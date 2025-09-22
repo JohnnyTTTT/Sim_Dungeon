@@ -2,6 +2,7 @@ using Loxodon.Framework.Binding.Builder;
 using Loxodon.Framework.ViewModels;
 using Sirenix.OdinInspector;
 using SoulGames.EasyGridBuilderPro;
+using System;
 using UnityEngine;
 
 namespace Johnny.SimDungeon
@@ -40,34 +41,14 @@ namespace Johnny.SimDungeon
         }
         private GameMode m_GameMode = GameMode.Default;
 
-        public StructureMode StructureMode
+        public bool IsBuildableMode
         {
             get
             {
-                return m_StructureMode;
-            }
-            set
-            {
-                if (m_StructureMode != value)
-                {
-                    Set(ref m_StructureMode, value);
-                    //switch (m_StructureMode)
-                    //{
-                    //    case StructureMode.None:
-                    //        //BindingService.CategoryObjectsPanelViewModel.SetSelectItem(null);
-                    //        ActiveCategoryObjectItemView = null;
-                    //        break;
-                    //    case StructureMode.LandExpand:
-                    //        GridMode = GridMode.BuildMode;
-                    //        break;
-                    //    default:
-                    //        break;
-                    //}
-                    RaisePropertyChanged();
-                }
+                return GameMode == GameMode.Structure || GameMode == GameMode.Placement;
             }
         }
-        private StructureMode m_StructureMode = StructureMode.None;
+
 
         public GridType GridType
         {
@@ -79,7 +60,7 @@ namespace Johnny.SimDungeon
             {
                 if (m_GridType != value)
                 {
-                    m_GridType = value;
+                    Set(ref m_GridType, value);
                     var size1 = EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize1;
                     var size2 = EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize2;
                     switch (m_GridType)
@@ -100,8 +81,73 @@ namespace Johnny.SimDungeon
         }
         private GridType m_GridType;
 
+        public bool IsLandExpandMode
+        {
+            get
+            {
+                return m_IsLandExpandMode;
+            }
+            set
+            {
+                if (m_IsLandExpandMode != value)
+                {
+                    Set(ref m_IsLandExpandMode, value);
+                    GridManager.Instance.SetActiveGridModeInAllGrids(GridMode.None);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+        private bool m_IsLandExpandMode;
 
+        public bool IsDestroyMode
+        {
+            get
+            {
+                return m_IsDestroyMode;
+            }
+            set
+            {
+                if (m_IsDestroyMode != value)
+                {
+                    Set(ref m_IsDestroyMode, value);
+                    GridManager.Instance.SetActiveGridModeInAllGrids(GridMode.DestroyMode);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+        private bool m_IsDestroyMode;
 
+        public bool IsBuildMode
+        {
+            get
+            {
+                return m_IsBuildMode;
+            }
+            set
+            {
+                if (m_IsBuildMode != value)
+                {
+                    Set(ref m_IsBuildMode, value);
+                }
+            }
+        }
+        private bool m_IsBuildMode;
+
+        public bool ShouldShowCategoryUI
+        {
+            get
+            {
+                return IsBuildableMode;
+            }
+        }
+
+        public bool ShouldShowBuildableUI
+        {
+            get
+            {
+                return IsBuildableMode && ActiveCategoryObjectItemView != null && !IsDestroyMode;
+            }
+        }
 
         public EasyGridBuilderProXZ ActiveEasyGridBuilderPro
         {
@@ -192,9 +238,35 @@ namespace Johnny.SimDungeon
         }
         private static MainGameView s_Instance;
 
+        private GridManager m_GridManager;
+
         protected override void Start()
         {
             ViewModel = BindingService.MainGameViewModel;
+            m_GridManager = GridManager.Instance;
+            m_GridManager.OnActiveGridModeChanged += OnActiveGridModeChanged;
+        }
+
+        private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)
+        {
+            Debug.Log(gridMode);
+            switch (gridMode)
+            {
+                case GridMode.None:
+                    break;
+                case GridMode.BuildMode:
+                    ViewModel.IsBuildMode = true;
+                    break;
+                case GridMode.DestroyMode:
+                    ViewModel.IsDestroyMode = true;
+                    break;
+                case GridMode.SelectMode:
+                    break;
+                case GridMode.MoveMode:
+                    break;
+                default:
+                    break;
+            }
         }
 
         //[ShowInInspector]

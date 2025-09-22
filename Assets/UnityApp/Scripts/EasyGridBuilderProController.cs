@@ -34,32 +34,14 @@ namespace Johnny.SimDungeon
         //Temp
         public Color temp_HideColor;
         private Texture2D temp_GeneratedTexture;
-
-
+        private GridManager m_GridManager;
 
         private void Start()
         {
-            StartCoroutine(PostStart());
-        }
-
-        private IEnumerator PostStart()
-        {
-            yield return new WaitForEndOfFrame();
-            //m_EasyGridBuilderProSize2.gameObject.SetActive(false);
-            //m_EasyGridBuilderProSize1.gameObject.SetActive(false);
+            m_GridManager = GridManager.Instance;
         }
 
 
-
-        public bool TryInitializeBuildableFreeObjectSinglePlacement(Entity entity, BuildableFreeObjectSO temelpte, BuildableObjectSO.RandomPrefabs randomPrefabs, out BuildableFreeObject spawned)
-        {
-            BindingService.MainGameViewModel.GameMode = GameMode.Structure;
-            var worldPosition = entity.transform.position;
-            var worldRatation = entity.transform.rotation.eulerAngles.y;
-            var verticalGridIndex = BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.GetActiveVerticalGridIndex();
-            return TryInitializeBuildableFreeObjectSinglePlacement(worldPosition, temelpte,
-                FourDirectionalRotation.North, EightDirectionalRotation.North, worldRatation, Vector3.zero, true, verticalGridIndex, true, out spawned, randomPrefabs, null);
-        }
 
         public bool TryDestroyBuildableGridObject(BuildableGridObject buildable)
         {
@@ -89,21 +71,12 @@ namespace Johnny.SimDungeon
             return false;
         }
 
-        public bool TryInitializeBuildableFreeObjectSinglePlacement(Vector3 worldPosition, BuildableFreeObjectSO buildableFreeObjectSO, FourDirectionalRotation fourDirectionalDirection,
-            EightDirectionalRotation eightDirectionalDirection, float freeRotation, Vector3 hitNormals, bool ignoreCustomConditions, int verticalGridIndex, bool byPassEventsAndMessages,
-            out BuildableFreeObject spawnnedBuildableFreeObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null, BuildableFreeObject originalBuildableFreeObject = null)
-        {
-            return BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableFreeObjectSinglePlacement(worldPosition, buildableFreeObjectSO, fourDirectionalDirection,
-                eightDirectionalDirection, freeRotation, hitNormals, ignoreCustomConditions, verticalGridIndex, byPassEventsAndMessages
-                , out spawnnedBuildableFreeObject, buildableObjectSORandomPrefab, originalBuildableFreeObject);
-        }
-
         public bool TryInitializeBuildableEdgeObjectSinglePlacement(Vector3 worldPosition, BuildableEdgeObjectSO buildableEdgeObjectSO, FourDirectionalRotation fourDirectionalDirection, out BuildableEdgeObject spawnnedBuildableEdgeObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab)
         {
             //var index = BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.GetActiveVerticalGridIndex();
             //Debug.Log(index);
             if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement
-                (worldPosition, buildableEdgeObjectSO, fourDirectionalDirection, 
+                (worldPosition, buildableEdgeObjectSO, fourDirectionalDirection,
                 false, true, true, 0, true, out spawnnedBuildableEdgeObject, buildableObjectSORandomPrefab, null))
             {
                 return true;
@@ -132,7 +105,20 @@ namespace Johnny.SimDungeon
             return false;
         }
 
+        public bool TryInitializeBuildableCornerObjectSinglePlacement(Vector3 worldPosition, BuildableCornerObjectSO buildableCornerObjectSO, FourDirectionalRotation direction, out BuildableCornerObject buildableCornerObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null)
+        {
+            if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableCornerObjectSinglePlacement(worldPosition, buildableCornerObjectSO,
+                direction, EightDirectionalRotation.North, 0f, true, true, 0, true, out buildableCornerObject, buildableObjectSORandomPrefab, null))
+            {
+                return true;
+            }
+            else
+            {
+                Debug.LogError($"Place Corner Error - <>");
+            }
 
+            return false;
+        }
 
         public void Temp_UpdateGrid(Dictionary<Vector2Int, Element_Cell> subCellsMap)
         {
