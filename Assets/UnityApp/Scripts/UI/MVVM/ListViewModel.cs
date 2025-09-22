@@ -57,7 +57,6 @@ namespace Johnny.SimDungeon
 
         private void OnItemSelect(T item)
         {
-            Debug.Log(222); 
             SelectedItem = item;
             //item.IsSelected = !item.IsSelected;
             //if (item.IsSelected)

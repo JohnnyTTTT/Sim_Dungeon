@@ -53,10 +53,10 @@ namespace Johnny.SimDungeon
             {
                 ElementManager_Cell.Instance.drawGizmos = showCellGizmo;
             }
-            //if (ElementManager_Edge.Instance != null && ElementManager_Edge.Instance.drawGizmos != showEdgeGizmo)
-            //{
-            //    ElementManager_Edge.Instance.drawGizmos = showEdgeGizmo;
-            //}
+            if (ElementManager_Edge.Instance != null && ElementManager_Edge.Instance.drawGizmos != showEdgeGizmo)
+            {
+                ElementManager_Edge.Instance.drawGizmos = showEdgeGizmo;
+            }
             if (ElementManager_Room.Instance != null && ElementManager_Room.Instance.drawGizmos != showRoomGizmo)
             {
                 ElementManager_Room.Instance.drawGizmos = showRoomGizmo;

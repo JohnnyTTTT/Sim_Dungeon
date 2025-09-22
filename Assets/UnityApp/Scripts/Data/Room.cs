@@ -10,18 +10,12 @@ namespace Johnny.SimDungeon
     public class Room : Element
     {
         public string name;
-        public List<Element_Cell> containedCells = new List<Element_Cell>();
         public RoomType roomType;
-        //{
-        //    get
-        //    {
-        //        return m_RoomType;
-        //    }
-        //}
+        public List<Element_Cell> containedCells = new List<Element_Cell>();
+        public bool isClosed;
 
         public BiomeSO biome;
 
-        private RoomType m_RoomType;
 
         public IntVector2 spawnNodeCoord;
         public Color roomColor;
@@ -33,11 +27,12 @@ namespace Johnny.SimDungeon
         private List<GameObject> wallDownSegments = new List<GameObject>();
         private List<GameObject> wallLeftSegments = new List<GameObject>();
         private List<GameObject> wallRightSegments = new List<GameObject>();
+ 
 
         public void Init(string n, RoomType type)
         {
             name = n;
-            m_RoomType = type;
+            roomType = type;
             roomColor = Random.ColorHSV();
         }
 
@@ -47,7 +42,15 @@ namespace Johnny.SimDungeon
             cellElement.room = this;
             CalculateBounds();
         }
-
+        public void AddCells(IEnumerable<Element_Cell> cells)
+        {
+            foreach (var item in cells)
+            {
+                containedCells.Add(item);
+                item.room = this;
+                CalculateBounds();
+            }
+        }
         public void CalculateBounds()
         {
             if (containedCells == null || containedCells.Count == 0)
@@ -73,6 +76,7 @@ namespace Johnny.SimDungeon
         public void RemoveCell(Element_Cell cellData)
         {
             containedCells.Remove(cellData);
+            CalculateBounds();
         }
 
 #if UNITY_EDITOR
@@ -85,6 +89,8 @@ namespace Johnny.SimDungeon
             }
             GizmoUnitily.DrawLabel(center, name);
         }
+
+
 #endif
     }
 }

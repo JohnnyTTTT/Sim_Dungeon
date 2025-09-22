@@ -65,7 +65,7 @@ namespace Johnny.SimDungeon
 
         public void SetWallHide(float value)
         {
-            cornerMaterial.SetFloat(Entity_EdgeGroup.CullPlaneHeight, value);
+            cornerMaterial.SetFloat(Entity_Edge.CullPlaneHeight, value);
         }
 
         private void OnDrawGizmos()

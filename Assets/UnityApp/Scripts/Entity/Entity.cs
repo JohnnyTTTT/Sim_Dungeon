@@ -12,22 +12,23 @@ namespace Johnny.SimDungeon
         public bool drawGizmos;
         public GameObject telempte;
         public BuildableFreeObject currentObject;
-        protected FourDirectionalRotation Direction;
+        public Direction Direction;
+        public BuildableObjectSO currentSO;
 
         private void OnEnable()
         {
-            if (DungeonController.Instance.worldDataInited)
-            {
-                UpdateData();
-            }
+            //if (DungeonController.Instance.worldDataInited)
+            //{
+            //    UpdateData();
+            //}
         }
 
         protected virtual void Start()
         {
-            if (DungeonController.Instance.worldDataInited)
-            {
-                CreateOrUpdateModel();
-            }
+            //if (DungeonController.Instance.worldDataInited)
+            //{
+            //    CreateOrUpdateModel();
+            //}
         }
 
         private void OnDestroy()

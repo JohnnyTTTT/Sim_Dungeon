@@ -4,6 +4,7 @@ using Loxodon.Framework.Binding;
 using Sirenix.OdinInspector;
 using SoulGames.EasyGridBuilderPro;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -155,8 +156,9 @@ namespace Johnny.SimDungeon
             }
         }
         private bool m_IsLandExpand;
-  
 
+        private bool isEdgeBoxPlacementMode;
+        private List<Entity_Edge> newWalls = new List<Entity_Edge>();
         private void Start()
         {
             var staticBindingSet = this.CreateBindingSet();
@@ -167,45 +169,55 @@ namespace Johnny.SimDungeon
             {
                 spawnRulesDic[item.roomType] = item;
             }
-            GridManager.Instance.OnGridObjectBoxPlacementUpdated += OnGridObjectBoxPlacementUpdated;
+            GridManager.Instance.OnEdgeObjectBoxPlacementStarted -= OnEdgeObjectBoxPlacementStarted;
+            GridManager.Instance.OnGridObjectBoxPlacementUpdated -= OnGridObjectBoxPlacementUpdated;
+            GridManager.Instance.OnEdgeObjectBoxPlacementFinalized += OnEdgeObjectBoxPlacementFinalized;
             GridManager.Instance.OnBuildableObjectPlaced += OnBuildableObjectPlaced;
+           
+        }
+
+
+        private void OnEdgeObjectBoxPlacementStarted(EasyGridBuilderPro easyGridBuilderPro, Vector3 boxPlacementStartPosition, EdgeObjectPlacementType placementType)
+        {
+
         }
 
         private void OnGridObjectBoxPlacementUpdated(EasyGridBuilderPro easyGridBuilderPro, Vector3 boxPlacementEndPosition)
         {
-
+            
         }
+
+        private void OnEdgeObjectBoxPlacementFinalized(EasyGridBuilderPro easyGridBuilderPro)
+        {
+
+            //StartCoroutine(OnPostEdgeObjectBoxPlacementFinalized());
+        }
+
+        //private IEnumerator OnPostEdgeObjectBoxPlacementFinalized()
+        //{
+        //    yield return new WaitForEndOfFrame();
+        //    yield return new WaitForEndOfFrame();
+        //    var lastBuilded = newWalls[newWalls.Count - 1];
+        //    //DetectorUtility.HandleWallPlacedIncremental(lastBuilded);
+        //    newWalls.Clear();
+        //    //GridManager.Instance.TryGetBuildableEdgeObjectGhost
+        //}
 
         private void OnBuildableObjectPlaced(EasyGridBuilderPro easyGridBuilderPro, BuildableObject buildableObject)
         {
-            if (buildableObject.TryGetComponent<RoomSpawnProxy>(out var roomSpawnProxy))
+            //easyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement
+            if (DungeonController.Instance.worldDataInited)
             {
-
-                if (!ConfirmPanel.Instance.isActive)
-                {
-                    ConfirmPanel.Instance.isActive = true;
-                    ConfirmPanel.Instance.onConfirm += ConfirmRoomBuild;
-                    ConfirmPanel.Instance.onCancel += CancelRoomBuild;
-                }
-
-                m_CandidateRoomProxies.AddRoomProxy(roomSpawnProxy);
+              
+                    if (buildableObject is BuildableEdgeObject buildableEdgeObject)
+                    {
+                        var entity = buildableEdgeObject.GetComponent<Entity_Edge>();
+                    entity.UpdateData();
+                    entity.edgeElement.Data.EdgeType = FlowTilemapEdgeType.Wall;
+                    //newWalls.Add(entity);
+                    }
             }
-        }
-
-        private void ConfirmRoomBuild()
-        {
-            m_CandidateRoomProxies.Confirm();
-            m_CandidateRoomGhostProxies.Clear();
-            GridManager.Instance.OnGridObjectBoxPlacementUpdated -= OnGridObjectBoxPlacementUpdated;
-            GridManager.Instance.OnBuildableObjectPlaced -= OnBuildableObjectPlaced;
-        }
-
-        private void CancelRoomBuild()
-        {
-            m_CandidateRoomGhostProxies.Cancel();
-            m_CandidateRoomProxies.Cancel();
-            GridManager.Instance.OnGridObjectBoxPlacementUpdated -= OnGridObjectBoxPlacementUpdated;
-            GridManager.Instance.OnBuildableObjectPlaced -= OnBuildableObjectPlaced;
+            //Debug.Log("Rooms : " + ElementManager_Room.Instance.roomList.Count);
         }
 
         private void Update()

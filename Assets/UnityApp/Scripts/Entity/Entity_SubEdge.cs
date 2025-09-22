@@ -9,7 +9,7 @@ namespace Johnny.SimDungeon
     public class Entity_SubEdge : Entity
     {
         public static int DirectionHash = Shader.PropertyToID("_Direction");
-        public Entity_EdgeGroup parent;
+        public Entity_Edge parent;
         public Entity_SubEdge relativeEdge;
 
         private Transform preview;
@@ -40,7 +40,7 @@ namespace Johnny.SimDungeon
         protected override void SetParentCellElement_JustUseThisFunction(Element_Cell element)
         {
             //Old
-            var horizontal = Direction == FourDirectionalRotation.North || Direction == FourDirectionalRotation.South;
+            var horizontal = Direction == Direction.Up || Direction == Direction.Down;
 
             if (ParentElement != null)
             {

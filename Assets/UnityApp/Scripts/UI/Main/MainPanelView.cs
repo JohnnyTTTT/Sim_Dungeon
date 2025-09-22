@@ -13,6 +13,7 @@ namespace Johnny.SimDungeon
     public enum GameMode
     {
         None,
+        Loading,
         God,
         Default,
         Structure,

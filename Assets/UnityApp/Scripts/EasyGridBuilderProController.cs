@@ -45,8 +45,8 @@ namespace Johnny.SimDungeon
         private IEnumerator PostStart()
         {
             yield return new WaitForEndOfFrame();
-            m_EasyGridBuilderProSize2.gameObject.SetActive(false);
-            m_EasyGridBuilderProSize1.gameObject.SetActive(false);
+            //m_EasyGridBuilderProSize2.gameObject.SetActive(false);
+            //m_EasyGridBuilderProSize1.gameObject.SetActive(false);
         }
 
 
@@ -98,26 +98,38 @@ namespace Johnny.SimDungeon
                 , out spawnnedBuildableFreeObject, buildableObjectSORandomPrefab, originalBuildableFreeObject);
         }
 
-        public bool TryInitializeBuildableEdgeObjectSinglePlacement(Vector3 worldPosition, BuildableEdgeObjectSO buildableEdgeObjectSO, FourDirectionalRotation fourDirectionalDirection,
-            bool isBuildableEdgeObjectFlipped, bool ignoreCustomConditions, bool ignoreReplacement, int verticalGridIndex, bool byPassEventsAndMessages, out BuildableEdgeObject spawnnedBuildableEdgeObject,
-            BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null, BuildableEdgeObject originalBuildableEdgeObject = null)
+        public bool TryInitializeBuildableEdgeObjectSinglePlacement(Vector3 worldPosition, BuildableEdgeObjectSO buildableEdgeObjectSO, FourDirectionalRotation fourDirectionalDirection, out BuildableEdgeObject spawnnedBuildableEdgeObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab)
         {
+            //var index = BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.GetActiveVerticalGridIndex();
+            //Debug.Log(index);
+            if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement
+                (worldPosition, buildableEdgeObjectSO, fourDirectionalDirection, 
+                false, true, true, 0, true, out spawnnedBuildableEdgeObject, buildableObjectSORandomPrefab, null))
+            {
+                return true;
+            }
+            else
+            {
+                Debug.LogError($"Place Edge Error - <>");
+            }
 
-            return BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement(worldPosition, buildableEdgeObjectSO,
-                 FourDirectionalRotation.West, isBuildableEdgeObjectFlipped, ignoreCustomConditions, ignoreReplacement, verticalGridIndex, byPassEventsAndMessages, out spawnnedBuildableEdgeObject,
-               buildableObjectSORandomPrefab, originalBuildableEdgeObject);
+            return false;
         }
 
-        public bool TryInitializeBuildableGridObjectSinglePlacement(Vector3 worldPosition, BuildableGridObjectSO buildableGridObjectSO,
-            FourDirectionalRotation direction, bool ignoreBuildConditions, bool ignoreReplacement,
-            int activeVerticalGridIndex, bool byPassEventsAndMessages, out BuildableGridObject buildableGridObject,
-            BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null, BuildableGridObject originalBuildableGridObject = null)
+        public bool TryInitializeBuildableGridObjectSinglePlacement(Vector3 worldPosition, BuildableGridObjectSO buildableGridObjectSO, FourDirectionalRotation direction, out BuildableGridObject buildableGridObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null)
         {
 
-            return BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableGridObjectSinglePlacement(worldPosition, buildableGridObjectSO,
-                direction, ignoreBuildConditions, ignoreReplacement, activeVerticalGridIndex, byPassEventsAndMessages, out buildableGridObject,
-               buildableObjectSORandomPrefab, originalBuildableGridObject);
+            if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableGridObjectSinglePlacement(worldPosition, buildableGridObjectSO,
+                direction, true, true, 0, true, out buildableGridObject, buildableObjectSORandomPrefab, null))
+            {
+                return true;
+            }
+            else
+            {
+                Debug.LogError($"Place Grid Error - <>");
+            }
 
+            return false;
         }
 
 

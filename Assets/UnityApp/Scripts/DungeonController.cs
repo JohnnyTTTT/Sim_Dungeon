@@ -85,22 +85,27 @@ namespace Johnny.SimDungeon
             GridManager.Instance.OnActiveEasyGridBuilderProChanged += OnActiveEasyGridBuilderProChanged;
 
             Debug.Log("[-----System-----] : Dungeon Build Start");
-
+            BindingService.MainGameViewModel.GameMode = GameMode.Loading;
             DestroyDungeon();
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+
+            BindingService.MainGameViewModel.GridType = GridType.SizeTwo;
             yield return new WaitForEndOfFrame();
             BuildDungeon();
             yield return new WaitForEndOfFrame();
             worldDataInited = true;
             RandomUtility.SetSeed((int)DungeonController.Instance.dungeon.Config.Seed);
-            var entities = FindObjectsByType<Entity>(FindObjectsSortMode.InstanceID);
-            foreach (var item in entities)
-            {
-                item.UpdateData();
-            }
-            foreach (var item in entities)
-            {
-                item.CreateOrUpdateModel();
-            }
+            yield return new WaitForEndOfFrame();
+            BindingService.MainGameViewModel.GameMode = GameMode.Default;
+            //foreach (var item in entities)
+            //{
+            //    item.UpdateData();
+            //}
+            //foreach (var item in entities)
+            //{
+            //    item.CreateOrUpdateModel();
+            //}
 
             //SpawnManager.Instance.SpawnWorld();
         }
@@ -493,15 +498,16 @@ namespace Johnny.SimDungeon
 
         public void BuildDungeon()
         {
-            if (Application.isPlaying)
-            {
-                runtimeSimSceneObjectInstantiator = new RuntimeSimSceneObjectInstantiator();
-                dungeon.Build(runtimeSimSceneObjectInstantiator);
-            }
-            else
-            {
-                dungeon.Build(new EditorDungeonSceneObjectInstantiator());
-            }
+            runtimeSimSceneObjectInstantiator = new RuntimeSimSceneObjectInstantiator();
+            dungeon.Build(runtimeSimSceneObjectInstantiator);
+            //if (Application.isPlaying)
+            //{
+
+            //}
+            //else
+            //{
+            //    dungeon.Build(new EditorDungeonSceneObjectInstantiator());
+            //}
 
         }
 
@@ -552,8 +558,9 @@ namespace Johnny.SimDungeon
         public override void OnDungeonMarkersEmitted(Dungeon dungeon, DungeonModel model, LevelMarkerList markers)
         {
             var gridFlowDungeonModel = model as GridFlowDungeonModel;
+
+            ElementManager_Edge.Instance.Init(gridFlowDungeonModel.Tilemap.Edges);
             ElementManager_Cell.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
-            //ElementManager_Edge.Instance.Init(gridFlowDungeonModel.Tilemap.Edges);
             ElementManager_Room.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
             ElementManager_Tile.Instance.Init(EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize1);
             Debug.Log("[-----System-----] : OnDungeonMarkersEmitted");
@@ -563,7 +570,7 @@ namespace Johnny.SimDungeon
         {
             if (!Application.isPlaying)
             {
-                var entities = FindObjectsByType<Entity>(FindObjectsSortMode.InstanceID);
+                var entities = FindObjectsByType<Entity_Edge>(FindObjectsSortMode.InstanceID);
                 foreach (var item in entities)
                 {
                     item.UpdateData();
@@ -572,13 +579,17 @@ namespace Johnny.SimDungeon
 
             Debug.Log("[-----System-----] : OnPostDungeonBuild");
         }
-
+        public Transform root;
         public override void OnDungeonDestroyed(Dungeon dungeon)
         {
             ElementManager_Cell.Instance.UnInit();
             //ElementManager_Edge.Instance.UnInit();
             ElementManager_Room.Instance.UnInit();
             ElementManager_Tile.Instance.UnInit();
+            //for (int i = root.childCount - 1; i >= 0; i--)
+            //{
+            //    Destroy(root.GetChild(i));
+            //}
 
         }
 

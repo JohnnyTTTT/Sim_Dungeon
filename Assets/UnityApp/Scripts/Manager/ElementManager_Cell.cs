@@ -13,8 +13,18 @@ namespace Johnny.SimDungeon
     [System.Serializable]
     public class Element_Cell : ElementData<FlowTilemapCell>
     {
+        public Element_Edge leftEdge;
+        public Element_Edge upEdge;
+        public Element_Edge rightEdge;
+        public Element_Edge downEdge;
+        public Room room;
+
+
         public Entity_Ground ground;
         public Entity_Ceiling ceiling;
+
+
+
 
         public Element_Edge horizontalEdge;
         public Element_Edge verticalEdge;
@@ -25,11 +35,16 @@ namespace Johnny.SimDungeon
         public List<Element_Tile> tiles = new List<Element_Tile>();
         public Vector3 worldPosition;
 
-        public Room room;
+    
 
         public Element_Cell(FlowTilemapCell data) : base(data)
         {
             worldPosition = DungeonController.Instance.TileCoordToWorldPosition(data.TileCoord);
+            var coord = data.TileCoord;
+            leftEdge = ElementManager_Edge.Instance.GetLeftEdgeFromTileCoord(coord);
+            upEdge = ElementManager_Edge.Instance.GetUpEdgeFromTileCoord(coord);
+            rightEdge = ElementManager_Edge.Instance.GetRightEdgeFromTileCoord(coord);
+            downEdge = ElementManager_Edge.Instance.GetDownEdgeFromTileCoord(coord);
         }
 
         private FourDirectionalRotation GetEdgeDirection(Vector3 edge)
@@ -49,13 +64,21 @@ namespace Johnny.SimDungeon
         public void DrawGizmos()
         {
             GizmoUnitily.DrawTwoSizeCube(worldPosition, Color.green, true);
-            if (horizontalSubEdge != null)
+            if (leftEdge.wall != null)
             {
-                GizmoUnitily.DrawLine(worldPosition, horizontalSubEdge.transform.position + new Vector3(0f, 1.5f, 0f), Color.gold);
+                GizmoUnitily.DrawLine(worldPosition, leftEdge.wall.transform.GetChild(0).transform.position + new Vector3(0f, 1.5f, 0f), Color.gold);
             }
-            if (verticalSubEdge != null)
+            if (upEdge.wall != null)
             {
-                GizmoUnitily.DrawLine(worldPosition, verticalSubEdge.transform.position + new Vector3(0f, 1.5f, 0f), Color.gold);
+                GizmoUnitily.DrawLine(worldPosition, upEdge.wall.transform.GetChild(0).transform.position + new Vector3(0f, 1.5f, 0f), Color.red);
+            }
+            if (rightEdge.wall != null)
+            {
+                GizmoUnitily.DrawLine(worldPosition, rightEdge.wall.transform.GetChild(0).transform.position + new Vector3(0f, 1.5f, 0f), Color.yellowGreen);
+            }
+            if (downEdge.wall != null)
+            {
+                GizmoUnitily.DrawLine(worldPosition, downEdge.wall.transform.GetChild(0).transform.position + new Vector3(0f, 1.5f, 0f), Color.violetRed);
             }
             //var origin = worldPosition - new Vector3(2, -0.1f, 2);
             //foreach (var item in subCells)
@@ -136,27 +159,22 @@ namespace Johnny.SimDungeon
 
         }
         private static ElementManager_Cell s_Instance;
-
+        public int tilemapSize;
 
         public Vector2Int drawGizmosCoord;
 
         public bool drawAll;
+
         public void Init(FlowTilemapCellDatabase cells)
         {
             if (Inited) return;
 
+            tilemapSize = DungeonController.Instance.dungeonModel.Tilemap.Width;
             map.Clear();
 
             foreach (var cell in cells)
             {
                 var data = new Element_Cell(cell);
-
-                var verticalEdge = DungeonController.Instance.GetLeftEdgeFromTileCoord(data.Data.TileCoord);
-                data.verticalEdge = new Element_Edge(verticalEdge);
-
-                var horizontalEdge = DungeonController.Instance.GetDownEdgeFromTileCoord(data.Data.TileCoord);
-                data.horizontalEdge = new Element_Edge(horizontalEdge);
-
                 map[cell.TileCoord] = data;
             }
             Inited = true;
@@ -168,6 +186,7 @@ namespace Johnny.SimDungeon
             map.Clear();
             Inited = false;
         }
+
 
         private void OnDrawGizmos()
         {

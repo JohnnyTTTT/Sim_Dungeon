@@ -4,20 +4,29 @@ using DungeonArchitect;
 using System;
 using System.Collections.Generic;
 using SoulGames.EasyGridBuilderPro;
+using System.Linq;
 
 namespace Johnny.SimDungeon
 {
     public class Element_Edge : ElementData<FlowTilemapEdge>
     {
-        public Entity_EdgeGroup wall;
+
+        public Element_Cell primaryCell;
+        public Element_Cell secondaryCell;
+        public Entity_Edge wall;
+        public List<Element_Edge> Neighbors;
+
+
+
         public Entity_Door door;
 
         public List<Entity_Corner> corners = new List<Entity_Corner>();
 
         public Element_Edge(FlowTilemapEdge data) : base(data)
         {
-
+         
         }
+
 
 
         public void DrawGizmos()
@@ -33,7 +42,7 @@ namespace Johnny.SimDungeon
             if (wall != null)
             {
                 GizmoUnitily.DrawLine(DungeonController.Instance.TileCoordToWorldPosition(Data.EdgeCoord),
-                    wall.transform.position + new Vector3(0f, 2f, 0f), Color.yellow);
+                    wall.transform.GetChild(0).position + new Vector3(0f, 2f, 0f), Color.yellow);
             }
 
         }

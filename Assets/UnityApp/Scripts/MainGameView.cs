@@ -95,7 +95,6 @@ namespace Johnny.SimDungeon
                             BindingService.MainGameViewModel.ActiveEasyGridBuilderPro = size2;
                             break;
                     }
-                    Debug.Log(BindingService.MainGameViewModel.ActiveEasyGridBuilderPro);
                 }
             }
         }

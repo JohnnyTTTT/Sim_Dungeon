@@ -11,7 +11,7 @@ namespace Johnny.SimDungeon
 
             Element_Edge edgeElement;
             Direction = DirectionUtility.GetDirectionForWorld(transform.rotation);
-            if (Direction == FourDirectionalRotation.North || Direction == FourDirectionalRotation.South)
+            if (Direction == Direction.Up || Direction == Direction.Down)
             {
                 edgeElement = parentElement.horizontalEdge;
             }
