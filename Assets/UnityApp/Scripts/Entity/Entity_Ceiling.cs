@@ -20,11 +20,11 @@ namespace Johnny.SimDungeon
 
         public override void CreateOrUpdateModel()
         {
-            var ceilingTemplete = SpawnManager.Instance.defaultCeiling;
-            if (ceilingTemplete != null)
-            {
-                TryAddOrUpdateModel(ceilingTemplete);
-            }
+            //var ceilingTemplete = SpawnManager.Instance.defaultCeiling;
+            //if (ceilingTemplete != null)
+            //{
+            //    //TryAddOrUpdateModel(ceilingTemplete);
+            //}
         }
     }
 }

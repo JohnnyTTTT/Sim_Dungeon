@@ -21,53 +21,44 @@ namespace Johnny.SimDungeon
                 {
                     var buildableObjectSO = entity.buildableObjectSO;
                     entity.Direction = DirectionUtility.GetDirectionForWorld(rotation);
-                    var fourDirectionalRotation = DirectionUtility.ToFourDirectionalRotation(entity.Direction);
-                    if (buildableObjectSO is BuildableEdgeObjectSO)
+                    if (entity is Entity_Edge)
                     {
-                        switch (entity.Direction)
+                        var so = buildableObjectSO as BuildableEdgeObjectSO;
+                        if (so == null)
                         {
-                            case Direction.Up:
-                                position += new Vector3(-1f, 0f, 0f);
-                                break;
-                            case Direction.Right:
-                                position += new Vector3(0f, 0f, 1f);
-                                break;
-                            case Direction.Down:
-                                position += new Vector3(1f, 0f, 0f);
-                                break;
-                            case Direction.Left:
-                                position += new Vector3(0f, 0f, -1f);
-                                break;
-                            default:
-                                break;
+                            so = SpawnManager.Instance.defaultWall;
                         }
-                        var so = entity.buildableObjectSO as BuildableEdgeObjectSO;
-                        var coord = DungeonController.Instance.WorldPositionToTileCoord(position);
-                        var randomPrefab = RandomUtility.UpdateBuildableObjectSORandomPrefab(coord, so);
-
-                        if (EasyGridBuilderProController.Instance.TryInitializeBuildableEdgeObjectSinglePlacement(position, so, fourDirectionalRotation, out var buildable, randomPrefab))
+                        if (SpawnManager.Instance.TryInitializeBuildableEdgeObjectSinglePlacement(position, rotation, so, out var buildable))
+                        {
+                            reslut = buildable.gameObject;
+                        }
+                    }
+                    else if (entity is Entity_Ground)
+                    {
+                        var so = buildableObjectSO as BuildableGridObjectSO;
+                        if (so == null)
+                        {
+                            so = SpawnManager.Instance.defaultGround;
+                        }
+                        var coord = CoordUtility.WorldPositionToTileCoord(position);
+                        rotation = RandomUtility.GetRandomRotation(coord);
+                        if (SpawnManager.Instance.TryInitializeBuildableGridObjectSinglePlacement(position, rotation, so, out var buildable))
                         {
 
                             reslut = buildable.gameObject;
                         }
                     }
-                    else if (buildableObjectSO is BuildableGridObjectSO)
+                    else if (entity is Entity_Corner)
                     {
-                        var so = entity.buildableObjectSO as BuildableGridObjectSO;
-                        var coord = DungeonController.Instance.WorldPositionToTileCoord(position);
-                        var randomPrefab = RandomUtility.UpdateBuildableObjectSORandomPrefab(coord, so);
-                        if (EasyGridBuilderProController.Instance.TryInitializeBuildableGridObjectSinglePlacement(position, so, fourDirectionalRotation, out var buildable, randomPrefab))
+                        var so = buildableObjectSO as BuildableCornerObjectSO;
+                        if (so == null)
                         {
-
-                            reslut = buildable.gameObject;
+                            so = SpawnManager.Instance.defaultCorner;
                         }
-                    }
-                    else if (buildableObjectSO is BuildableCornerObjectSO)
-                    {
-                        var so = entity.buildableObjectSO as BuildableCornerObjectSO;
-                        var coord = DungeonController.Instance.WorldPositionToTileCoord(position);
+                        var coord = CoordUtility.WorldPositionToTileCoord(position);
                         var randomPrefab = RandomUtility.UpdateBuildableObjectSORandomPrefab(coord, so);
-                        if (EasyGridBuilderProController.Instance.TryInitializeBuildableCornerObjectSinglePlacement(position, so, fourDirectionalRotation, out var buildable, randomPrefab))
+                        var fourDirectionalRotation = so.fourDirectionalRotation;
+                        if (SpawnManager.Instance.TryInitializeBuildableCornerObjectSinglePlacement(position, so, fourDirectionalRotation, out var buildable, randomPrefab))
                         {
                             reslut = buildable.gameObject;
                         }

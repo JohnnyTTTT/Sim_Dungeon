@@ -49,20 +49,45 @@ namespace Johnny.SimDungeon
             return rng.Next(max + 1);
         }
 
-        public static Quaternion GetRandomDirection(IntVector2 coord)
+        public static Direction GetRandomDirection(IntVector2 coord)
         {
-            var dirIndex = GetRandomInt(coord, 4);
+            int index = GetRandomInt(coord, 4);
 
-            Vector3 dir = Vector3.forward;
-            switch (dirIndex)
+            switch (index)
             {
-                case 0: dir = DirectionUtility.dirUp; break;
-                case 1: dir = DirectionUtility.dirDown; break;
-                case 2: dir = DirectionUtility.dirRight; break;
-                case 3: dir = DirectionUtility.dirLeft; break;
+                case 0: return Direction.Up;
+                case 1: return Direction.Down;
+                case 2: return Direction.Right;
+                case 3: return Direction.Left;
+            }
+            return Direction.Up;
+        }
+
+        public static FourDirectionalRotation GetRandomFourDirectionalRotation(IntVector2 coord)
+        {
+            var values = System.Enum.GetValues(typeof(FourDirectionalRotation));
+            var index = GetRandomInt(coord, values.Length);
+            return (FourDirectionalRotation)values.GetValue(index);
+        }
+
+        public static Quaternion GetRandomRotation(IntVector2 coord)
+        {
+            // 用坐标作为随机种子，确保同一个格子每次结果一致
+            var seed = coord.x * 73856093 ^ coord.y * 19349663;
+            var random = new System.Random(seed);
+
+            // 四个方向：0=北，1=东，2=南，3=西
+            var index = random.Next(0, 4);
+
+            switch (index)
+            {
+                case 0: return Quaternion.LookRotation(Vector3.forward);   // 北
+                case 1: return Quaternion.LookRotation(Vector3.right);     // 东
+                case 2: return Quaternion.LookRotation(Vector3.back);      // 南
+                case 3: return Quaternion.LookRotation(Vector3.left);      // 西
             }
 
-            return Quaternion.LookRotation(dir, Vector3.up);
+            return Quaternion.identity;
         }
 
         private static int HashCombine(int h1, int h2)
@@ -91,12 +116,7 @@ namespace Johnny.SimDungeon
             return null;
         }
 
-        public static FourDirectionalRotation GetRandomFourDirectionalRotation(IntVector2 coord)
-        {
-            var values = System.Enum.GetValues(typeof(FourDirectionalRotation));
-            var index = GetRandomInt(coord,values.Length);
-            return (FourDirectionalRotation)values.GetValue(index);
-        }
+
 
         public static T GetRandomElement<T>(IntVector2 coord, T[] array)
         {
@@ -105,7 +125,7 @@ namespace Johnny.SimDungeon
                 throw new System.Exception("数组为空，无法随机取值");
             }
 
-            var index = GetRandomInt(coord, array.Length-1);
+            var index = GetRandomInt(coord, array.Length - 1);
             return array[index];
         }
 

@@ -16,8 +16,7 @@ namespace Johnny.SimDungeon
             var visited = new HashSet<Element_Cell>();
             var queue = new Queue<Element_Cell>();
 
-            var size = ElementManager_Cell.Instance.tilemapSize;
-            var mapSize = new IntVector2(size, size);
+            var mapSize = DungeonController.Instance.tilemapSize;
 
 
             queue.Enqueue(start);

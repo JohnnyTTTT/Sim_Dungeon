@@ -248,7 +248,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.Entity_Corner
   drawGizmos: 0
   Direction: 0
-  buildableObjectSO: {fileID: 11400000, guid: 33ad207251c5340408412217abb70859, type: 2}
+  buildableObjectSO: {fileID: 0}
 --- !u!114 &-5613622768780511369
 MonoBehaviour:
   m_ObjectHideFlags: 0

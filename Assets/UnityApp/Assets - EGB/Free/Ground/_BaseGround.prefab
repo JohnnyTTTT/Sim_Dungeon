@@ -180,4 +180,46 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.Element_Ground
   drawGizmos: 0
-  telempte: {fileID: 5159193640635780001}
+  Direction: 0
+  buildableObjectSO: {fileID: 0}
+  cellElement:
+    GUID: 0
+    Data:
+      CellType: 0
+      CustomCellInfo:
+        name: 
+        defaultColor: {r: 1, g: 1, b: 1, a: 1}
+      Item:
+        A: 0
+        B: 0
+        C: 0
+        D: 0
+      Tags: []
+      Overlay:
+        markerName: 
+        color: {r: 0, g: 0, b: 0, a: 0}
+        tileBlockingOverlay: 1
+        mergeConfig:
+          minHeight: 0
+          maxHeight: 0
+          wallOverlayRule: 0
+          markerHeightOffsetForLayoutTiles: 0
+          markerHeightOffsetForNonLayoutTiles: 0
+          removeElevationMarker: 0
+      NodeCoord:
+        x: 0
+        y: 0
+      TileCoord:
+        x: 0
+        y: 0
+      UseCustomColor: 0
+      CustomColor: {r: 1, g: 1, b: 1, a: 1}
+      MainPath: 0
+      LayoutCell: 0
+      DistanceFromMainPath: 2147483647
+      Height: 0
+    ground: {fileID: 0}
+    ceiling: {fileID: 0}
+    horizontalSubEdge: {fileID: 0}
+    verticalSubEdge: {fileID: 0}
+    worldPosition: {x: 0, y: 0, z: 0}

@@ -19,76 +19,6 @@ namespace Johnny.SimDungeon
         public BiomeSO Biome;
     }
 
-    public class CandidateRoomProxies
-    {
-        public List<RoomSpawnProxy> candidateRoomProxies = new List<RoomSpawnProxy>();
-        public List<IntVector2> candidateCoords = new List<IntVector2>();
-
-        public void AddRoomProxy(RoomSpawnProxy roomSpawnProxy)
-        {
-            candidateRoomProxies.Add(roomSpawnProxy);
-            CalculateCandidateRoomEdges();
-        }
-
-        public void RemoveRoomProxy(RoomSpawnProxy roomSpawnProxy)
-        {
-            candidateRoomProxies.Remove(roomSpawnProxy);
-            CalculateCandidateRoomEdges();
-        }
-
-        public void CalculateCandidateRoomEdges()
-        {
-            candidateCoords = candidateRoomProxies
-                .Select(x => DungeonController.Instance.WorldPositionToTileCoord(x.transform.position))
-                .ToList();
-            foreach (var item in candidateRoomProxies)
-            {
-                item.CalculateEdges(candidateCoords);
-            }
-        }
-
-        public void Confirm()
-        {
-            var cells = candidateRoomProxies
-                .Select(x => ElementManager_Cell.Instance.GetElement(x.transform.position))
-                .ToList();
-
-            var room = ElementManager_Room.Instance.CreateSingleCellRoom(cells[0], candidateRoomProxies[0].roomType);
-
-            foreach (var item in cells)
-            {
-                room.AddCell(item);
-            }
-
-            SpawnManager.Instance.CreateWallForCells(cells, room);
-
-            foreach (var item in candidateRoomProxies)
-            {
-                var buildable = item.GetComponent<BuildableGridObject>();
-                EasyGridBuilderProController.Instance.TryDestroyBuildableGridObject(buildable);
-            }
-
-            Clear();
-        }
-
-        public void Cancel()
-        {
-            foreach (var item in candidateRoomProxies)
-            {
-                var buildable = item.GetComponent<BuildableGridObject>();
-                EasyGridBuilderProController.Instance.TryDestroyBuildableGridObject(buildable);
-            }
-            Clear();
-        }
-
-        public void Clear()
-        {
-            candidateRoomProxies.Clear();
-            candidateCoords.Clear();
-        }
-    }
-
-
     public class SpawnManager : MonoBehaviour
     {
         public static SpawnManager Instance
@@ -105,13 +35,15 @@ namespace Johnny.SimDungeon
         }
         private static SpawnManager s_Instance;
 
-        public LayerMask m_GroundMask;
+        [Title("Easy GridBuilder Pro Settings")]
+        public EasyGridBuilderProXZ m_EasyGridBuilderProSize1;
+        public EasyGridBuilderProXZ m_EasyGridBuilderProSize2;
 
-        [Title("Default BuildableGridObjectSOs")]
-        public BuildableGridObjectSO defaultArea;
-        public BuildableFreeObjectSO defaultGround;
-        public BuildableFreeObjectSO defaultWall;
-        public BuildableFreeObjectSO defaultCeiling;
+        [Title("Default BuildableGridObjectSO")]
+        public BuildableGridObjectSO defaultAreaExpand;
+        public BuildableGridObjectSO defaultGround;
+        public BuildableEdgeObjectSO defaultWall;
+        public BuildableCornerObjectSO defaultCorner;
 
         [Title("Default BaseModels")]
         public GameObject groundBase;
@@ -121,97 +53,130 @@ namespace Johnny.SimDungeon
         [Title("spawnRules")]
         public SpawnRulee[] spawnRules;
 
-        public bool IsLandExpand
-        {
-            get
-            {
-                return m_IsLandExpand;
-            }
-            set
-            {
-                if (m_IsLandExpand != value)
-                {
-                    m_IsLandExpand = value;
-                    var grid = EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize2;
-                    var position = grid.transform.position;
-                    if (m_IsLandExpand)
-                    {
-                        grid.transform.position = new Vector3(position.x, 4.05f, position.y);
-                        grid.SetDisplayObjectGrid(true);
-                        //BindingService.MainGameViewModel.InputActiveBuildableObjectSO = defaultArea;
-                    }
-                    else
-                    {
-                        grid.transform.position = new Vector3(position.x, 0.05f, position.y);
-                        grid.SetDisplayObjectGrid(false);
-                    }
-                    Debug.Log(grid.GetIsDisplayObjectGrid());
-                }
-            }
-        }
-        private bool m_IsLandExpand;
-
-
         private GridManager m_GridManager;
+
+        private List<BuildableGridObject> m_CandidateAreaExpandProxies = new List<BuildableGridObject>();
 
         private void Start()
         {
             var staticBindingSet = this.CreateBindingSet();
-            //staticBindingSet.Bind(this).For(v => v.IsLandExpand).ToExpression(() => BindingService.MainGameViewModel.StructureMode == StructureMode.LandExpand).OneWay();
+
             staticBindingSet.Build();
             m_GridManager = GridManager.Instance;
-           
+            m_GridManager.OnBuildableObjectPlaced += OnBuildableObjectPlaced;
+            m_GridManager.OnGridObjectBoxPlacementFinalized += OnGridObjectBoxPlacementFinalized;
         }
 
-
-        private void OnBuildableObjectPlaced(EasyGridBuilderPro easyGridBuilderPro, BuildableObject buildableObject)
+        private void OnGridObjectBoxPlacementFinalized(EasyGridBuilderPro easyGridBuilderPro)
         {
-            //easyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement
-            if (DungeonController.Instance.worldDataInited)
+            StartCoroutine(AreaExpand());
+        }
+
+        private IEnumerator AreaExpand()
+        {
+            BindingService.MainGameViewModel.IsLandExpandMode = false;
+
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+
+            var cellList = new List<Element_Cell>();
+            foreach (var item in m_CandidateAreaExpandProxies)
             {
-              
-                    if (buildableObject is BuildableEdgeObject buildableEdgeObject)
-                    {
-                        var entity = buildableEdgeObject.GetComponent<Entity_Edge>();
-                    entity.UpdateData();
-                    entity.edgeElement.Data.EdgeType = FlowTilemapEdgeType.Wall;
-                    //newWalls.Add(entity);
-                    }
+                var cell = ElementManager_Cell.Instance.GetElement(item.transform.position);
+                cellList.Add(cell);
             }
-            //Debug.Log("Rooms : " + ElementManager_Room.Instance.roomList.Count);
+
+            foreach (var cell in cellList)
+            {
+                cell.Data.CellType = FlowTilemapCellType.Floor;
+                CreateGroundForCellElement(cell);
+            }
+
+            var candidateEdges = new List<Element_Edge>();
+            foreach (var cell in cellList)
+            {
+                var leftCell = cell.leftCell;
+                var leftEdge = cell.leftEdge;
+                if (!cellList.Contains(leftCell) && leftEdge.wall == null && (leftCell.Data.CellType == FlowTilemapCellType.Custom || leftCell.room == null))
+                {
+                    leftEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
+                    candidateEdges.Add(leftEdge);
+                }
+
+                var upCell = cell.upCell;
+                var upEdge = cell.upEdge;
+                if (!cellList.Contains(upCell) && upEdge.wall == null && (upCell.Data.CellType == FlowTilemapCellType.Custom || upCell.room == null))
+                {
+
+                    upEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
+                    candidateEdges.Add(upEdge);
+                }
+
+                var rightCell = cell.rightCell;
+                var rightEdge = cell.rightEdge;
+                if (!cellList.Contains(rightCell) && rightEdge.wall == null && (rightCell.Data.CellType == FlowTilemapCellType.Custom || rightCell.room == null))
+                {
+                    rightEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
+                    candidateEdges.Add(rightEdge);
+                }
+
+                var downCell = cell.downCell;
+                var downEdge = cell.downEdge;
+                if (!cellList.Contains(downCell) && downEdge.wall == null && (downCell.Data.CellType == FlowTilemapCellType.Custom || downCell.room == null))
+                {
+                    downEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
+                    candidateEdges.Add(downEdge);
+                }
+            }
+
+            foreach (var item in candidateEdges)
+            {
+                CreateWallForEdgeElement(item);
+            }
+
+
+            for (int i = m_CandidateAreaExpandProxies.Count - 1; i >= 0; i--)
+            {
+                TryDestroyBuildableGridObject(m_CandidateAreaExpandProxies[i]);
+            }
+
+            m_CandidateAreaExpandProxies.Clear();
+
+            InvalidAreaManager.Instance.UpdateMesh();
         }
 
-        private void Update()
+        private void CreateGroundForCellElement(Element_Cell cell)
         {
-
+            var postion = CoordUtility.TileCoordToWorldPosition(cell.Data.TileCoord);
+            var rotation = RandomUtility.GetRandomRotation(cell.Data.TileCoord);
+            if (TryInitializeBuildableGridObjectSinglePlacement(postion, rotation, defaultGround, out var obj))
+            {
+                var entity = obj.GetComponent<Entity_Ground>();
+                entity.UpdateData();
+            }
         }
 
+        private void CreateWallForEdgeElement(Element_Edge edge)
+        {
+            var postion = CoordUtility.TileCoordToWorldPosition(edge.Data.EdgeCoord);
+            Quaternion rotation;
+            if (edge.Data.HorizontalEdge)
+            {
+                postion += new Vector3(0f, 0f, -1f);
+                rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+            }
+            else
+            {
+                postion += new Vector3(-1f, 0f, 0f);
+                rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
+            }
 
-        //private void OnGridObjectBoxPlacementFinalized(EasyGridBuilderPro easyGridBuilderPro)
-        //{
-        //    if (m_CandidateRoomProxies.Count > 0)
-        //    {
-        //        var room = ElementManager_Room.Instance.CreateRoom(m_CandidateRoomProxies[0].roomType);
-
-        //        var roomCells = new List<Element_Cell>();
-        //        if (GridManager.Instance.TryGetBuildableGridObjectGhost(out var buildableGridObjectGhost)
-        //            && buildableGridObjectGhost.TryGetGhostObjectVisualDictionary(out var ghostObjects))
-        //        {
-        //            foreach (var buildableObject in ghostObjects)
-        //            {
-        //                var coord = Vector2IntToIntVector2(buildableObject.Key);
-        //                var cellData = ElementManager_Cell.Instance.GetElement(coord);
-        //                var oldParent = map[coord];
-        //                oldParent.RemoveCell(cellData);
-        //                room.AddCell(cellData);
-        //                map[coord] = room;
-        //                roomCells.Add(cellData);
-        //            }
-        //            m_CandidateRoomProxies = RoomType.Undefined;
-        //            StartCoroutine(AddEdgeForCells(roomCells, room));
-        //        }
-        //    }
-        //}
+            if (TryInitializeBuildableEdgeObjectSinglePlacement(postion, rotation, defaultWall, out var obj))
+            {
+                var entity = obj.GetComponent<Entity_Edge>();
+                entity.UpdateData();
+            }
+        }
 
         public void CreateWallForCells(List<Element_Cell> cells, Room newRoom)
         {
@@ -270,6 +235,169 @@ namespace Johnny.SimDungeon
                 }
             }
         }
+
+        private void OnBuildableObjectPlaced(EasyGridBuilderPro easyGridBuilderPro, BuildableObject buildableObject)
+        {
+            //easyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement
+            if (DungeonController.Instance.worldDataInited)
+            {
+                if (buildableObject is BuildableGridObject buildableGridObject)
+                {
+                    if (buildableObject.TryGetComponent<AreaExpandProxy>(out var areaExpandProxy))
+                    {
+                        m_CandidateAreaExpandProxies.Add(buildableGridObject);
+                    }
+                }
+
+                //if (buildableObject is BuildableEdgeObject buildableEdgeObject)
+                //{
+                //    var entity = buildableEdgeObject.GetComponent<Entity_Edge>();
+                //    entity.UpdateData();
+                //    entity.edgeElement.Data.EdgeType = FlowTilemapEdgeType.Wall;
+                //    //newWalls.Add(entity);
+                //}
+            }
+            //Debug.Log("Rooms : " + ElementManager_Room.Instance.roomList.Count);
+        }
+
+        private void Update()
+        {
+
+        }
+
+
+        public bool TryInitializeBuildableEdgeObjectSinglePlacement(Vector3 worldPosition, Quaternion rotation, BuildableEdgeObjectSO buildableEdgeObjectSO, out BuildableEdgeObject spawnnedBuildableEdgeObject, BuildableObjectSO.RandomPrefabs radomPrefabs = null)
+        {
+            BindingService.MainGameViewModel.GameMode = GameMode.Structure;
+            var fourDirectional = DirectionUtility.GetFourDirectionalRotationForWorld(rotation);
+            switch (fourDirectional)
+            {
+                case FourDirectionalRotation.East:
+                    worldPosition += new Vector3(-1f, 0f, 0f);
+                    break;
+                case FourDirectionalRotation.South:
+                    worldPosition += new Vector3(0f, 0f, 1f);
+                    break;
+                case FourDirectionalRotation.West:
+                    worldPosition += new Vector3(1f, 0f, 0f);
+                    break;
+                case FourDirectionalRotation.North:
+                    worldPosition += new Vector3(0f, 0f, -1f);
+                    break;
+            }
+
+            if (radomPrefabs == null)
+            {
+                var coord = CoordUtility.WorldPositionToTileCoord(worldPosition);
+                radomPrefabs = RandomUtility.UpdateBuildableObjectSORandomPrefab(coord, buildableEdgeObjectSO);
+            }
+
+            if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement(worldPosition, buildableEdgeObjectSO, fourDirectional, false, true, true, 0, true, out spawnnedBuildableEdgeObject, radomPrefabs, null))
+            {
+                return true;
+            }
+            else
+            {
+                Debug.LogError($"Try Initialize Edge Error - ObjectOS : <{buildableEdgeObjectSO.objectName}> , Position <{worldPosition}>");
+            }
+
+            return false;
+        }
+
+        public bool TryInitializeBuildableGridObjectSinglePlacement(Vector3 worldPosition, Quaternion rotation, BuildableGridObjectSO buildableGridObjectSO, out BuildableGridObject buildableGridObject, BuildableObjectSO.RandomPrefabs radomPrefabs = null)
+        {
+            BindingService.MainGameViewModel.GameMode = GameMode.Structure;
+            var fourDirectional = DirectionUtility.GetFourDirectionalRotationForWorld(rotation);
+            if (radomPrefabs == null)
+            {
+                var coord = CoordUtility.WorldPositionToTileCoord(worldPosition);
+                radomPrefabs = RandomUtility.UpdateBuildableObjectSORandomPrefab(coord, buildableGridObjectSO);
+            }
+            if (m_EasyGridBuilderProSize2.TryInitializeBuildableGridObjectSinglePlacement(worldPosition, buildableGridObjectSO,
+                fourDirectional, true, true, 0, true, out buildableGridObject, radomPrefabs, null))
+            {
+                return true;
+            }
+            else
+            {
+                Debug.LogError($"Place Grid Error - <>");
+            }
+
+            return false;
+        }
+
+        public bool TryInitializeBuildableCornerObjectSinglePlacement(Vector3 worldPosition, BuildableCornerObjectSO buildableCornerObjectSO, FourDirectionalRotation direction, out BuildableCornerObject buildableCornerObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null)
+        {
+            if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableCornerObjectSinglePlacement(worldPosition, buildableCornerObjectSO,
+                direction, EightDirectionalRotation.North, 0f, true, true, 0, true, out buildableCornerObject, buildableObjectSORandomPrefab, null))
+            {
+                return true;
+            }
+            else
+            {
+                Debug.LogError($"Place Corner Error - <>");
+            }
+
+            return false;
+        }
+
+        public bool TryDestroyBuildableGridObject(BuildableGridObject buildable)
+        {
+            if (GridManager.Instance.TryGetBuildableObjectDestroyer(out var destroyer))
+            {
+                if (destroyer.TryDestroyBuildableGridObject(buildable, true))
+                {
+                    return true;
+                }
+                else
+                {
+                    Debug.LogError($"TryDestroyGridObject faild : {buildable}");
+                }
+            }
+            return false;
+        }
+
+        public bool TryDestroyBuildableFreeObject(BuildableFreeObject buildable)
+        {
+            if (GridManager.Instance.TryGetBuildableObjectDestroyer(out var destroyer))
+            {
+                if (destroyer.TryDestroyBuildableFreeObject(buildable, true))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+
+        //private void OnGridObjectBoxPlacementFinalized(EasyGridBuilderPro easyGridBuilderPro)
+        //{
+        //    if (m_CandidateRoomProxies.Count > 0)
+        //    {
+        //        var room = ElementManager_Room.Instance.CreateRoom(m_CandidateRoomProxies[0].roomType);
+
+        //        var roomCells = new List<Element_Cell>();
+        //        if (GridManager.Instance.TryGetBuildableGridObjectGhost(out var buildableGridObjectGhost)
+        //            && buildableGridObjectGhost.TryGetGhostObjectVisualDictionary(out var ghostObjects))
+        //        {
+        //            foreach (var buildableObject in ghostObjects)
+        //            {
+        //                var coord = Vector2IntToIntVector2(buildableObject.Key);
+        //                var cellData = ElementManager_Cell.Instance.GetElement(coord);
+        //                var oldParent = map[coord];
+        //                oldParent.RemoveCell(cellData);
+        //                room.AddCell(cellData);
+        //                map[coord] = room;
+        //                roomCells.Add(cellData);
+        //            }
+        //            m_CandidateRoomProxies = RoomType.Undefined;
+        //            StartCoroutine(AddEdgeForCells(roomCells, room));
+        //        }
+        //    }
+        //}
+
+
 
 
 

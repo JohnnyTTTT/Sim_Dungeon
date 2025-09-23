@@ -9,8 +9,8 @@ namespace Johnny.SimDungeon
         public Element_Cell cellElement;
         public override void UpdateData()
         {
+            base.UpdateData();
             cellElement = ElementManager_Cell.Instance.GetElement(transform.position);
-            transform.rotation = RandomUtility.GetRandomDirection(cellElement.Data.TileCoord);
             cellElement.ground = this;
         }
 

@@ -41,7 +41,7 @@ namespace Johnny.SimDungeon
             }
             if (wall != null)
             {
-                GizmoUnitily.DrawLine(DungeonController.Instance.TileCoordToWorldPosition(Data.EdgeCoord),
+                GizmoUnitily.DrawLine(CoordUtility.TileCoordToWorldPosition(Data.EdgeCoord),
                     wall.transform.GetChild(0).position + new Vector3(0f, 2f, 0f), Color.yellow);
             }
 

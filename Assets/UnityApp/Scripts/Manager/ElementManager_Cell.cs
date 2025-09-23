@@ -17,6 +17,13 @@ namespace Johnny.SimDungeon
         public Element_Edge upEdge;
         public Element_Edge rightEdge;
         public Element_Edge downEdge;
+
+        public Element_Cell leftCell;
+        public Element_Cell upCell;
+        public Element_Cell rightCell;
+        public Element_Cell downCell;
+
+
         public Room room;
 
 
@@ -34,17 +41,14 @@ namespace Johnny.SimDungeon
 
         public List<Element_Tile> tiles = new List<Element_Tile>();
         public Vector3 worldPosition;
+        public Vector2Int coord;
 
-    
 
         public Element_Cell(FlowTilemapCell data) : base(data)
         {
-            worldPosition = DungeonController.Instance.TileCoordToWorldPosition(data.TileCoord);
-            var coord = data.TileCoord;
-            leftEdge = ElementManager_Edge.Instance.GetLeftEdgeFromTileCoord(coord);
-            upEdge = ElementManager_Edge.Instance.GetUpEdgeFromTileCoord(coord);
-            rightEdge = ElementManager_Edge.Instance.GetRightEdgeFromTileCoord(coord);
-            downEdge = ElementManager_Edge.Instance.GetDownEdgeFromTileCoord(coord);
+            worldPosition = CoordUtility.TileCoordToWorldPosition(data.TileCoord);
+            coord = new Vector2Int(data.TileCoord.x, data.TileCoord.y);
+
         }
 
         private FourDirectionalRotation GetEdgeDirection(Vector3 edge)
@@ -103,7 +107,7 @@ namespace Johnny.SimDungeon
             //    var position = new Vector3(item.position.x + 0.5f, 0f, item.position.y + 0.5f);
             //    GizmoUnitily.DrawOneSizeCube(position, item.GizmoColor, true);
             //}
-            GizmoUnitily.DrawLabel(Data.TileCoord, new Vector2Int(Data.TileCoord.x, Data.TileCoord.y).ToString()+" "+Data.CellType);
+            GizmoUnitily.DrawLabel(Data.TileCoord, new Vector2Int(Data.TileCoord.x, Data.TileCoord.y).ToString() + " " + Data.CellType);
         }
         //public override void Init(FlowTilemapCell flowTilemapCell)
         //{
@@ -159,7 +163,7 @@ namespace Johnny.SimDungeon
 
         }
         private static ElementManager_Cell s_Instance;
-        public int tilemapSize;
+
 
         public Vector2Int drawGizmosCoord;
 
@@ -168,23 +172,66 @@ namespace Johnny.SimDungeon
         public void Init(FlowTilemapCellDatabase cells)
         {
             if (Inited) return;
-
-            tilemapSize = DungeonController.Instance.dungeonModel.Tilemap.Width;
             map.Clear();
 
+            var edgeManager = ElementManager_Edge.Instance;
             foreach (var cell in cells)
             {
-                var data = new Element_Cell(cell);
-                map[cell.TileCoord] = data;
+                var element = new Element_Cell(cell);
+
+                var coord = cell.TileCoord;
+                element.leftEdge = edgeManager.GetLeftEdgeFromTileCoord(coord);
+                element.upEdge = edgeManager.GetUpEdgeFromTileCoord(coord);
+                element.rightEdge = edgeManager.GetRightEdgeFromTileCoord(coord);
+                element.downEdge = edgeManager.GetDownEdgeFromTileCoord(coord);
+
+                map[cell.TileCoord] = element;
             }
+
+            foreach (var element in map.Values)
+            {
+                var coord = element.Data.TileCoord;
+                element.leftCell = GetLeftCellFromTileCoord(coord);
+                element.upCell = GetUpCellFromTileCoord(coord);
+                element.rightCell = GetRightCellFromTileCoord(coord);
+                element.downCell = GetDownCellFromTileCoord(coord);
+            }
+
+
+
             Inited = true;
             Debug.Log($"[-----System-----] : DataManager Cell inited , Cell count <{map.Count}>");
+        }
+
+        public List<Element_Cell> GetAllItems()
+        {
+            return new List<Element_Cell>(map.Values);
         }
 
         public void UnInit()
         {
             map.Clear();
             Inited = false;
+        }
+
+        public Element_Cell GetLeftCellFromTileCoord(IntVector2 coord)
+        {
+            return GetElement(coord + DirectionUtility.LEFT);
+        }
+
+        public Element_Cell GetUpCellFromTileCoord(IntVector2 coord)
+        {
+            return GetElement(coord + DirectionUtility.UP);
+        }
+
+        public Element_Cell GetRightCellFromTileCoord(IntVector2 coord)
+        {
+            return GetElement(coord + DirectionUtility.RIGHT);
+        }
+
+        public Element_Cell GetDownCellFromTileCoord(IntVector2 coord)
+        {
+            return GetElement(coord + DirectionUtility.DOWN);
         }
 
 

@@ -38,32 +38,21 @@ namespace Johnny.SimDungeon
         [SerializeField] private CanvasGroup m_CanvasGroup;
         [SerializeField] private CategoryObjectsListView m_ListView;
 
-        public EasyGridBuilderPro ActiveEasyGridBuilderPro
-        {
-            get
-            {
-                return m_ActiveEasyGridBuilderPro;
-            }
-            set
-            {
-                if (m_ActiveEasyGridBuilderPro != value)
-                {
-                    m_ActiveEasyGridBuilderPro = value;
-                    if (AllItems.TryGetValue(m_ActiveEasyGridBuilderPro, out var datas))
-                    {
-                        ViewModel.Items = datas;
-                        ViewModel.SelectedItem = null;
-                    }
-                }
-            }
-        }
-        private EasyGridBuilderPro m_ActiveEasyGridBuilderPro;
-
         protected override void Start()
         {
             ViewModel = BindingService.CategoryObjectsPanelViewModel;
+            GridManager.Instance.OnActiveEasyGridBuilderProChanged += OnActiveEasyGridBuilderProChanged;
             GridManager.Instance.OnActiveGridModeChanged += OnActiveGridModeChanged;
             base.Start();
+        }
+
+        private void OnActiveEasyGridBuilderProChanged(EasyGridBuilderPro activeEasyGridBuilderProSystem)
+        {
+            if (AllItems.TryGetValue(activeEasyGridBuilderProSystem, out var datas))
+            {
+                ViewModel.Items = datas;
+                ViewModel.SelectedItem = null;
+            }
         }
 
         private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)
@@ -82,8 +71,6 @@ namespace Johnny.SimDungeon
         protected override void StaticBinding(BindingSet<ViewBase<CategoryObjectsPanelViewModel>> staticBindingSet)
         {
             staticBindingSet.Bind(this.gameObject).For(v => v.activeSelf).To(() => BindingService.MainGameViewModel.ShouldShowCategoryUI).OneWay();
-            staticBindingSet.Bind(this).For(v => v.ActiveEasyGridBuilderPro).To(() => BindingService.MainGameViewModel.ActiveEasyGridBuilderPro).OneWay();
-
         }
 
         public void Init(EasyGridBuilderPro activeEasyGridBuilderPro)

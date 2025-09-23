@@ -28,8 +28,7 @@ namespace Johnny.SimDungeon
         }
         private static EasyGridBuilderProController s_Instance;
 
-        public EasyGridBuilderProXZ m_EasyGridBuilderProSize1;
-        public EasyGridBuilderProXZ m_EasyGridBuilderProSize2;
+
 
         //Temp
         public Color temp_HideColor;
@@ -43,82 +42,9 @@ namespace Johnny.SimDungeon
 
 
 
-        public bool TryDestroyBuildableGridObject(BuildableGridObject buildable)
-        {
-            if (GridManager.Instance.TryGetBuildableObjectDestroyer(out var destroyer))
-            {
-                if (destroyer.TryDestroyBuildableGridObject(buildable, true))
-                {
-                    return true;
-                }
-                else
-                {
-                    Debug.LogError($"TryDestroyGridObject faild : {buildable}");
-                }
-            }
-            return false;
-        }
 
-        public bool TryDestroyBuildableFreeObject(BuildableFreeObject buildable)
-        {
-            if (GridManager.Instance.TryGetBuildableObjectDestroyer(out var destroyer))
-            {
-                if (destroyer.TryDestroyBuildableFreeObject(buildable, true))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
 
-        public bool TryInitializeBuildableEdgeObjectSinglePlacement(Vector3 worldPosition, BuildableEdgeObjectSO buildableEdgeObjectSO, FourDirectionalRotation fourDirectionalDirection, out BuildableEdgeObject spawnnedBuildableEdgeObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab)
-        {
-            //var index = BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.GetActiveVerticalGridIndex();
-            //Debug.Log(index);
-            if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement
-                (worldPosition, buildableEdgeObjectSO, fourDirectionalDirection,
-                false, true, true, 0, true, out spawnnedBuildableEdgeObject, buildableObjectSORandomPrefab, null))
-            {
-                return true;
-            }
-            else
-            {
-                Debug.LogError($"Place Edge Error - <>");
-            }
-
-            return false;
-        }
-
-        public bool TryInitializeBuildableGridObjectSinglePlacement(Vector3 worldPosition, BuildableGridObjectSO buildableGridObjectSO, FourDirectionalRotation direction, out BuildableGridObject buildableGridObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null)
-        {
-
-            if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableGridObjectSinglePlacement(worldPosition, buildableGridObjectSO,
-                direction, true, true, 0, true, out buildableGridObject, buildableObjectSORandomPrefab, null))
-            {
-                return true;
-            }
-            else
-            {
-                Debug.LogError($"Place Grid Error - <>");
-            }
-
-            return false;
-        }
-
-        public bool TryInitializeBuildableCornerObjectSinglePlacement(Vector3 worldPosition, BuildableCornerObjectSO buildableCornerObjectSO, FourDirectionalRotation direction, out BuildableCornerObject buildableCornerObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null)
-        {
-            if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableCornerObjectSinglePlacement(worldPosition, buildableCornerObjectSO,
-                direction, EightDirectionalRotation.North, 0f, true, true, 0, true, out buildableCornerObject, buildableObjectSORandomPrefab, null))
-            {
-                return true;
-            }
-            else
-            {
-                Debug.LogError($"Place Corner Error - <>");
-            }
-
-            return false;
-        }
+      
 
         public void Temp_UpdateGrid(Dictionary<Vector2Int, Element_Cell> subCellsMap)
         {

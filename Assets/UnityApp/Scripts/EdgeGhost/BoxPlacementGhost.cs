@@ -11,6 +11,7 @@ namespace Johnny.SimDungeon
     {
         [SerializeField] private BoxPlacementGhostIndicator[] m_Indicator;
 
+
         private EasyGridBuilderProXZ m_GridBuilderProSize2;
         private GridManager gridManager;
         private BuildableObjectSO activeBuildableObjectSO;
@@ -19,7 +20,7 @@ namespace Johnny.SimDungeon
         private Vector3[] m_GhostPostions = new Vector3[4];
         private void Start()
         {
-            m_GridBuilderProSize2 = EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize2;
+            m_GridBuilderProSize2 = SpawnManager.Instance.m_EasyGridBuilderProSize2;
             gridManager = GridManager.Instance;
 
             gridManager.OnActiveBuildableSOChanged += OnActiveBuildableSOChanged;
@@ -37,45 +38,50 @@ namespace Johnny.SimDungeon
         {
             if (m_IsBoxPlacement)
             {
-                if (m_BuildableCornerObjectGhost.TryGetBoxPlacementHolderObject(out var boxPlacementHolderObject))
+                if (m_BuildableCornerObjectGhost.TryGetGhostObjectVisualDictionary(out var boxPlacements))
                 {
-                    var count = boxPlacementHolderObject.childCount;
+                    var count = boxPlacements.Count;
                     if (count == 1)
                     {
-                        m_Indicator[0].Set(true, false, boxPlacementHolderObject.GetChild(0).GetChild(0).position, Vector3.zero);
-                        m_Indicator[1].Set(true, false, Vector3.zero, Vector3.zero);
+                        m_Indicator[0].Set(false, false, boxPlacements.First().Value.position, Vector3.zero);
+                        m_Indicator[1].Set(false, false, Vector3.zero, Vector3.zero);
                         m_Indicator[2].Set(false, false, Vector3.zero, Vector3.zero);
                         m_Indicator[3].Set(false, false, Vector3.zero, Vector3.zero);
                     }
                     else if (count == 2)
                     {
-                        for (int i = 0; i < boxPlacementHolderObject.childCount; i++)
+                        int i = 0;
+                        foreach (var item in boxPlacements.Values)
                         {
-                            m_GhostPostions[i] = boxPlacementHolderObject.GetChild(i).GetChild(0).position;
+                            m_GhostPostions[i] = item.position;
+                            i++;
                         }
-                        m_Indicator[0].Set(true, true, m_GhostPostions[0], m_GhostPostions[1]);
-                        m_Indicator[1].Set(true, false, m_GhostPostions[1], Vector3.zero);
+
+                        m_Indicator[0].Set(false, true, m_GhostPostions[0], m_GhostPostions[1]);
+                        m_Indicator[1].Set(false, false, m_GhostPostions[1], Vector3.zero);
                         m_Indicator[2].Set(false, false, Vector3.zero, Vector3.zero);
                         m_Indicator[3].Set(false, false, Vector3.zero, Vector3.zero);
                     }
-                    else if(count == 4)
+                    else if (count == 4)
                     {
-                        for (int i = 0; i < boxPlacementHolderObject.childCount; i++)
+                        int i = 0;
+                        foreach (var item in boxPlacements.Values)
                         {
-                            m_GhostPostions[i] = boxPlacementHolderObject.GetChild(i).GetChild(0).position;
+                            m_GhostPostions[i] = item.position;
+                            i++;
                         }
                         var orderPositions = m_GhostPostions.OrderBy(p => p.x).ThenBy(p => p.z).ToArray();
-                        m_Indicator[0].Set(true, true, orderPositions[0], orderPositions[1]);
-                        m_Indicator[1].Set(true, true, orderPositions[1], orderPositions[3]);
-                        m_Indicator[2].Set(true, true, orderPositions[2], orderPositions[0]);
-                        m_Indicator[3].Set(true, true, orderPositions[3], orderPositions[2]);
+                        m_Indicator[0].Set(false, true, orderPositions[0], orderPositions[1]);
+                        m_Indicator[1].Set(false, true, orderPositions[1], orderPositions[3]);
+                        m_Indicator[2].Set(false, true, orderPositions[2], orderPositions[0]);
+                        m_Indicator[3].Set(false, true, orderPositions[3], orderPositions[2]);
                     }
                 }
             }
-            else if ( activeBuildableObjectSO != null && !MouseInteractionUtilities.IsMousePointerOverUI())
-            {
-                m_Indicator[0].Set(true, false, m_BuildableCornerObjectGhost.transform.position, Vector3.zero);
-            }
+            //else if (activeBuildableObjectSO != null && !MouseInteractionUtilities.IsMousePointerOverUI())
+            //{
+            //    m_Indicator[0].Set(true, false, m_BuildableCornerObjectGhost.transform.position, Vector3.zero);
+            //}
 
         }
 

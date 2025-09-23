@@ -26,7 +26,7 @@ namespace Johnny.SimDungeon
 
         public V GetElement(Vector3 worldPosition)
         {
-            var coord = DungeonController.Instance.WorldPositionToTileCoord(worldPosition);
+            var coord = CoordUtility.WorldPositionToTileCoord(worldPosition);
             return GetElement(coord);
         }
     }

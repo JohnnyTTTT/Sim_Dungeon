@@ -34,30 +34,24 @@ namespace Johnny.SimDungeon
         [SerializeField] private CategoryObjectsPanelView m_CategoryObjectsPanelView;
         [SerializeField] private BuildableObjectsPanelView m_BuildableObjectsPanelView;
         private GridManager m_GridManager;
+        private bool m_Inited;
 
         protected override void Start()
         {
             ViewModel = BindingService.MainGameViewModel;
             m_GridManager = GridManager.Instance;
+            m_CategoryObjectsPanelView.Init(SpawnManager.Instance.m_EasyGridBuilderProSize1);
+            m_CategoryObjectsPanelView.Init(SpawnManager.Instance.m_EasyGridBuilderProSize2);
+
+            m_BuildableObjectsPanelView.Init(SpawnManager.Instance.m_EasyGridBuilderProSize1);
+            m_BuildableObjectsPanelView.Init(SpawnManager.Instance.m_EasyGridBuilderProSize2);
+            Debug.Log("[-----UI-----] : Init CategoryObjects And BuildableObjects");
             m_GridManager.OnActiveGridModeChanged += OnActiveGridModeChanged;
 
             base.Start();
-            StartCoroutine(PostStart());
         }
 
-        private IEnumerator PostStart()
-        {
-            yield return new WaitForEndOfFrame();
-            yield return new WaitForEndOfFrame();
 
-            m_CategoryObjectsPanelView.Init(EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize1);
-            m_CategoryObjectsPanelView.Init(EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize2);
-
-            m_BuildableObjectsPanelView.Init(EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize1);
-            m_BuildableObjectsPanelView.Init(EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize2);
-
-            Debug.Log("[-----UI-----] : Init CategoryObjects And BuildableObjects");
-        }
 
         protected override void Binding(BindingSet<ViewBase<MainGameViewModel>, MainGameViewModel> bindingSet)
         {

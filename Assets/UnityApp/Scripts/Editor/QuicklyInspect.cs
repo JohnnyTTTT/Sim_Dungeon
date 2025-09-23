@@ -32,12 +32,6 @@ namespace Johnny.SimDungeon
         {
             DungeonController.Instance.DestroyDungeon();
         }
-        [Button]
-        private void ApplyTheme()
-        {
-            DungeonController.Instance.ApplyTheme();
-
-        }
 
         [Button]
         private void GC()

@@ -77,37 +77,37 @@ namespace Johnny.SimDungeon
 
         private void Update()
         {
-            if (currentBuildable != null)
-            {
-                var mousePos = Mouse.current.position.ReadValue();
-                var ray = DungeonController.Instance.m_Camera.ScreenPointToRay(mousePos);
-                var mask = DungeonController.Instance.m_GroundMask;
+            //if (currentBuildable != null)
+            //{
+            //    var mousePos = Mouse.current.position.ReadValue();
+            //    var ray = DungeonController.Instance.m_Camera.ScreenPointToRay(mousePos);
+            //    var mask = DungeonController.Instance.m_GroundMask;
 
-                Entity_SubEdge newHitEdge = null;
+            //    Entity_SubEdge newHitEdge = null;
 
-                if (Physics.Raycast(ray, out var hit, 1000f, mask))
-                {
-                    if (hit.transform.TryGetComponent<Entity>(out var entity) && entity is Entity_SubEdge edgeEntity)
-                    {
-                        newHitEdge = edgeEntity;
-                    }
-                }
+            //    if (Physics.Raycast(ray, out var hit, 1000f, mask))
+            //    {
+            //        if (hit.transform.TryGetComponent<Entity>(out var entity) && entity is Entity_SubEdge edgeEntity)
+            //        {
+            //            newHitEdge = edgeEntity;
+            //        }
+            //    }
 
-                if (newHitEdge != m_LastPreviewEdge)
-                {
-                    if (m_LastPreviewEdge != null)
-                    {
-                        Preview(false);
-                        m_LastPreviewEdge = null;
-                    }
-                    if (newHitEdge != null)
-                    {
-                        m_LastPreviewEdge = newHitEdge;
-                        Preview(true);
-                    }
-                }
+            //    if (newHitEdge != m_LastPreviewEdge)
+            //    {
+            //        if (m_LastPreviewEdge != null)
+            //        {
+            //            Preview(false);
+            //            m_LastPreviewEdge = null;
+            //        }
+            //        if (newHitEdge != null)
+            //        {
+            //            m_LastPreviewEdge = newHitEdge;
+            //            Preview(true);
+            //        }
+            //    }
 
-            }
+            //}
         }
 
         private void Preview(bool value)

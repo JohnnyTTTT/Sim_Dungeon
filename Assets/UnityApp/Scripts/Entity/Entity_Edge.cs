@@ -47,7 +47,7 @@ namespace Johnny.SimDungeon
 
         public override void UpdateData()
         {
-            Direction = DirectionUtility.GetDirectionForWorld(transform.rotation);
+            base.UpdateData();
 
             var primaryCell = ElementManager_Cell.Instance.GetElement(primary.transform.position);
             var secondaryCell = ElementManager_Cell.Instance.GetElement(secondary.transform.position);
@@ -73,10 +73,10 @@ namespace Johnny.SimDungeon
         {
             if (drawGizmos)
             {
-                var pPosition = DungeonController.Instance.TileCoordToWorldPosition(edgeElement.primaryCell.Data.TileCoord);
-                var sPosition = DungeonController.Instance.TileCoordToWorldPosition(edgeElement.secondaryCell.Data.TileCoord);
-                GizmoUnitily.DrawLine(transform.GetChild(0).position, pPosition, Color.beige);
-                GizmoUnitily.DrawLine(transform.GetChild(0).position, sPosition, Color.green);
+                var pPosition = CoordUtility.TileCoordToWorldPosition(edgeElement.primaryCell.Data.TileCoord);
+                var sPosition = CoordUtility.TileCoordToWorldPosition(edgeElement.secondaryCell.Data.TileCoord);
+                GizmoUnitily.DrawLine(primary.transform.position + new Vector3(0f, 2f, 0f), pPosition, Color.yellow);
+                GizmoUnitily.DrawLine(secondary.transform.position + new Vector3(0f, 2f, 0f), sPosition, Color.green);
             }
         }
     }

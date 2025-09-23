@@ -29,7 +29,7 @@ namespace Johnny.SimDungeon
         public static void DrawLabel(IntVector2 center, string label)
         {
 #if UNITY_EDITOR
-            var worldCenter = DungeonController.Instance.TileCoordToWorldPosition(center);
+            var worldCenter = CoordUtility.TileCoordToWorldPosition(center);
             DrawLabel(worldCenter, label);
 #endif
         }
@@ -64,7 +64,7 @@ namespace Johnny.SimDungeon
         }
         public static void DrawWall(IntVector2 center, Color color, bool isHorizontalEdge)
         {
-            var position = DungeonController.Instance.TileCoordToWorldPosition(center);
+            var position = CoordUtility.TileCoordToWorldPosition(center);
             DrawWall(position, color, isHorizontalEdge);
         }
         public static void DrawTwoSizeCube(Vector3 center, Color color, bool isWire)
@@ -82,7 +82,7 @@ namespace Johnny.SimDungeon
 
         public static void DrawTwoSizeCube(IntVector2 center, Color color, bool isWire)
         {
-            var worldCenter = DungeonController.Instance.TileCoordToWorldPosition(center);
+            var worldCenter = CoordUtility.TileCoordToWorldPosition(center);
             DrawTwoSizeCube(worldCenter, color, isWire);
         }
     }

@@ -14,19 +14,19 @@ namespace Johnny.SimDungeon
 
         public void CalculateEdges(List<IntVector2> roomCoords)
         {
-            var coord = DungeonController.Instance.WorldPositionToTileCoord(transform.position);
+            //var coord = DungeonController.Instance.WorldPositionToTileCoord(transform.position);
 
-            var coordLeft = new IntVector2(coord.x-1, coord.y);
-            m_WallLeft.SetActive(!roomCoords.Contains(coordLeft));
+            //var coordLeft = new IntVector2(coord.x-1, coord.y);
+            //m_WallLeft.SetActive(!roomCoords.Contains(coordLeft));
 
-            var coordUp = new IntVector2(coord.x, coord.y + 1);
-            m_WallUp.SetActive(!roomCoords.Contains(coordUp));
+            //var coordUp = new IntVector2(coord.x, coord.y + 1);
+            //m_WallUp.SetActive(!roomCoords.Contains(coordUp));
 
-            var coordRight = new IntVector2(coord.x+1, coord.y);
-            m_WallRight.SetActive(!roomCoords.Contains(coordRight));
+            //var coordRight = new IntVector2(coord.x+1, coord.y);
+            //m_WallRight.SetActive(!roomCoords.Contains(coordRight));
 
-            var coordDown = new IntVector2(coord.x, coord.y-1);
-            m_WallDown.SetActive(!roomCoords.Contains(coordDown));
+            //var coordDown = new IntVector2(coord.x, coord.y-1);
+            //m_WallDown.SetActive(!roomCoords.Contains(coordDown));
         }
 
 

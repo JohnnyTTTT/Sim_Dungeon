@@ -20,8 +20,8 @@ MonoBehaviour:
     ghostObjectPrefab: {fileID: 7803159104911250065, guid: 5d8b04bef0525714c9cc0fe7cf75cb8f, type: 3}
     probability: 0
   eachPlacementUseRandomPrefab: 0
-  validPlacementMaterial: {fileID: 2100000, guid: 60b6e8cab158bd44dbdf258b7527565a, type: 2}
-  invalidPlacementMaterial: {fileID: 2100000, guid: 1a665553bd032b84f8122a81c18ba378, type: 2}
+  validPlacementMaterial: {fileID: 2100000, guid: e8a2c7224a8b9844e9a2c84e5f5ace41, type: 2}
+  invalidPlacementMaterial: {fileID: 2100000, guid: fe48486a20e56a94f84ee96b1792ee98, type: 2}
   setSpawnedObjectLayer: 0
   spawnedObjectLayer:
     serializedVersion: 2

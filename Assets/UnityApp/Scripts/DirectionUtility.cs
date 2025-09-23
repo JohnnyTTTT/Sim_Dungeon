@@ -25,11 +25,10 @@ namespace Johnny.SimDungeon
             new IntVector2(0, 1),
             new IntVector2(0, -1)};
 
-
-        public static Vector3 dirUp = Vector3.forward;    // 世界前
-        public static Vector3 dirDown = Vector3.back;     // 世界后
-        public static Vector3 dirRight = Vector3.right;   // 世界右
-        public static Vector3 dirLeft = Vector3.left;     // 世界左
+        public static Vector3 dirLeft = Vector3.left;
+        public static Vector3 dirUp = Vector3.forward;
+        public static Vector3 dirRight = Vector3.right;
+        public static Vector3 dirDown = Vector3.back;     
        
         public static Direction ToDirection(FourDirectionalRotation pluginDir)
         {
@@ -46,10 +45,10 @@ namespace Johnny.SimDungeon
         {
             return myDir switch
             {
+                Direction.Left => FourDirectionalRotation.North,  // 我的 Left(270°)→ 插件 North(270°)
                 Direction.Up => FourDirectionalRotation.East,   // 我的 Up(0°)    → 插件 East(0°)
                 Direction.Right => FourDirectionalRotation.South,  // 我的 Right(90°)→ 插件 South(90°)
                 Direction.Down => FourDirectionalRotation.West,   // 我的 Down(180°)→ 插件 West(180°)
-                Direction.Left => FourDirectionalRotation.North,  // 我的 Left(270°)→ 插件 North(270°)
             };
         }
 
@@ -76,6 +75,31 @@ namespace Johnny.SimDungeon
                 return Direction.Right;
             else
                 return Direction.Left;
+        }
+
+        public static FourDirectionalRotation GetFourDirectionalRotationForWorld(Quaternion rotation)
+        {
+
+            var forward = rotation * Vector3.forward;
+
+            forward.y = 0;
+            forward.Normalize();
+
+            var dotUp = Vector3.Dot(forward, dirUp);
+            var dotDown = Vector3.Dot(forward, dirDown);
+            var dotRight = Vector3.Dot(forward, dirRight);
+            var dotLeft = Vector3.Dot(forward, dirLeft);
+
+            float maxDot = Mathf.Max(dotUp, dotDown, dotRight, dotLeft);
+
+            if (maxDot == dotUp)
+                return FourDirectionalRotation.East;
+            else if (maxDot == dotDown)
+                return FourDirectionalRotation.West;
+            else if (maxDot == dotRight)
+                return FourDirectionalRotation.South;
+            else
+                return FourDirectionalRotation.North;
         }
 
         public static Direction GetDirection(Vector3 A, Vector3 B)

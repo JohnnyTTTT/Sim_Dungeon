@@ -1,8 +1,10 @@
 using Loxodon.Framework.Binding.Builder;
+using Loxodon.Framework.Observables;
 using Loxodon.Framework.ViewModels;
 using Sirenix.OdinInspector;
 using SoulGames.EasyGridBuilderPro;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Johnny.SimDungeon
@@ -61,8 +63,8 @@ namespace Johnny.SimDungeon
                 if (m_GridType != value)
                 {
                     Set(ref m_GridType, value);
-                    var size1 = EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize1;
-                    var size2 = EasyGridBuilderProController.Instance.m_EasyGridBuilderProSize2;
+                    var size1 = SpawnManager.Instance.m_EasyGridBuilderProSize1;
+                    var size2 = SpawnManager.Instance.m_EasyGridBuilderProSize2;
                     switch (m_GridType)
                     {
                         case GridType.SizeOne:
@@ -92,7 +94,17 @@ namespace Johnny.SimDungeon
                 if (m_IsLandExpandMode != value)
                 {
                     Set(ref m_IsLandExpandMode, value);
-                    GridManager.Instance.SetActiveGridModeInAllGrids(GridMode.None);
+                    var grid = SpawnManager.Instance.m_EasyGridBuilderProSize2;
+                    var position = grid.transform.position;
+                    if (m_IsLandExpandMode)
+                    {
+                        grid.transform.position = new Vector3(position.x, 4f, position.z);
+                        grid.SetInputActiveBuildableObjectSO(SpawnManager.Instance.defaultAreaExpand, onlySetBuildableExistInBuildablesList: false);
+                    }
+                    else
+                    {
+                        grid.transform.position = new Vector3(position.x, 0f, position.z);
+                    }
                     RaisePropertyChanged();
                 }
             }
@@ -253,16 +265,29 @@ namespace Johnny.SimDungeon
             switch (gridMode)
             {
                 case GridMode.None:
+                    ViewModel.IsBuildMode = false;
+                    ViewModel.IsLandExpandMode = false;
+                    ViewModel.IsDestroyMode = false;
                     break;
                 case GridMode.BuildMode:
                     ViewModel.IsBuildMode = true;
+                    ViewModel.IsLandExpandMode = false;
+                    ViewModel.IsDestroyMode = false;
                     break;
                 case GridMode.DestroyMode:
+                    ViewModel.IsBuildMode = false;
+                    ViewModel.IsLandExpandMode = false;
                     ViewModel.IsDestroyMode = true;
                     break;
                 case GridMode.SelectMode:
+                    ViewModel.IsBuildMode = false;
+                    ViewModel.IsLandExpandMode = false;
+                    ViewModel.IsDestroyMode = false;
                     break;
                 case GridMode.MoveMode:
+                    ViewModel.IsBuildMode = false;
+                    ViewModel.IsLandExpandMode = false;
+                    ViewModel.IsDestroyMode = false;
                     break;
                 default:
                     break;
