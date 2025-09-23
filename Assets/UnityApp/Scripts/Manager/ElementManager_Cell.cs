@@ -17,14 +17,10 @@ namespace Johnny.SimDungeon
         public Element_Edge upEdge;
         public Element_Edge rightEdge;
         public Element_Edge downEdge;
+        public Element_Cell[] neighbors = new Element_Cell[4];
+        public Element_Edge[] edges = new Element_Edge[4];
 
-        public Element_Cell leftCell;
-        public Element_Cell upCell;
-        public Element_Cell rightCell;
-        public Element_Cell downCell;
-
-
-        public Room area;
+        public Region region;
 
 
         public Entity_Ground ground;
@@ -108,7 +104,7 @@ namespace Johnny.SimDungeon
             //    GizmoUnitily.DrawOneSizeCube(position, item.GizmoColor, true);
             //}
             GizmoUnitily.DrawLabel(Data.TileCoord, 
-                $"{new Vector2Int(Data.TileCoord.x, Data.TileCoord.y)} - {Data.CellType} - {area}");
+                $"{new Vector2Int(Data.TileCoord.x, Data.TileCoord.y)} - {Data.CellType} - {region}");
         }
         //public override void Init(FlowTilemapCell flowTilemapCell)
         //{
@@ -192,10 +188,10 @@ namespace Johnny.SimDungeon
             foreach (var element in map.Values)
             {
                 var coord = element.Data.TileCoord;
-                element.leftCell = GetLeftCellFromTileCoord(coord);
-                element.upCell = GetUpCellFromTileCoord(coord);
-                element.rightCell = GetRightCellFromTileCoord(coord);
-                element.downCell = GetDownCellFromTileCoord(coord);
+                element.neighbors[0] = GetLeftCellFromTileCoord(coord);
+                element.neighbors[1] = GetUpCellFromTileCoord(coord);
+                element.neighbors[2] = GetRightCellFromTileCoord(coord);
+                element.neighbors[3] = GetDownCellFromTileCoord(coord);
             }
 
 
@@ -204,7 +200,7 @@ namespace Johnny.SimDungeon
             Debug.Log($"[-----System-----] : DataManager Cell inited , Cell count <{map.Count}>");
         }
 
-        public List<Element_Cell> GetAllItems()
+        public List<Element_Cell> GetAllCells()
         {
             return new List<Element_Cell>(map.Values);
         }

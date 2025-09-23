@@ -94,7 +94,7 @@ namespace Johnny.SimDungeon
 
             ElementManager_Edge.Instance.Init(gridFlowDungeonModel.Tilemap.Edges);
             ElementManager_Cell.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
-            ElementManager_Room.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
+            ElementManager_Region.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
             ElementManager_Tile.Instance.Init(SpawnManager.Instance.m_EasyGridBuilderProSize1);
             Debug.Log("[-----System-----] : OnDungeonMarkersEmitted");
         }
@@ -107,7 +107,7 @@ namespace Johnny.SimDungeon
                 item.UpdateData();
                 if (item is Entity_Edge edge)
                 {
-                    DetectorUtility.HandleWallPlacedIncremental(edge);
+                    //DetectorUtility.HandleWallPlacedIncremental(edge);
                 }
             }
 
@@ -121,7 +121,7 @@ namespace Johnny.SimDungeon
         {
             ElementManager_Cell.Instance.UnInit();
             ElementManager_Edge.Instance.UnInit();
-            ElementManager_Room.Instance.UnInit();
+            ElementManager_Region.Instance.UnInit();
             ElementManager_Tile.Instance.UnInit();
 
         }

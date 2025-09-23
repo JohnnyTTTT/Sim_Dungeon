@@ -20,9 +20,9 @@ namespace Johnny.SimDungeon
         public static readonly IntVector2 DOWN = new IntVector2(0, -1);
 
         public static readonly IntVector2[] CardinalDirections ={
-            new IntVector2(1, 0),
             new IntVector2(-1, 0),
             new IntVector2(0, 1),
+            new IntVector2(1, 0),
             new IntVector2(0, -1)};
 
         public static Vector3 dirLeft = Vector3.left;

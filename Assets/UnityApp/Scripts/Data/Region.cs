@@ -2,16 +2,17 @@ using DungeonArchitect;
 using DungeonArchitect.Flow.Domains.Tilemap;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 namespace Johnny.SimDungeon
 {
-    public class Room : Element
+    public class Region : Element
     {
         public string name;
         public RoomType roomType;
-        public List<Element_Cell> containedCells = new List<Element_Cell>();
+        public HashSet<Element_Cell> containedCells = new HashSet<Element_Cell>();
         public bool isClosed;
 
         public BiomeSO biome;
@@ -29,29 +30,47 @@ namespace Johnny.SimDungeon
         public void AddCell(Element_Cell cellElement)
         {
             containedCells.Add(cellElement);
-            cellElement.area = this;
-            CalculateBounds();
+            cellElement.region = this;
+            CalculateCells();
         }
+
+        public void RemoveCell(Element_Cell cellData)
+        {
+            cellData.region = null;
+            containedCells.Remove(cellData);
+            CalculateCells();
+        }
+
         public void AddCells(IEnumerable<Element_Cell> cells)
         {
             foreach (var item in cells)
             {
+                item.region = this;
                 containedCells.Add(item);
-                item.area = this;
-                CalculateBounds();
+                CalculateCells();
             }
         }
-        public void CalculateBounds()
+
+        public void RemoveCells(IEnumerable<Element_Cell> cells)
+        {
+            foreach (var cell in cells)
+            {
+                cell.region = null;
+                containedCells.Remove(cell);
+                CalculateCells();
+            }
+
+        }
+        public void CalculateCells()
         {
             if (containedCells == null || containedCells.Count == 0)
             {
-                bounds = new Bounds(Vector3.zero, Vector3.zero);
-                center = Vector3.zero;
+                ElementManager_Region.Instance.RemoveRegion(this);
                 return;
             }
 
             // 初始化 bounds
-            bounds = new Bounds(containedCells[0].worldPosition, Vector3.zero);
+            bounds = new Bounds(containedCells.First().worldPosition, Vector3.zero);
 
             // 包含所有格子
             foreach (var cell in containedCells)
@@ -67,16 +86,12 @@ namespace Johnny.SimDungeon
         {
             foreach (var item in containedCells)
             {
-                item.area = null;
+                item.region = null;
             }
             containedCells.Clear();
         }
 
-        public void RemoveCell(Element_Cell cellData)
-        {
-            containedCells.Remove(cellData);
-            CalculateBounds();
-        }
+
 
         public override string ToString()
         {
@@ -93,6 +108,8 @@ namespace Johnny.SimDungeon
             }
             GizmoUnitily.DrawLabel(center, name);
         }
+
+
 
 
 #endif

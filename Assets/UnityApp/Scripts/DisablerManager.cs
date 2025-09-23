@@ -40,7 +40,7 @@ namespace Johnny.SimDungeon
         public void Init()
         {
             m_OccupiedCellPositionLis.Clear();
-            foreach (var cell in ElementManager_Cell.Instance.GetAllItems())
+            foreach (var cell in ElementManager_Cell.Instance.GetAllCells())
             {
                 if (cell.Data.CellType != FlowTilemapCellType.Floor)
                 {

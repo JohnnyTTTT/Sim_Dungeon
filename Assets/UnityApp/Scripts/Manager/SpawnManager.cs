@@ -91,7 +91,7 @@ namespace Johnny.SimDungeon
 
             foreach (var item in m_CreatedBuildableEdgeObject)
             {
-                DetectorUtility.HandleWallPlacedIncremental(item);
+                ElementManager_Region.Instance.HandleWallPlacedIncremental(item);
             }
            
             m_CreatedBuildableEdgeObject.Clear();
@@ -121,34 +121,34 @@ namespace Johnny.SimDungeon
             var candidateEdges = new List<Element_Edge>();
             foreach (var cell in cellList)
             {
-                var leftCell = cell.leftCell;
+                var leftCell = cell.neighbors[0];
                 var leftEdge = cell.leftEdge;
-                if (!cellList.Contains(leftCell) && leftEdge.wall == null && (leftCell.Data.CellType == FlowTilemapCellType.Custom || leftCell.area == null))
+                if (!cellList.Contains(leftCell) && leftEdge.wall == null && (leftCell.Data.CellType == FlowTilemapCellType.Custom || leftCell.region == null))
                 {
                     leftEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
                     candidateEdges.Add(leftEdge);
                 }
 
-                var upCell = cell.upCell;
+                var upCell = cell.neighbors[1];
                 var upEdge = cell.upEdge;
-                if (!cellList.Contains(upCell) && upEdge.wall == null && (upCell.Data.CellType == FlowTilemapCellType.Custom || upCell.area == null))
+                if (!cellList.Contains(upCell) && upEdge.wall == null && (upCell.Data.CellType == FlowTilemapCellType.Custom || upCell.region == null))
                 {
 
                     upEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
                     candidateEdges.Add(upEdge);
                 }
 
-                var rightCell = cell.rightCell;
+                var rightCell = cell.neighbors[2];
                 var rightEdge = cell.rightEdge;
-                if (!cellList.Contains(rightCell) && rightEdge.wall == null && (rightCell.Data.CellType == FlowTilemapCellType.Custom || rightCell.area == null))
+                if (!cellList.Contains(rightCell) && rightEdge.wall == null && (rightCell.Data.CellType == FlowTilemapCellType.Custom || rightCell.region == null))
                 {
                     rightEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
                     candidateEdges.Add(rightEdge);
                 }
 
-                var downCell = cell.downCell;
+                var downCell = cell.neighbors[3];
                 var downEdge = cell.downEdge;
-                if (!cellList.Contains(downCell) && downEdge.wall == null && (downCell.Data.CellType == FlowTilemapCellType.Custom || downCell.area == null))
+                if (!cellList.Contains(downCell) && downEdge.wall == null && (downCell.Data.CellType == FlowTilemapCellType.Custom || downCell.region == null))
                 {
                     downEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
                     candidateEdges.Add(downEdge);
@@ -204,7 +204,7 @@ namespace Johnny.SimDungeon
             }
         }
 
-        public void CreateWallForCells(List<Element_Cell> cells, Room newRoom)
+        public void CreateWallForCells(List<Element_Cell> cells, Region newRoom)
         {
             // 在一连续的单元格集合里找出位于边缘的格子
             var cellCoords = cells.Select(x => x.Data.TileCoord);
@@ -229,7 +229,7 @@ namespace Johnny.SimDungeon
                 var edges = new List<Element_Edge>();
 
                 var leftCell = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x - 1, coord.y));
-                if (leftCell.area == null || leftCell.area != newRoom)
+                if (leftCell.region == null || leftCell.region != newRoom)
                 {
                     var leftEdge = ElementManager_Cell.Instance.GetElement(coord).verticalEdge;
                     leftEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
@@ -237,7 +237,7 @@ namespace Johnny.SimDungeon
                 }
 
                 var upCell = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x, coord.y + 1));
-                if (upCell.area == null || upCell.area != newRoom)
+                if (upCell.region == null || upCell.region != newRoom)
                 {
                     var upEdge = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x, coord.y + 1)).horizontalEdge;
                     upEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
@@ -245,7 +245,7 @@ namespace Johnny.SimDungeon
                 }
 
                 var rightCell = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x + 1, coord.y));
-                if (rightCell.area == null || rightCell.area != newRoom)
+                if (rightCell.region == null || rightCell.region != newRoom)
                 {
                     var rightEdge = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x + 1, coord.y)).verticalEdge;
                     rightEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
@@ -253,7 +253,7 @@ namespace Johnny.SimDungeon
                 }
 
                 var downCell = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x, coord.y - 1));
-                if (downCell.area == null || downCell.area != newRoom)
+                if (downCell.region == null || downCell.region != newRoom)
                 {
                     var downEdge = ElementManager_Cell.Instance.GetElement(coord).horizontalEdge;
                     downEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
