@@ -35,9 +35,13 @@ namespace Johnny.SimDungeon
         }
         private static SpawnManager s_Instance;
 
+        [Title("Global Settings")]
+        public Transform m_SpawnRoot;
+
         [Title("Easy GridBuilder Pro Settings")]
         public EasyGridBuilderProXZ m_EasyGridBuilderProSize1;
         public EasyGridBuilderProXZ m_EasyGridBuilderProSize2;
+
 
         [Title("Default BuildableGridObjectSO")]
         public BuildableGridObjectSO defaultAreaExpand;
@@ -55,7 +59,8 @@ namespace Johnny.SimDungeon
 
         private GridManager m_GridManager;
 
-        private List<BuildableGridObject> m_CandidateAreaExpandProxies = new List<BuildableGridObject>();
+        [SerializeField] private List<BuildableGridObject> m_CandidateAreaExpandProxies = new List<BuildableGridObject>();
+        [SerializeField] private List<Entity_Edge> m_CreatedBuildableEdgeObject = new List<Entity_Edge>();
 
         private void Start()
         {
@@ -65,11 +70,32 @@ namespace Johnny.SimDungeon
             m_GridManager = GridManager.Instance;
             m_GridManager.OnBuildableObjectPlaced += OnBuildableObjectPlaced;
             m_GridManager.OnGridObjectBoxPlacementFinalized += OnGridObjectBoxPlacementFinalized;
+            m_GridManager.OnEdgeObjectBoxPlacementFinalized += OnGridObjectBoxPlacementFinalized;
+            m_GridManager.OnEdgeObjectBoxPlacementFinalized += OnEdgeObjectBoxPlacementFinalized;
         }
+
 
         private void OnGridObjectBoxPlacementFinalized(EasyGridBuilderPro easyGridBuilderPro)
         {
-            StartCoroutine(AreaExpand());
+            //StartCoroutine(AreaExpand());
+        }
+        private void OnEdgeObjectBoxPlacementFinalized(EasyGridBuilderPro easyGridBuilderPro)
+        {
+            StartCoroutine(OnPostEdgeObjectBoxPlacementFinalized());
+        }
+
+        private IEnumerator OnPostEdgeObjectBoxPlacementFinalized()
+        {
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+
+            foreach (var item in m_CreatedBuildableEdgeObject)
+            {
+                DetectorUtility.HandleWallPlacedIncremental(item);
+            }
+           
+            m_CreatedBuildableEdgeObject.Clear();
+            //GridManager.Instance.TryGetBuildableEdgeObjectGhost
         }
 
         private IEnumerator AreaExpand()
@@ -97,7 +123,7 @@ namespace Johnny.SimDungeon
             {
                 var leftCell = cell.leftCell;
                 var leftEdge = cell.leftEdge;
-                if (!cellList.Contains(leftCell) && leftEdge.wall == null && (leftCell.Data.CellType == FlowTilemapCellType.Custom || leftCell.room == null))
+                if (!cellList.Contains(leftCell) && leftEdge.wall == null && (leftCell.Data.CellType == FlowTilemapCellType.Custom || leftCell.area == null))
                 {
                     leftEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
                     candidateEdges.Add(leftEdge);
@@ -105,7 +131,7 @@ namespace Johnny.SimDungeon
 
                 var upCell = cell.upCell;
                 var upEdge = cell.upEdge;
-                if (!cellList.Contains(upCell) && upEdge.wall == null && (upCell.Data.CellType == FlowTilemapCellType.Custom || upCell.room == null))
+                if (!cellList.Contains(upCell) && upEdge.wall == null && (upCell.Data.CellType == FlowTilemapCellType.Custom || upCell.area == null))
                 {
 
                     upEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
@@ -114,7 +140,7 @@ namespace Johnny.SimDungeon
 
                 var rightCell = cell.rightCell;
                 var rightEdge = cell.rightEdge;
-                if (!cellList.Contains(rightCell) && rightEdge.wall == null && (rightCell.Data.CellType == FlowTilemapCellType.Custom || rightCell.room == null))
+                if (!cellList.Contains(rightCell) && rightEdge.wall == null && (rightCell.Data.CellType == FlowTilemapCellType.Custom || rightCell.area == null))
                 {
                     rightEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
                     candidateEdges.Add(rightEdge);
@@ -122,7 +148,7 @@ namespace Johnny.SimDungeon
 
                 var downCell = cell.downCell;
                 var downEdge = cell.downEdge;
-                if (!cellList.Contains(downCell) && downEdge.wall == null && (downCell.Data.CellType == FlowTilemapCellType.Custom || downCell.room == null))
+                if (!cellList.Contains(downCell) && downEdge.wall == null && (downCell.Data.CellType == FlowTilemapCellType.Custom || downCell.area == null))
                 {
                     downEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
                     candidateEdges.Add(downEdge);
@@ -203,7 +229,7 @@ namespace Johnny.SimDungeon
                 var edges = new List<Element_Edge>();
 
                 var leftCell = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x - 1, coord.y));
-                if (leftCell.room == null || leftCell.room != newRoom)
+                if (leftCell.area == null || leftCell.area != newRoom)
                 {
                     var leftEdge = ElementManager_Cell.Instance.GetElement(coord).verticalEdge;
                     leftEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
@@ -211,7 +237,7 @@ namespace Johnny.SimDungeon
                 }
 
                 var upCell = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x, coord.y + 1));
-                if (upCell.room == null || upCell.room != newRoom)
+                if (upCell.area == null || upCell.area != newRoom)
                 {
                     var upEdge = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x, coord.y + 1)).horizontalEdge;
                     upEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
@@ -219,7 +245,7 @@ namespace Johnny.SimDungeon
                 }
 
                 var rightCell = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x + 1, coord.y));
-                if (rightCell.room == null || rightCell.room != newRoom)
+                if (rightCell.area == null || rightCell.area != newRoom)
                 {
                     var rightEdge = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x + 1, coord.y)).verticalEdge;
                     rightEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
@@ -227,7 +253,7 @@ namespace Johnny.SimDungeon
                 }
 
                 var downCell = ElementManager_Cell.Instance.GetElement(new IntVector2(coord.x, coord.y - 1));
-                if (downCell.room == null || downCell.room != newRoom)
+                if (downCell.area == null || downCell.area != newRoom)
                 {
                     var downEdge = ElementManager_Cell.Instance.GetElement(coord).horizontalEdge;
                     downEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
@@ -243,22 +269,24 @@ namespace Johnny.SimDungeon
             {
                 if (buildableObject is BuildableGridObject buildableGridObject)
                 {
-                    if (buildableObject.TryGetComponent<AreaExpandProxy>(out var areaExpandProxy))
+                    if (buildableObject.TryGetComponent<DevelopToolPanel>(out var areaExpandProxy))
                     {
                         m_CandidateAreaExpandProxies.Add(buildableGridObject);
                     }
                 }
 
-                //if (buildableObject is BuildableEdgeObject buildableEdgeObject)
-                //{
-                //    var entity = buildableEdgeObject.GetComponent<Entity_Edge>();
-                //    entity.UpdateData();
-                //    entity.edgeElement.Data.EdgeType = FlowTilemapEdgeType.Wall;
-                //    //newWalls.Add(entity);
-                //}
+                if (buildableObject is BuildableEdgeObject buildableEdgeObject)
+                {
+                    var entity = buildableEdgeObject.GetComponent<Entity_Edge>();
+                    entity.UpdateData();
+                    entity.edgeElement.Data.EdgeType = FlowTilemapEdgeType.Wall;
+                    m_CreatedBuildableEdgeObject.Add(entity);
+                }
             }
             //Debug.Log("Rooms : " + ElementManager_Room.Instance.roomList.Count);
         }
+
+
 
         private void Update()
         {
@@ -294,6 +322,7 @@ namespace Johnny.SimDungeon
 
             if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement(worldPosition, buildableEdgeObjectSO, fourDirectional, false, true, true, 0, true, out spawnnedBuildableEdgeObject, radomPrefabs, null))
             {
+                spawnnedBuildableEdgeObject.transform.parent = m_SpawnRoot;
                 return true;
             }
             else
@@ -316,6 +345,7 @@ namespace Johnny.SimDungeon
             if (m_EasyGridBuilderProSize2.TryInitializeBuildableGridObjectSinglePlacement(worldPosition, buildableGridObjectSO,
                 fourDirectional, true, true, 0, true, out buildableGridObject, radomPrefabs, null))
             {
+                buildableGridObject.transform.parent = m_SpawnRoot;
                 return true;
             }
             else
@@ -331,6 +361,7 @@ namespace Johnny.SimDungeon
             if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro.TryInitializeBuildableCornerObjectSinglePlacement(worldPosition, buildableCornerObjectSO,
                 direction, EightDirectionalRotation.North, 0f, true, true, 0, true, out buildableCornerObject, buildableObjectSORandomPrefab, null))
             {
+                buildableCornerObject.transform.parent = m_SpawnRoot;
                 return true;
             }
             else
@@ -368,38 +399,6 @@ namespace Johnny.SimDungeon
             }
             return false;
         }
-
-
-
-        //private void OnGridObjectBoxPlacementFinalized(EasyGridBuilderPro easyGridBuilderPro)
-        //{
-        //    if (m_CandidateRoomProxies.Count > 0)
-        //    {
-        //        var room = ElementManager_Room.Instance.CreateRoom(m_CandidateRoomProxies[0].roomType);
-
-        //        var roomCells = new List<Element_Cell>();
-        //        if (GridManager.Instance.TryGetBuildableGridObjectGhost(out var buildableGridObjectGhost)
-        //            && buildableGridObjectGhost.TryGetGhostObjectVisualDictionary(out var ghostObjects))
-        //        {
-        //            foreach (var buildableObject in ghostObjects)
-        //            {
-        //                var coord = Vector2IntToIntVector2(buildableObject.Key);
-        //                var cellData = ElementManager_Cell.Instance.GetElement(coord);
-        //                var oldParent = map[coord];
-        //                oldParent.RemoveCell(cellData);
-        //                room.AddCell(cellData);
-        //                map[coord] = room;
-        //                roomCells.Add(cellData);
-        //            }
-        //            m_CandidateRoomProxies = RoomType.Undefined;
-        //            StartCoroutine(AddEdgeForCells(roomCells, room));
-        //        }
-        //    }
-        //}
-
-
-
-
 
 
     }

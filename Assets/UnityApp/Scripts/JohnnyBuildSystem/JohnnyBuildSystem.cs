@@ -63,16 +63,12 @@ namespace Johnny.SimDungeon
 
         private void MultiSelectionHoldActionPerformed(InputAction.CallbackContext context)
         {
-
-
             multipleSelection = true;
-            Debug.Log(1);
         }
 
         private void MultiSelectionHoldActionCancelled(InputAction.CallbackContext context)
         {
             multipleSelection = false;
-            Debug.Log(2);
         }
 
         private void Update()

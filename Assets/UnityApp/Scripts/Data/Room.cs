@@ -15,19 +15,9 @@ namespace Johnny.SimDungeon
         public bool isClosed;
 
         public BiomeSO biome;
-
-
-        public IntVector2 spawnNodeCoord;
         public Color roomColor;
         public Bounds bounds;
         public Vector3 center;
-
-
-        private List<GameObject> wallUpSegments = new List<GameObject>();
-        private List<GameObject> wallDownSegments = new List<GameObject>();
-        private List<GameObject> wallLeftSegments = new List<GameObject>();
-        private List<GameObject> wallRightSegments = new List<GameObject>();
- 
 
         public void Init(string n, RoomType type)
         {
@@ -39,7 +29,7 @@ namespace Johnny.SimDungeon
         public void AddCell(Element_Cell cellElement)
         {
             containedCells.Add(cellElement);
-            cellElement.room = this;
+            cellElement.area = this;
             CalculateBounds();
         }
         public void AddCells(IEnumerable<Element_Cell> cells)
@@ -47,7 +37,7 @@ namespace Johnny.SimDungeon
             foreach (var item in cells)
             {
                 containedCells.Add(item);
-                item.room = this;
+                item.area = this;
                 CalculateBounds();
             }
         }
@@ -73,10 +63,24 @@ namespace Johnny.SimDungeon
             center = new Vector3(bounds.center.x, 0f, bounds.center.z);
         }
 
+        public void Clear()
+        {
+            foreach (var item in containedCells)
+            {
+                item.area = null;
+            }
+            containedCells.Clear();
+        }
+
         public void RemoveCell(Element_Cell cellData)
         {
             containedCells.Remove(cellData);
             CalculateBounds();
+        }
+
+        public override string ToString()
+        {
+            return name;
         }
 
 #if UNITY_EDITOR

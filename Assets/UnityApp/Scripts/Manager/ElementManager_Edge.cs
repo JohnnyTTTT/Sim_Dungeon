@@ -21,8 +21,8 @@ namespace Johnny.SimDungeon
 
         }
         private static ElementManager_Edge s_Instance;
-        private Dictionary<IntVector2, Element_Edge> horizontalMap = new Dictionary<IntVector2, Element_Edge>();
-        private Dictionary<IntVector2, Element_Edge> verticalMap = new Dictionary<IntVector2, Element_Edge>();
+        public Dictionary<IntVector2, Element_Edge> horizontalMap = new Dictionary<IntVector2, Element_Edge>();
+        public Dictionary<IntVector2, Element_Edge> verticalMap = new Dictionary<IntVector2, Element_Edge>();
         public void Init(FlowTilemapEdgeDatabase edges)
         {
             if (Inited) return;
@@ -42,17 +42,14 @@ namespace Johnny.SimDungeon
                     verticalMap[edge.EdgeCoord] = data;
                 }
 
-                ////初始墙全部算作Fence，即不生成新房间
-                //if (edge.EdgeType == FlowTilemapEdgeType.Wall)
-                //{
-                //    edge.EdgeType = FlowTilemapEdgeType.Fence;
-                //}
+
             }
 
             foreach (var kvp in horizontalMap)
             {
                 var edge = kvp.Value;
                 edge.Neighbors = GetNeighborEdgeEdges(edge);
+
             }
 
             // 遍历所有垂直 Edge

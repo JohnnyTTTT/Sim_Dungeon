@@ -271,7 +271,6 @@ namespace Johnny.SimDungeon
                     break;
                 case GridMode.BuildMode:
                     ViewModel.IsBuildMode = true;
-                    ViewModel.IsLandExpandMode = false;
                     ViewModel.IsDestroyMode = false;
                     break;
                 case GridMode.DestroyMode:

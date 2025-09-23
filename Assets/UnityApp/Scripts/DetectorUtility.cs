@@ -9,9 +9,7 @@ namespace Johnny.SimDungeon
 {
     public class DetectorUtility
     {
-
-
-        public static HashSet<Element_Cell> FloodFill(Element_Cell start)
+        public static bool FloodFill(Element_Cell start, out HashSet<Element_Cell> cells)
         {
             var visited = new HashSet<Element_Cell>();
             var queue = new Queue<Element_Cell>();
@@ -38,7 +36,7 @@ namespace Johnny.SimDungeon
                 {
                     var neighborCoord = current.Data.TileCoord + dir;
                     var neighbor = ElementManager_Cell.Instance.GetElement(neighborCoord);
-                    if (neighbor == null || visited.Contains(neighbor) || neighbor.room != null)
+                    if (neighbor == null || visited.Contains(neighbor) || neighbor.area != null)
                     {
                         continue;
                     }
@@ -72,30 +70,51 @@ namespace Johnny.SimDungeon
             var cellA = entity.edgeElement.primaryCell;
             var cellB = entity.edgeElement.secondaryCell;
 
+            // ========== 步骤1: 找到所有受影响的 cell ==========
+            var affectedCells = new HashSet<Element_Cell>();
+            if (cellA != null) affectedCells.Add(cellA);
+            if (cellB != null) affectedCells.Add(cellB);
 
-            if (cellA.room != null && cellA.room == cellB.room)
+            // 同时把相邻 cell 也加入（确保跨房间的情况能覆盖）
+            foreach (var c in affectedCells.ToList())
             {
-                return;
+                foreach (var dir in DirectionUtility.CardinalDirections)
+                {
+                    var neighbor = ElementManager_Cell.Instance.GetElement(c.Data.TileCoord + dir);
+                    if (neighbor != null) affectedCells.Add(neighbor);
+                }
             }
 
+            // ========== 步骤2: 移除这些 cell 所属的旧房间 ==========
+            var oldRooms = affectedCells
+                .Where(c => c.area != null)
+                .Select(c => c.area)
+                .Distinct()
+                .ToList();
 
-            var newRoomCellsA = FloodFill(cellA);
-            if (newRoomCellsA.Count > 0)
+            foreach (var oldRoom in oldRooms)
             {
-                var newRoom = ElementManager_Room.Instance.CreateRoom(RoomType.EmptyRoom);
-                newRoom.AddCells(newRoomCellsA);
-                Debug.Log($"新房间（ID: {newRoom.name}）被创建，包含 {newRoomCellsA.Count} 个格子。");
+                ElementManager_Room.Instance.DestroyArea(oldRoom);
+                Debug.Log($"旧房间 {oldRoom.name} 已被销毁（因新墙影响）。");
             }
 
-            var newRoomCellsB = FloodFill(cellB);
-            if (newRoomCellsB.Count > 0 && !newRoomCellsB.Overlaps(newRoomCellsA))
+            // ========== 步骤3: 用 FloodFill 重新划分 ==========
+            var processed = new HashSet<Element_Cell>();
+
+            foreach (var c in affectedCells)
             {
-                var newRoom = ElementManager_Room.Instance.CreateRoom(RoomType.EmptyRoom);
-                newRoom.AddCells(newRoomCellsB);
-                Debug.Log($"新房间（ID: {newRoom.name}）被创建，包含 {newRoomCellsB.Count} 个格子。");
+                if (c.area != null || processed.Contains(c)) continue;
+
+                var region = FloodFill(c);
+                if (region.Count > 0)
+                {
+                    var newRoom = ElementManager_Room.Instance.CreateRoom(RoomType.EmptyRoom);
+                    newRoom.AddCells(region);
+                    processed.UnionWith(region);
+                    Debug.Log($"新房间（ID: {newRoom.name}）被创建，包含 {region.Count} 个格子。");
+                }
             }
         }
-
 
         private static bool HasWallBetween(Element_Cell a, Element_Cell b, IntVector2 dir)
         {

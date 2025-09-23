@@ -31,7 +31,7 @@ MonoBehaviour:
   objectGridCustomAlphaMaskScale: {x: 0, y: 0}
   customSurfaceLayerMask:
     serializedVersion: 2
-    m_Bits: 1073741824
+    m_Bits: 64
   raiseObjectWithVerticalGrids: 0
   enablePlaceAndDeselect: 0
   affectByBasicAreaDisablers: 1

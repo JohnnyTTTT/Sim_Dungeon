@@ -11,38 +11,42 @@ namespace Johnny.SimDungeon
         public Entity_SubEdge primary;
         public Entity_SubEdge secondary;
         public Element_Edge edgeElement;
-
+        private List<Vector3> adjacentFloorPositions = new List<Vector3>();
+        public bool isHidden;
+        private Transform m_Camera;
+        public float dotT;
         private void Update()
         {
-            //bool hide = false;
-
-            //foreach (var floorPo in floorPos)
+            //if (m_Camera == null)
             //{
-            //    Vector3 camDir = m_MainCam.position - floorPo;
-            //    camDir.y = 0; // 只考虑 XZ 平面
+            //    m_Camera = CameraController.Instance.MainCamera.transform;
+            //}
+            //if (edgeElement == null) return;
+            //isHidden = false;
 
-            //    Vector3 wallToCam = transform.position - floorPo;
-            //    wallToCam.y = 0;
+            //// 遍历所有相邻格子
+            //foreach (var floorPos in adjacentFloorPositions)
+            //{
+            //    // 摄像机相对于格子方向（XZ 平面）
+            //    Vector3 camDir = m_Camera.position - floorPos;
+            //    camDir.y = 0;
 
-            //    float dot = Vector3.Dot(camDir.normalized, wallToCam.normalized);
+            //    // 墙中心相对于格子方向
+            //    Vector3 wallDir = transform.position - floorPos;
+            //    wallDir.y = 0;
 
-            //    if (dot > 0f)
+            //    // 点乘判断摄像机是否在墙前面
+            //    float dot = Vector3.Dot(camDir.normalized, wallDir.normalized);
+
+            //    if (dot > dotT)
             //    {
-            //        hide = true;
-            //        break; // 一旦摄像机在正面，整面墙隐藏
+            //        // 摄像机在墙前面 → 整段墙隐藏
+            //        isHidden = true;
+            //        break;
             //    }
             //}
-
-            //if (primary.currentObject)
-            //{
-            //    primary.currentObject.gameObject.SetActive(!hide);
-            //}
-            //if (secondary.currentObject)
-            //{
-            //    secondary.currentObject.gameObject.SetActive(!hide);
-            //}
-
-            //gameObject.SetActive(!hide);
+            //primary.gameObject.SetActive(isHidden);
+            //secondary.gameObject.SetActive(isHidden);
         }
 
         public override void UpdateData()
@@ -52,11 +56,15 @@ namespace Johnny.SimDungeon
             var primaryCell = ElementManager_Cell.Instance.GetElement(primary.transform.position);
             var secondaryCell = ElementManager_Cell.Instance.GetElement(secondary.transform.position);
 
+            var primaryCellPosition = CoordUtility.TileCoordToWorldPosition(primaryCell.Data.TileCoord);
+            var secondaryCellPosition = CoordUtility.TileCoordToWorldPosition(secondaryCell.Data.TileCoord);
+            adjacentFloorPositions.Add(primaryCellPosition);
+            adjacentFloorPositions.Add(secondaryCellPosition);
+
             if (Direction == Direction.Up || Direction == Direction.Down)
             {
                 var parentElement = primaryCell.Data.TileCoord.y > secondaryCell.Data.TileCoord.y ? primaryCell : secondaryCell;
                 edgeElement = parentElement.downEdge;
-
             }
             else
             {

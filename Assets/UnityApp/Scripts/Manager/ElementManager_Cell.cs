@@ -24,7 +24,7 @@ namespace Johnny.SimDungeon
         public Element_Cell downCell;
 
 
-        public Room room;
+        public Room area;
 
 
         public Entity_Ground ground;
@@ -107,7 +107,8 @@ namespace Johnny.SimDungeon
             //    var position = new Vector3(item.position.x + 0.5f, 0f, item.position.y + 0.5f);
             //    GizmoUnitily.DrawOneSizeCube(position, item.GizmoColor, true);
             //}
-            GizmoUnitily.DrawLabel(Data.TileCoord, new Vector2Int(Data.TileCoord.x, Data.TileCoord.y).ToString() + " " + Data.CellType);
+            GizmoUnitily.DrawLabel(Data.TileCoord, 
+                $"{new Vector2Int(Data.TileCoord.x, Data.TileCoord.y)} - {Data.CellType} - {area}");
         }
         //public override void Init(FlowTilemapCell flowTilemapCell)
         //{

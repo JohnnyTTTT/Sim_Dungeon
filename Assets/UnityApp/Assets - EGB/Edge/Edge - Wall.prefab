@@ -231,6 +231,8 @@ MonoBehaviour:
   buildableObjectSO: {fileID: 0}
   primary: {fileID: 8326472648274943273}
   secondary: {fileID: 7658154835860340688}
+  isHidden: 0
+  dotT: 0.5
 --- !u!114 &8980230178865248745
 MonoBehaviour:
   m_ObjectHideFlags: 0

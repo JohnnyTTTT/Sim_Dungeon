@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public class Entity_SubEdge : Entity
+    public class Entity_SubEdge : MonoBehaviour
     {
         public Entity_Edge parent;
         public Entity_SubEdge relativeEdge;
