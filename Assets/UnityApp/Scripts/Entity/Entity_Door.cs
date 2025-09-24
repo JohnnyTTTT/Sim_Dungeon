@@ -15,15 +15,15 @@ namespace Johnny.SimDungeon
 
         public void CutWall()
         {
-            var wall = edgeElement.wall;
+            //var wall = edgeElement.wall;
 
-            wall.originWalls[0].full = DoCut(wall.originWalls[0].full);
-            wall.originWalls[0].shorten = DoCut(wall.originWalls[0].shorten);
+            //wall.originWalls[0].full = DoCut(wall.originWalls[0].full);
+            //wall.originWalls[0].shorten = DoCut(wall.originWalls[0].shorten);
 
-            wall.originWalls[1].full = DoCut(wall.originWalls[1].full);
-            wall.originWalls[1].shorten = DoCut(wall.originWalls[1].shorten);
+            //wall.originWalls[1].full = DoCut(wall.originWalls[1].full);
+            //wall.originWalls[1].shorten = DoCut(wall.originWalls[1].shorten);
 
-            virtualModel.SetActive(false);
+            //virtualModel.SetActive(false);
         }
 
         private GameObject DoCut(GameObject origin)
