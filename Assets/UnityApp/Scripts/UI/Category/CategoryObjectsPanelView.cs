@@ -48,6 +48,7 @@ namespace Johnny.SimDungeon
 
         private void OnActiveEasyGridBuilderProChanged(EasyGridBuilderPro activeEasyGridBuilderProSystem)
         {
+            if (activeEasyGridBuilderProSystem == null) return;
             if (AllItems.TryGetValue(activeEasyGridBuilderProSystem, out var datas))
             {
                 ViewModel.Items = datas;

@@ -27,6 +27,7 @@ namespace Johnny.SimDungeon
                         case GameMode.None:
                             break;
                         case GameMode.Default:
+                            GridType = GridType.None;
                             break;
                         case GameMode.Structure:
                             GridType = GridType.SizeTwo;
@@ -67,15 +68,20 @@ namespace Johnny.SimDungeon
                     var size2 = SpawnManager.Instance.m_EasyGridBuilderProSize2;
                     switch (m_GridType)
                     {
+                        case GridType.None:
+                            size1.gameObject.SetActive(false);
+                            size2.gameObject.SetActive(false);
+                            //ActiveEasyGridBuilderPro = null;
+                            break;
                         case GridType.SizeOne:
                             size1.gameObject.SetActive(true);
                             size2.gameObject.SetActive(false);
-                            BindingService.MainGameViewModel.ActiveEasyGridBuilderPro = size1;
+                            ActiveEasyGridBuilderPro = size1;
                             break;
                         case GridType.SizeTwo:
                             size2.gameObject.SetActive(true);
                             size1.gameObject.SetActive(false);
-                            BindingService.MainGameViewModel.ActiveEasyGridBuilderPro = size2;
+                           ActiveEasyGridBuilderPro = size2;
                             break;
                     }
                 }
@@ -169,12 +175,9 @@ namespace Johnny.SimDungeon
             }
             set
             {
-                if (m_ActiveEasyGridBuilderPro != value)
-                {
-                    Set(ref m_ActiveEasyGridBuilderPro, value);
-                    GridManager.Instance.SetActiveGridSystem(m_ActiveEasyGridBuilderPro);
-                    RaisePropertyChanged();
-                }
+                Set(ref m_ActiveEasyGridBuilderPro, value);
+                GridManager.Instance.SetActiveGridSystem(m_ActiveEasyGridBuilderPro);
+                RaisePropertyChanged();
             }
         }
         private EasyGridBuilderProXZ m_ActiveEasyGridBuilderPro;
@@ -207,31 +210,6 @@ namespace Johnny.SimDungeon
             }
         }
         private CategoryObjectItemViewModel m_activeCategoryObjectItemView;
-
-        //public BuildableObjectSO InputActiveBuildableObjectSO
-        //{
-        //    get
-        //    {
-        //        return m_InputActiveBuildableObjectSO;
-        //    }
-        //    set
-        //    {
-        //        if (m_InputActiveBuildableObjectSO != value)
-        //        {
-        //            Set(ref m_InputActiveBuildableObjectSO, value);
-        //            //if (m_InputActiveBuildableObjectSO != null)
-        //            //{
-        //            //    GridManager.Instance.SetActiveGridModeInAllGrids(GridMode.BuildMode);
-        //            //}
-        //            foreach (var easyGridBuilderPro in GridManager.Instance.GetEasyGridBuilderProSystemsList())
-        //            {
-        //                easyGridBuilderPro.SetInputActiveBuildableObjectSO(m_InputActiveBuildableObjectSO, onlySetBuildableExistInBuildablesList: true);
-        //            }
-        //            RaisePropertyChanged();
-        //        }
-        //    }
-        //}
-        //private BuildableObjectSO m_InputActiveBuildableObjectSO;
 
     }
     public class MainGameView : ViewBase<MainGameViewModel>

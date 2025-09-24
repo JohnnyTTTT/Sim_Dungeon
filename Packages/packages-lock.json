@@ -41,7 +41,7 @@
     },
     "com.unity.editorcoroutines": {
       "version": "1.0.1",
-      "depth": 0,
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
