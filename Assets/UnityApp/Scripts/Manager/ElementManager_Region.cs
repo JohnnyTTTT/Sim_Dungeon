@@ -121,16 +121,16 @@ namespace Johnny.SimDungeon
         }
 
 
-        public void HandleWallPlacedIncremental(Entity_Edge entity)
+        public void HandleWallPlacedIncremental(Entity_Wall entity)
         {
             if (ElementManager_Edge.Instance.CountConnectedEdges(entity.edgeElement) < 2)
             {
-                Debug.Log("新墙连接少于2，不形成封闭空间。跳过房间检查。");
+                //Debug.Log("新墙连接少于2，不形成封闭空间。跳过房间检查。");
                 return;
             }
 
-            var cellA = entity.edgeElement.primaryCell;
-            var cellB = entity.edgeElement.secondaryCell;
+            var cellA = entity.edgeElement.adjacentCells[0];
+            var cellB = entity.edgeElement.adjacentCells[1];
 
             if (cellA == null || cellB == null) return;
 

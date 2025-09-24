@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01296687a9e95814da30c68c2523196f, type: 3}
-  m_Name: Free Object Category SO- GridSize2
+  m_Name: _Free Category SO- GridSize2
   m_EditorClassIdentifier: Assembly-CSharp::SoulGames.EasyGridBuilderPro.BuildableFreeObjectCategorySO

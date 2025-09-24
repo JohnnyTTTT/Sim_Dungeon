@@ -261,7 +261,7 @@ namespace Johnny.SimDungeon
 
         private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)
         {
-            Debug.Log(gridMode);
+            Debug.Log($"<GridMode Changed> - {gridMode.SetColor(Color.yellow)}");
             switch (gridMode)
             {
                 case GridMode.None:

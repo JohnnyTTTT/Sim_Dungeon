@@ -10,23 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: acf3d8c6d1bb4e0489a63cbd68de1909, type: 3}
-  m_Name: Edge SO - Stone Wall
+  m_Name: Edge SO - BrickWall
   m_EditorClassIdentifier: 
-  objectName: BrickWall
-  objectIcon: {fileID: 21300000, guid: 81c5ccb31e91048daba6cea9ca10e988, type: 3}
+  objectName: Stone Wall
+  objectIcon: {fileID: 21300000, guid: 729353ff7ada649d1b8a97aacad39177, type: 3}
   buildableObjectUICategorySO: {fileID: 11400000, guid: 9de6d3d8a409bdc409200570d3638136, type: 2}
   randomPrefabs:
-  - objectPrefab: {fileID: 3407519850946740615, guid: 64f1c0372000feb43b5060f536d1538d, type: 3}
-    ghostObjectPrefab: {fileID: 3407519850946740615, guid: 64f1c0372000feb43b5060f536d1538d, type: 3}
-    probability: 20
-  - objectPrefab: {fileID: 3407519850946740615, guid: 8faf60621ec83424a984d1f3361e6c14, type: 3}
-    ghostObjectPrefab: {fileID: 3407519850946740615, guid: 8faf60621ec83424a984d1f3361e6c14, type: 3}
-    probability: 20
-  - objectPrefab: {fileID: 3407519850946740615, guid: cfe35f0185c50f5419221bb3170c02d0, type: 3}
-    ghostObjectPrefab: {fileID: 3407519850946740615, guid: cfe35f0185c50f5419221bb3170c02d0, type: 3}
-    probability: 20
-  - objectPrefab: {fileID: 3407519850946740615, guid: 36cd05266f3b0c745bc0e27d3edc89a9, type: 3}
-    ghostObjectPrefab: {fileID: 3407519850946740615, guid: 36cd05266f3b0c745bc0e27d3edc89a9, type: 3}
+  - objectPrefab: {fileID: 3407519850946740615, guid: cf6f2d683c38319478c6294b1b8cc157, type: 3}
+    ghostObjectPrefab: {fileID: 3407519850946740615, guid: ecbc5d3ac777183429b1901a75b3e0a0, type: 3}
     probability: 20
   eachPlacementUseRandomPrefab: 1
   validPlacementMaterial: {fileID: 2100000, guid: 60b6e8cab158bd44dbdf258b7527565a, type: 2}

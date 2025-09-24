@@ -3,32 +3,44 @@ using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
-    public class Entity_Door : Entity
+    public class Entity_Door : Entity_Edge
     {
+        public GameObject cutter;
+        public GameObject virtualModel;
         public override void UpdateData()
         {
-            var parentElement = ElementManager_Cell.Instance.GetElement(transform.position);
-
-            Element_Edge edgeElement;
-            Direction = DirectionUtility.GetDirectionForWorld(transform.rotation);
-            if (Direction == Direction.Up || Direction == Direction.Down)
-            {
-                edgeElement = parentElement.horizontalEdge;
-            }
-            else
-            {
-                edgeElement = parentElement.verticalEdge;
-            }
+            base.UpdateData();
             edgeElement.door = this;
-            SetParentCellElement_JustUseThisFunction(parentElement);
         }
 
-        protected override void SetParentCellElement_JustUseThisFunction(Element_Cell element)
+        public void CutWall()
         {
-            base.SetParentCellElement_JustUseThisFunction(element);
-            name = $"Door - {element.Data.TileCoord.x},{element.Data.TileCoord.y} - {Direction}";
+            var wall = edgeElement.wall;
+
+            wall.originWalls[0].full = DoCut(wall.originWalls[0].full);
+            wall.originWalls[0].shorten = DoCut(wall.originWalls[0].shorten);
+
+            wall.originWalls[1].full = DoCut(wall.originWalls[1].full);
+            wall.originWalls[1].shorten = DoCut(wall.originWalls[1].shorten);
+
+            virtualModel.SetActive(false);
         }
 
-
+        private GameObject DoCut(GameObject origin)
+        {
+            var result = CSG.Perform(CSG.BooleanOp.Subtraction, origin, cutter);
+            var composite = new GameObject();
+            composite.AddComponent<MeshFilter>().sharedMesh = result.mesh;
+            var mats = result.materials;
+            mats[mats.Count - 1] = SpawnManager.Instance.defaultSectionMaterial; ;
+            composite.AddComponent<MeshRenderer>().sharedMaterials = result.materials.ToArray();
+            composite.name = origin.name.ToString() + " - Door Cuted";
+            composite.transform.parent = origin.transform.parent;
+            composite.transform.localPosition = Vector3.zero;
+            composite.transform.rotation = Quaternion.identity;
+            composite.transform.localScale = Vector3.one;
+            Destroy(origin);
+            return composite;
+        }
     }
 }

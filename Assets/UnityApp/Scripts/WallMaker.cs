@@ -1,4 +1,5 @@
 using Sirenix.OdinInspector;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -19,14 +20,14 @@ namespace Johnny.SimDungeon
         {
             var result = CSG.Perform(operation, origin, cutter);
             var composite = new GameObject();
-            //composite.AddComponent<MeshFilter>().sharedMesh = result.mesh;
-            //var mats = result.materials;
-            //mats[mats.Count - 1] = sectionMaterial;
-            //composite.AddComponent<MeshRenderer>().sharedMaterials = result.materials.ToArray();
-            //composite.name = origin.name.ToString() + " Cutted";
+            composite.AddComponent<MeshFilter>().sharedMesh = result.mesh;
+            var mats = result.materials;
+            mats[mats.Count - 1] = sectionMaterial;
+            composite.AddComponent<MeshRenderer>().sharedMaterials = result.materials.ToArray();
+            composite.name = origin.name.ToString() + " - Half";
 
-            AssetDatabase.CreateAsset(Object.Instantiate(result.mesh), savePath);
-            AssetDatabase.SaveAssets();
+            //AssetDatabase.CreateAsset(Object.Instantiate(result.mesh), Path.Combine( savePath,origin.name+"-Half"+".asset"));
+            //AssetDatabase.SaveAssets();
         }
     }
 }

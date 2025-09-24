@@ -1,4 +1,5 @@
 using DungeonArchitect;
+using System;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -67,6 +68,12 @@ namespace Johnny.SimDungeon
             var position = CoordUtility.TileCoordToWorldPosition(center);
             DrawWall(position, color, isHorizontalEdge);
         }
+
+        internal static void DrawLine(Vector3 vector3, object worldPosition, Color yellow)
+        {
+            throw new NotImplementedException();
+        }
+
         public static void DrawTwoSizeCube(Vector3 center, Color color, bool isWire)
         {
             Gizmos.color = color;

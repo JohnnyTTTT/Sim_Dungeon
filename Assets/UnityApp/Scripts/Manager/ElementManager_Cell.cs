@@ -10,7 +10,6 @@ using UnityEditor;
 #endif
 namespace Johnny.SimDungeon
 {
-    [System.Serializable]
     public class Element_Cell : ElementData<FlowTilemapCell>
     {
         public Element_Edge leftEdge;
@@ -171,33 +170,33 @@ namespace Johnny.SimDungeon
             if (Inited) return;
             map.Clear();
 
-            var edgeManager = ElementManager_Edge.Instance;
             foreach (var cell in cells)
             {
                 var element = new Element_Cell(cell);
+                map[cell.TileCoord] = element;
+            }
 
-                var coord = cell.TileCoord;
+            Inited = true;
+            Debug.Log($"[-----System-----] : DataManager Cell inited , Cell count <{map.Count}>");
+        }
+
+        public void PostInit()
+        {
+            var edgeManager = ElementManager_Edge.Instance;
+            foreach (var element in map.Values)
+            {
+                var coord = element.Data.TileCoord;
+
                 element.leftEdge = edgeManager.GetLeftEdgeFromTileCoord(coord);
                 element.upEdge = edgeManager.GetUpEdgeFromTileCoord(coord);
                 element.rightEdge = edgeManager.GetRightEdgeFromTileCoord(coord);
                 element.downEdge = edgeManager.GetDownEdgeFromTileCoord(coord);
 
-                map[cell.TileCoord] = element;
-            }
-
-            foreach (var element in map.Values)
-            {
-                var coord = element.Data.TileCoord;
                 element.neighbors[0] = GetLeftCellFromTileCoord(coord);
                 element.neighbors[1] = GetUpCellFromTileCoord(coord);
                 element.neighbors[2] = GetRightCellFromTileCoord(coord);
                 element.neighbors[3] = GetDownCellFromTileCoord(coord);
             }
-
-
-
-            Inited = true;
-            Debug.Log($"[-----System-----] : DataManager Cell inited , Cell count <{map.Count}>");
         }
 
         public List<Element_Cell> GetAllCells()

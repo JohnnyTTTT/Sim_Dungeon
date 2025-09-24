@@ -10,6 +10,7 @@ namespace Johnny.SimDungeon
     {
         public bool drawGizmos;
         public Direction Direction;
+
         public BuildableObjectSO buildableObjectSO;
 
         private void OnEnable()

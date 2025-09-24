@@ -74,7 +74,7 @@ namespace Johnny.SimDungeon
         public void BuildDungeon()
         {
             m_RuntimeSimSceneObjectInstantiator = new RuntimeSimSceneObjectInstantiator();
-            dungeon.Build(m_RuntimeSimSceneObjectInstantiator);
+            dungeon.Build(new RuntimeSimSceneObjectInstantiator());
         }
 
         public void DestroyDungeon()
@@ -91,27 +91,24 @@ namespace Johnny.SimDungeon
         public override void OnDungeonMarkersEmitted(Dungeon dungeon, DungeonModel model, LevelMarkerList markers)
         {
             var gridFlowDungeonModel = model as GridFlowDungeonModel;
-
-            ElementManager_Edge.Instance.Init(gridFlowDungeonModel.Tilemap.Edges);
             ElementManager_Cell.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
+            ElementManager_Edge.Instance.Init(gridFlowDungeonModel.Tilemap.Edges);
             ElementManager_Region.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
             ElementManager_Tile.Instance.Init(SpawnManager.Instance.m_EasyGridBuilderProSize1);
+            ElementManager_Cell.Instance.PostInit();
+            ElementManager_Edge.Instance.PostInit();
+
             Debug.Log("[-----System-----] : OnDungeonMarkersEmitted");
         }
 
         public override void OnPostDungeonBuild(Dungeon dungeon, DungeonModel model)
         {
-            var entities = FindObjectsByType<Entity>(FindObjectsSortMode.InstanceID);
-            foreach (var item in entities)
-            {
-                item.UpdateData();
-                if (item is Entity_Edge edge)
-                {
-                    //DetectorUtility.HandleWallPlacedIncremental(edge);
-                }
-            }
-
-            Debug.Log("[-----System-----] : Entities UpdateData");
+            //var entities = FindObjectsOfType<Entity>();
+            //foreach (var item in entities)
+            //{
+            //    item.UpdateData();
+            //}
+            SpawnManager.Instance.Init();
             //InvalidAreaManager.Instance.UpdateMesh();
 
             Debug.Log("[-----System-----] : OnPostDungeonBuild");
@@ -123,6 +120,7 @@ namespace Johnny.SimDungeon
             ElementManager_Edge.Instance.UnInit();
             ElementManager_Region.Instance.UnInit();
             ElementManager_Tile.Instance.UnInit();
+            SpawnManager.Instance.UnInit();
 
         }
     }

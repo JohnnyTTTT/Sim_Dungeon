@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c911fdae6a66643488f5baf45dd89ac3, type: 3}
-  m_Name: Free Object SO - StoneGround
+  m_Name: Free SO - Door
   m_EditorClassIdentifier: Assembly-CSharp::SoulGames.EasyGridBuilderPro.BuildableFreeObjectSO
-  objectName: Stone Ground
-  objectIcon: {fileID: 21300000, guid: a8132c8c3b08146f698283ea4bbbaf36, type: 3}
+  objectName: Door
+  objectIcon: {fileID: 21300000, guid: 4a48ea4097fab44cc84f812863c910e4, type: 3}
   buildableObjectUICategorySO: {fileID: 11400000, guid: 81d257747ea27c540a799d720aebc54e, type: 2}
   randomPrefabs:
   - objectPrefab: {fileID: 4549288026964822154, guid: a64afa6797b07534abec2b15309b47de, type: 3}
     ghostObjectPrefab: {fileID: 4549288026964822154, guid: a64afa6797b07534abec2b15309b47de, type: 3}
     probability: 0
   eachPlacementUseRandomPrefab: 1
-  validPlacementMaterial: {fileID: 0}
-  invalidPlacementMaterial: {fileID: 0}
+  validPlacementMaterial: {fileID: 2100000, guid: 60b6e8cab158bd44dbdf258b7527565a, type: 2}
+  invalidPlacementMaterial: {fileID: 2100000, guid: 1a665553bd032b84f8122a81c18ba378, type: 2}
   setSpawnedObjectLayer: 0
   spawnedObjectLayer:
     serializedVersion: 2
@@ -34,9 +34,9 @@ MonoBehaviour:
     m_Bits: 0
   raiseObjectWithVerticalGrids: 0
   enablePlaceAndDeselect: 0
-  affectByBasicAreaDisablers: 0
-  affectByAreaDisablers: 0
-  affectByBasicAreaEnablers: 0
+  affectByBasicAreaDisablers: 1
+  affectByAreaDisablers: 1
+  affectByBasicAreaEnablers: 1
   affectByAreaEnablers: 1
   isObjectReplacable: 0
   replacingObjectIgnoreCustomConditions: 1
@@ -60,7 +60,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   buildableFreeObjectCategorySO: {fileID: 11400000, guid: c4749859d17451b4bb93e62567e11642, type: 2}
-  rotationType: 2
+  rotationType: 0
   freeRotationSpeed: 100
   freezeRotation: 0
   fourDirectionalRotation: 0
@@ -75,4 +75,4 @@ MonoBehaviour:
   spacingChangeSmoothness: 1
   splineTangetMode: 0
   closedSpline: 0
-  affectByFreeObjectSnappers: 0
+  affectByFreeObjectSnappers: 1

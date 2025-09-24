@@ -276,6 +276,7 @@ MonoBehaviour:
       LayoutCell: 0
       DistanceFromMainPath: 2147483647
       Height: 0
+    neighbors: []
     ground: {fileID: 0}
     ceiling: {fileID: 0}
     horizontalSubEdge: {fileID: 0}

@@ -41,7 +41,7 @@ namespace Johnny.SimDungeon
             };
         }
 
-        public static FourDirectionalRotation ToFourDirectionalRotation(Direction myDir)
+        public static FourDirectionalRotation ToEdgeFourDirectionalRotation(Direction myDir)
         {
             return myDir switch
             {
@@ -77,7 +77,26 @@ namespace Johnny.SimDungeon
                 return Direction.Left;
         }
 
-        public static FourDirectionalRotation GetFourDirectionalRotationForWorld(Quaternion rotation)
+        public static FourDirectionalRotation GetFreeFourDirectionalRotationForWorld(Quaternion rotation)
+        {
+            // 获取旋转后的 forward 方向，只在水平面上考虑
+            var forward = rotation * Vector3.forward;
+            forward.y = 0;
+            forward.Normalize();
+
+            // atan2 得到角度（范围 -180 ~ 180）
+            var angle = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
+
+            // 转为 0~360
+            if (angle < 0) angle += 360f;
+
+            // 每 90° 一个方向，四舍五入到最近的整数
+            var index = Mathf.RoundToInt(angle / 90f) % 4;
+
+            return (FourDirectionalRotation)index;
+        }
+
+        public static FourDirectionalRotation GetEdgeFourDirectionalRotationForWorld(Quaternion rotation)
         {
 
             var forward = rotation * Vector3.forward;

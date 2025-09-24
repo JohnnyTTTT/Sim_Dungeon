@@ -238,7 +238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.Entity_Ground
   drawGizmos: 0
-  Direction: 1
+  Direction: 0
   buildableObjectSO: {fileID: 0}
   cellElement:
     GUID: 0
@@ -276,6 +276,7 @@ MonoBehaviour:
       LayoutCell: 0
       DistanceFromMainPath: 2147483647
       Height: 0
+    neighbors: []
     ground: {fileID: 0}
     ceiling: {fileID: 0}
     horizontalSubEdge: {fileID: 0}

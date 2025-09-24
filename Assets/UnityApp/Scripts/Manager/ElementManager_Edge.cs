@@ -34,33 +34,33 @@ namespace Johnny.SimDungeon
                 var data = new Element_Edge(edge);
                 if (edge.HorizontalEdge)
                 {
-
                     horizontalMap[edge.EdgeCoord] = data;
                 }
                 else
                 {
                     verticalMap[edge.EdgeCoord] = data;
                 }
-
-
             }
+            Inited = true;
+            Debug.Log($"[-----System-----] : DataManager_Edge inited , HorizontalMap count <{horizontalMap.Count}> - VerticalMap <{verticalMap.Count}>");
+        }
 
+        public void PostInit()
+        {
             foreach (var kvp in horizontalMap)
             {
                 var edge = kvp.Value;
-                edge.Neighbors = GetNeighborEdgeEdges(edge);
+                edge.adjacentCells = GetAdjacentCells(edge);
+                edge.Neighbors = GetNeighborEdges(edge);
 
             }
 
-            // 遍历所有垂直 Edge
             foreach (var kvp in verticalMap)
             {
                 var edge = kvp.Value;
-                edge.Neighbors = GetNeighborEdgeEdges(edge);
+                edge.adjacentCells = GetAdjacentCells(edge);
+                edge.Neighbors = GetNeighborEdges(edge);
             }
-
-            Inited = true;
-            Debug.Log($"[-----System-----] : DataManager_Edge inited , HorizontalMap count <{horizontalMap.Count}> - VerticalMap <{verticalMap.Count}>");
         }
 
         public Element_Edge GetHorizontal(IntVector2 cooed)
@@ -88,7 +88,7 @@ namespace Johnny.SimDungeon
 
         public Element_Edge GetUpEdgeFromTileCoord(IntVector2 coord)
         {
-            return GetHorizontal(coord+DirectionUtility.UP);
+            return GetHorizontal(coord + DirectionUtility.UP);
         }
 
         public Element_Edge GetRightEdgeFromTileCoord(IntVector2 coord)
@@ -101,7 +101,7 @@ namespace Johnny.SimDungeon
             return GetHorizontal(coord);
         }
 
-        private List<Element_Edge> GetNeighborEdgeEdges(Element_Edge edge)
+        private List<Element_Edge> GetNeighborEdges(Element_Edge edge)
         {
             var neighborEdges = new List<Element_Edge>();
             var edgeCoord = edge.Data.EdgeCoord;
@@ -150,6 +150,27 @@ namespace Johnny.SimDungeon
             return neighborEdges;
         }
 
+        private Element_Cell[] GetAdjacentCells(Element_Edge edge)
+        {
+            var adjacentCells = new Element_Cell[2];
+            var edgeCoord = edge.Data.EdgeCoord;
+            if (edge.Data.HorizontalEdge)
+            {
+                var frontCell = ElementManager_Cell.Instance.GetElement(edgeCoord);
+                adjacentCells[0]=frontCell;
+                var backCell = ElementManager_Cell.Instance.GetDownCellFromTileCoord(edgeCoord);
+                adjacentCells[1] = backCell;
+            }
+            else
+            {
+                var frontCell = ElementManager_Cell.Instance.GetLeftCellFromTileCoord(edgeCoord);
+                adjacentCells[0] = frontCell;
+                var backCell = ElementManager_Cell.Instance.GetElement(edgeCoord);
+                adjacentCells[1] = backCell;
+            }
+            return adjacentCells;
+        }
+
         public int CountConnectedEdges(Element_Edge edge)
         {
             var count = 0;
@@ -177,7 +198,7 @@ namespace Johnny.SimDungeon
                 foreach (var item in horizontalMap)
                 {
 
-                   // if (item.Value.Data.EdgeType == FlowTilemapEdgeType.Wall || item.Value.Data.EdgeType == FlowTilemapEdgeType.Fence)
+                    // if (item.Value.Data.EdgeType == FlowTilemapEdgeType.Wall || item.Value.Data.EdgeType == FlowTilemapEdgeType.Fence)
                     {
                         item.Value.DrawGizmos();
                     }
@@ -185,7 +206,7 @@ namespace Johnny.SimDungeon
                 }
                 foreach (var item in verticalMap)
                 {
-                //    if (item.Value.Data.EdgeType == FlowTilemapEdgeType.Wall || item.Value.Data.EdgeType == FlowTilemapEdgeType.Fence)
+                    //    if (item.Value.Data.EdgeType == FlowTilemapEdgeType.Wall || item.Value.Data.EdgeType == FlowTilemapEdgeType.Fence)
                     {
                         item.Value.DrawGizmos();
                     }
