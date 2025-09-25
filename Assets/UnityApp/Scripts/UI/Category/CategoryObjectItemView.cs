@@ -29,12 +29,20 @@ namespace Johnny.SimDungeon
         }
         private bool active;
 
-        public CategoryObjectItemViewModel(Loxodon.Framework.Commands.ICommand selectCommand,
+        public GridType GridType
+        {
+            get { return this.m_GridType; }
+            set { this.Set(ref m_GridType, value); }
+        }
+        private GridType m_GridType;
+
+        public CategoryObjectItemViewModel(GridType gridType,Loxodon.Framework.Commands.ICommand selectCommand,
             Loxodon.Framework.Commands.ICommand clickCommand,
             BuildableObjectUICategorySO categorySO) :
             base(selectCommand, clickCommand)
         {
             Data = categorySO;
+            GridType = gridType;
             Icon = categorySO.categoryIcon;
         }
     }

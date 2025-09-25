@@ -27,10 +27,12 @@ namespace Johnny.SimDungeon
         private static int s_BaseColor = Shader.PropertyToID("_BaseColor");
 
         public DevelopMode currentMode;
-        [SerializeField] private GameObject cellDetectionPrefab;
+        [SerializeField] private GameObject m_LargeCellDetectionPrefab;
+        [SerializeField] private GameObject m_SmallCellDetectionPrefab;
         [SerializeField] private LayerMask detectionLayer;
         private Element_LargeCell m_LasatDetectionCell;
-        private List<GameObject> m_Instantiates = new List<GameObject>();
+        private List<GameObject> m_InstantiateLargeCells = new List<GameObject>();
+        private List<GameObject> m_InstantiateSmallCells = new List<GameObject>();
 
         private void Update()
         {
@@ -52,11 +54,25 @@ namespace Johnny.SimDungeon
                         case DevelopMode.None:
                             break;
                         case DevelopMode.Cell:
-                            CreateCellDetection(cell);
-                            CreateCellDetection(cell.neighbors[0], Color.green);
-                            CreateCellDetection(cell.neighbors[1], Color.blue);
-                            CreateCellDetection(cell.neighbors[2], Color.yellow);
-                            CreateCellDetection(cell.neighbors[3], Color.red);
+                            CreateLargeCellDetection(cell);
+                            if (cell.neighbors[0] != null)
+                                CreateLargeCellDetection(cell.neighbors[0], Color.green);
+                            if (cell.neighbors[1] != null)
+                                CreateLargeCellDetection(cell.neighbors[1], Color.blue);
+                            if (cell.neighbors[2] != null)
+                                CreateLargeCellDetection(cell.neighbors[2], Color.yellow);
+                            if (cell.neighbors[3] != null)
+                                CreateLargeCellDetection(cell.neighbors[3], Color.red);
+
+                            if (cell.containedSmallCells[0] != null)
+                                CreateSmallCellDetection(cell.containedSmallCells[0], Color.green);
+                            if (cell.containedSmallCells[1] != null)
+                                CreateSmallCellDetection(cell.containedSmallCells[1], Color.blue);
+                            if (cell.containedSmallCells[2] != null)
+                                CreateSmallCellDetection(cell.containedSmallCells[2], Color.yellow);
+                            if (cell.containedSmallCells[3] != null)
+                                CreateSmallCellDetection(cell.containedSmallCells[3], Color.red);
+
                             break;
                         case DevelopMode.Area:
                             var area = cell.region;
@@ -64,7 +80,7 @@ namespace Johnny.SimDungeon
                             {
                                 foreach (var child in area.containedCells)
                                 {
-                                    CreateCellDetection(child);
+                                    CreateLargeCellDetection(child);
                                 }
                             }
                             break;
@@ -74,24 +90,41 @@ namespace Johnny.SimDungeon
             }
         }
 
-        private void CreateCellDetection(Element_LargeCell cell, Color? color = null)
+        private void CreateLargeCellDetection(Element_LargeCell cell, Color? color = null)
         {
-            var obj = Instantiate(cellDetectionPrefab, cell.worldPosition, Quaternion.identity, transform);
+            var obj = Instantiate(m_LargeCellDetectionPrefab, cell.worldPosition, Quaternion.identity, transform);
             obj.name = cell.ToString();
             if (color != null)
             {
                 obj.GetComponent<Renderer>().material.SetColor(s_BaseColor, color.Value);
             }
-            m_Instantiates.Add(obj);
+            m_InstantiateLargeCells.Add(obj);
+        }
+
+        private void CreateSmallCellDetection(Element_SmallCell cell, Color? color = null)
+        {
+            var obj = Instantiate(m_SmallCellDetectionPrefab, cell.worldPosition + new Vector3(0f, 0.6f, 0f), Quaternion.identity, transform);
+            obj.name = cell.ToString();
+            if (color != null)
+            {
+                obj.GetComponent<Renderer>().material.SetColor(s_BaseColor, color.Value);
+            }
+            m_InstantiateSmallCells.Add(obj);
         }
 
         private void Clear()
         {
-            for (int i = m_Instantiates.Count - 1; i >= 0; i--)
+            for (int i = m_InstantiateLargeCells.Count - 1; i >= 0; i--)
             {
-                Destroy(m_Instantiates[i]);
+                Destroy(m_InstantiateLargeCells[i]);
             }
-            m_Instantiates.Clear();
+            m_InstantiateLargeCells.Clear();
+
+            for (int i = m_InstantiateSmallCells.Count - 1; i >= 0; i--)
+            {
+                Destroy(m_InstantiateSmallCells[i]);
+            }
+            m_InstantiateSmallCells.Clear();
         }
     }
 }

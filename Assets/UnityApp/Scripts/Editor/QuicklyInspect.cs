@@ -1,6 +1,7 @@
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 #if UNITY_EDITOR
 namespace Johnny.SimDungeon
@@ -25,7 +26,7 @@ namespace Johnny.SimDungeon
         [Button]
         private void BuildDungeon()
         {
-            DungeonController.Instance.BuildDungeon();
+            DungeonController.Instance.BuildDungeonEditor();
         }
         [Button]
         private void DestroyDungeon()
@@ -39,6 +40,13 @@ namespace Johnny.SimDungeon
             System.GC.Collect();
             System.GC.WaitForPendingFinalizers();
             Resources.UnloadUnusedAssets();
+        }
+
+        [Button]
+        private void OpenMainScene()
+        {
+            string scenePath = "Assets/UnityApp/Scenes/MainGame/MainGame Lasted.unity";
+            EditorSceneManager.OpenScene(scenePath);
         }
 
         private void Update()

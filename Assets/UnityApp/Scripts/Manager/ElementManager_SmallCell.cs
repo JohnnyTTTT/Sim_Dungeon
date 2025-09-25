@@ -10,13 +10,15 @@ namespace Johnny.SimDungeon
     {
         public Vector2Int coord;
         public Vector3 worldPosition;
-
+        public bool isBuildingValid;
         public Element_Edge wall;
-
+        public Element_LargeCell parentCell;
         public Element_SmallCell(Vector2Int vector)
         {
             coord = vector;
-            worldPosition = CoordUtility.GetSmallCellWorldPosition(coord,0);
+            worldPosition = CoordUtility.SmallCoordToWorldPosition(coord);
+            parentCell = ElementManager_LargeCell.Instance.GetElement(worldPosition);
+
         }
 
         public void DrawGizmos()
@@ -42,7 +44,6 @@ namespace Johnny.SimDungeon
 
         public void Init(EasyGridBuilderPro easyGridBuilder)
         {
-            if (Inited) return;
             for (int x = 0; x < easyGridBuilder.GetGridWidth(); x++)
             {
                 for (int z = 0; z < easyGridBuilder.GetGridLength(); z++)
@@ -52,13 +53,12 @@ namespace Johnny.SimDungeon
                     map.Add(newData.coord, newData);
                 }
             }
-            Inited = true;
             Debug.Log($"[-----System-----] : DataManager_Tile inited , tile count <{map.Count}>");
         }
 
         public override Element_SmallCell GetElement(Vector3 worldPosition)
         {
-            var coord = CoordUtility.GetSmallCellCorrd(worldPosition);
+            var coord = CoordUtility.WorldPositionToSmallCoord(worldPosition);
             return GetElement(coord);
         }
 
@@ -84,8 +84,7 @@ namespace Johnny.SimDungeon
 
         public void UnInit()
         {
-            map.Clear();
-            Inited = false;
+            //map.Clear();
         }
 
         private void OnDrawGizmos()

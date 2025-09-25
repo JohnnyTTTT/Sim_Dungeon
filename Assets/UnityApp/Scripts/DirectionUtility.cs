@@ -1,4 +1,5 @@
 using DungeonArchitect;
+using DungeonArchitect.Flow.Domains.Tilemap;
 using SoulGames.EasyGridBuilderPro;
 using UnityEngine;
 
@@ -18,6 +19,9 @@ namespace Johnny.SimDungeon
         public static readonly Vector2Int UP = new Vector2Int(0, 1);
         public static readonly Vector2Int RIGHT = new Vector2Int(1, 0);
         public static readonly Vector2Int DOWN = new Vector2Int(0, -1);
+
+
+
 
         public static readonly Vector2Int[] CardinalDirections ={
             new Vector2Int(-1, 0),
@@ -41,18 +45,7 @@ namespace Johnny.SimDungeon
             };
         }
 
-        public static FourDirectionalRotation ToEdgeFourDirectionalRotation(Direction myDir)
-        {
-            return myDir switch
-            {
-                Direction.Left => FourDirectionalRotation.North,  // 我的 Left(270°)→ 插件 North(270°)
-                Direction.Up => FourDirectionalRotation.East,   // 我的 Up(0°)    → 插件 East(0°)
-                Direction.Right => FourDirectionalRotation.South,  // 我的 Right(90°)→ 插件 South(90°)
-                Direction.Down => FourDirectionalRotation.West,   // 我的 Down(180°)→ 插件 West(180°)
-            };
-        }
-
-        public static Direction GetDirectionForWorld(Quaternion rotation)
+        public static Direction ToDirection(Quaternion rotation)
         {
 
             var forward = rotation * Vector3.forward;
@@ -75,6 +68,17 @@ namespace Johnny.SimDungeon
                 return Direction.Right;
             else
                 return Direction.Left;
+        }
+
+        public static FourDirectionalRotation ToEdgeFourDirectionalRotation(Direction myDir)
+        {
+            return myDir switch
+            {
+                Direction.Left => FourDirectionalRotation.North,  // 我的 Left(270°)→ 插件 North(270°)
+                Direction.Up => FourDirectionalRotation.East,   // 我的 Up(0°)    → 插件 East(0°)
+                Direction.Right => FourDirectionalRotation.South,  // 我的 Right(90°)→ 插件 South(90°)
+                Direction.Down => FourDirectionalRotation.West,   // 我的 Down(180°)→ 插件 West(180°)
+            };
         }
 
         public static FourDirectionalRotation GetFreeFourDirectionalRotationForWorld(Quaternion rotation)
@@ -136,19 +140,69 @@ namespace Johnny.SimDungeon
             }
         }
 
-        //public static Orientation GetOrientation(Transform t)
-        //{
-        //    var forward = t.forward;
-        //    var dir = new Vector2(forward.x, forward.z).normalized;
 
-        //    if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
-        //    {
-        //        return Orientation.Vertical;
-        //    }
-        //    else
-        //    {
-        //        return Orientation.Horizontal;
-        //    }
-        //}
+        public static bool HasEdgeBetween(Element_LargeCell a, Element_LargeCell b, Vector2Int dir)
+        {
+            if (dir == LEFT) return a.edges[0].Data.EdgeType > FlowTilemapEdgeType.Empty;
+            if (dir == UP) return a.edges[1].Data.EdgeType > FlowTilemapEdgeType.Empty;
+            if (dir == RIGHT) return a.edges[2].Data.EdgeType > FlowTilemapEdgeType.Empty;
+            if (dir == DOWN) return a.edges[3].Data.EdgeType > FlowTilemapEdgeType.Empty;
+            return false;
+        }
+
+        public static int GetEdgeConnectedEdgesCount(Element_Edge edge)
+        {
+            var count = 0;
+            foreach (var neighbor in edge.Neighbors)
+            {
+                if (neighbor.Data.EdgeType != FlowTilemapEdgeType.Empty)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// 获取一个位置的角的所有连接边
+        /// </summary>
+        /// <param name="cornerPosition"></param>
+        /// <returns></returns>
+        public static Element_Edge[] GetCornerConnectedEdges(Vector3 cornerPosition)
+        {
+            var start = cornerPosition + new Vector3(1f, 0f, 1f);
+
+            var connects = new Element_Edge[4];
+            //Left
+            connects[0] = ElementManager_Edge.Instance.GetHorizontal(start + Vector3.left);
+            //up
+            connects[1] = ElementManager_Edge.Instance.GetVertical(start);
+            //Right
+            connects[2] = ElementManager_Edge.Instance.GetHorizontal(start);
+            //Down
+            connects[3] = ElementManager_Edge.Instance.GetVertical(start+Vector3.back);
+            return connects;
+        }
+
+        /// <summary>
+        /// 判断一个位置的角是否连接直角边
+        /// </summary>
+        /// <param name="cornerPosition"></param>
+        /// <returns></returns>
+        public static bool HasCornerConnectRightAngleEdges(Vector3 cornerPosition)
+        {
+            var edges = GetCornerConnectedEdges(cornerPosition);
+
+            // Left + Up + Down
+            if (edges[0] != null && edges[1] != null && edges[3] != null) return true;
+            // Up + Left + Right
+            if (edges[1] != null && edges[0] != null && edges[2] != null) return true;
+            // Right + Up + Down
+            if (edges[2] != null && edges[1] != null && edges[3] != null) return true;
+            // Down + Left + Right
+            if (edges[3] != null && edges[0] != null && edges[2] != null) return true;
+
+            return false;
+        }
     }
 }

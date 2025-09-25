@@ -41,7 +41,7 @@ namespace Johnny.SimDungeon
 
         public virtual void UpdateData()
         {
-            Direction = DirectionUtility.GetDirectionForWorld(transform.rotation);
+            Direction = DirectionUtility.ToDirection(transform.rotation);
         }
 
 

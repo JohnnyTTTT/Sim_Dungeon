@@ -12,7 +12,6 @@ namespace Johnny.SimDungeon
 {
     public enum GameMode
     {
-        None,
         Loading,
         God,
         Default,
@@ -40,11 +39,8 @@ namespace Johnny.SimDungeon
         {
             ViewModel = BindingService.MainGameViewModel;
             m_GridManager = GridManager.Instance;
-            m_CategoryObjectsPanelView.Init(SpawnManager.Instance.m_EasyGridBuilderProSize1);
-            m_CategoryObjectsPanelView.Init(SpawnManager.Instance.m_EasyGridBuilderProSize2);
-
-            m_BuildableObjectsPanelView.Init(SpawnManager.Instance.m_EasyGridBuilderProSize1);
-            m_BuildableObjectsPanelView.Init(SpawnManager.Instance.m_EasyGridBuilderProSize2);
+            m_CategoryObjectsPanelView.Init();
+            m_BuildableObjectsPanelView.Init();
             Debug.Log("[-----UI-----] : Init CategoryObjects And BuildableObjects");
             m_GridManager.OnActiveGridModeChanged += OnActiveGridModeChanged;
 

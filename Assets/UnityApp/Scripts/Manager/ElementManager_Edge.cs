@@ -2,14 +2,17 @@ using DungeonArchitect;
 using DungeonArchitect.Flow.Domains.Tilemap;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Johnny.SimDungeon
 {
     public class Element_Edge : ElementData<FlowTilemapEdge>
     {
+        public event Action<Element_Edge> OnWallEntityAdded;
+
         public Element_LargeCell[] adjacentLargeCells = new Element_LargeCell[2];
-        public List<Element_Edge> Neighbors;
+        public Element_Edge[] Neighbors = new Element_Edge[6];
 
         public Element_SmallCell[] containedSmallCells = new Element_SmallCell[3];
 
@@ -25,18 +28,23 @@ namespace Johnny.SimDungeon
             coord = new Vector2Int(data.EdgeCoord.x, data.EdgeCoord.y);
             if (data.HorizontalEdge)
             {
-                worldPosition = CoordUtility.LargeCellCoordToWorldPosition(coord) + new Vector3(0f, 0f, -1f);
+                worldPosition = CoordUtility.LargeCoordToWorldPosition(coord) + new Vector3(0f, 0f, -1f);
             }
             else
             {
-                worldPosition = CoordUtility.LargeCellCoordToWorldPosition(coord) + Vector3.left;
+                worldPosition = CoordUtility.LargeCoordToWorldPosition(coord) + Vector3.left;
             }
         }
 
         public void SetWallEntity(Entity_Wall wall)
         {
             m_WallEntity = wall;
-            DungeonController.Instance.disablerController_SmallCell.AddDisablerCells(containedSmallCells);
+            //DungeonController.Instance.disablerController_SmallCell.AddDisablerCells(containedSmallCells);
+            //foreach (var item in containedSmallCells)
+            //{
+            //    item.isBuildingValid = false;
+            //}
+            OnWallEntityAdded?.Invoke(this);
         }
 
         public Entity_Wall GetWallEntity()
@@ -85,9 +93,15 @@ namespace Johnny.SimDungeon
         private static ElementManager_Edge s_Instance;
         public Dictionary<Vector2Int, Element_Edge> horizontalMap = new Dictionary<Vector2Int, Element_Edge>();
         public Dictionary<Vector2Int, Element_Edge> verticalMap = new Dictionary<Vector2Int, Element_Edge>();
+
+        private void OnDestroy()
+        {
+            horizontalMap.Clear();
+            verticalMap.Clear();
+        }
+
         public void Init(FlowTilemapEdgeDatabase edges)
         {
-            if (Inited) return;
             horizontalMap.Clear();
             verticalMap.Clear();
 
@@ -103,7 +117,6 @@ namespace Johnny.SimDungeon
                     verticalMap[edge.EdgeCoord.ToVector2Int()] = data;
                 }
             }
-            Inited = true;
             Debug.Log($"[-----System-----] : DataManager_Edge inited , HorizontalMap count <{horizontalMap.Count}> - VerticalMap <{verticalMap.Count}>");
         }
 
@@ -112,9 +125,9 @@ namespace Johnny.SimDungeon
             foreach (var kvp in horizontalMap)
             {
                 var edge = kvp.Value;
-                edge.adjacentLargeCells = GetAdjacentCells(edge);
-                edge.Neighbors = GetNeighborEdges(edge);
+                var edgeCoord = edge.coord;
 
+                //SmallCell
                 var midCell = ElementManager_SmallCell.Instance.GetElement(edge.worldPosition);
                 if (midCell != null)
                 {
@@ -123,15 +136,38 @@ namespace Johnny.SimDungeon
                     edge.containedSmallCells[2] = ElementManager_SmallCell.Instance.GetRightCellFromCoord(midCell.coord);
                 }
 
+                //LargeCell
+                var frontCell = ElementManager_LargeCell.Instance.GetElement(edgeCoord);
+                edge.adjacentLargeCells[0] = frontCell;
+                var backCell = ElementManager_LargeCell.Instance.GetDownCellFromTileCoord(edgeCoord);
+                edge.adjacentLargeCells[1] = backCell;
 
+                //Edges
+                var leftHorizontal = GetHorizontal(edgeCoord + DirectionUtility.LEFT);
+                edge.Neighbors[0] = leftHorizontal;
+
+                var upLeftVertical = GetVertical(edgeCoord);
+                edge.Neighbors[1] = upLeftVertical;
+
+                var upRightVertical = GetVertical(edgeCoord + DirectionUtility.RIGHT);
+                edge.Neighbors[2] = upRightVertical;
+
+                var rightHorizontal = GetHorizontal(edgeCoord + DirectionUtility.RIGHT);
+                edge.Neighbors[3] = rightHorizontal;
+
+                var downRightVertical = GetVertical(edgeCoord + DirectionUtility.DOWN + DirectionUtility.RIGHT);
+                edge.Neighbors[4] = downRightVertical;
+
+                var downLeftVertical = GetVertical(edgeCoord + DirectionUtility.DOWN);
+                edge.Neighbors[5] = downLeftVertical;
             }
 
             foreach (var kvp in verticalMap)
             {
                 var edge = kvp.Value;
-                edge.adjacentLargeCells = GetAdjacentCells(edge);
-                edge.Neighbors = GetNeighborEdges(edge);
+                var edgeCoord = edge.coord;
 
+                //SmallCell
                 var midCell = ElementManager_SmallCell.Instance.GetElement(edge.worldPosition);
                 if (midCell != null)
                 {
@@ -140,9 +176,37 @@ namespace Johnny.SimDungeon
                     edge.containedSmallCells[2] = ElementManager_SmallCell.Instance.GetDownCellFromCoord(edge.containedSmallCells[1].coord);
                 }
 
+                //LargeCell
+                var frontCell = ElementManager_LargeCell.Instance.GetLeftCellFromTileCoord(edgeCoord);
+                edge.adjacentLargeCells[0] = frontCell;
+                var backCell = ElementManager_LargeCell.Instance.GetElement(edgeCoord);
+                edge.adjacentLargeCells[1] = backCell;
+
+                //Edges
+                var upLeftHorizontal = GetHorizontal(edgeCoord);
+                edge.Neighbors[0] = upLeftHorizontal;
+
+                var upVertical = GetVertical(edgeCoord + DirectionUtility.UP);
+                edge.Neighbors[1] = upVertical;
+
+                var upRightHorizontal = GetHorizontal(edgeCoord + DirectionUtility.UP);
+                edge.Neighbors[2] = upRightHorizontal;
+
+                var downRightHorizontal = GetHorizontal(edgeCoord + DirectionUtility.LEFT + DirectionUtility.UP);
+                edge.Neighbors[3] = downRightHorizontal;
+
+                var downVertical = GetVertical(edgeCoord + DirectionUtility.DOWN);
+                edge.Neighbors[4] = downVertical;
+
+                var downLeftHorizontal = GetHorizontal(edgeCoord + DirectionUtility.LEFT);
+                edge.Neighbors[5] = downLeftHorizontal;
 
             }
+        }
 
+        public IEnumerable<Element_Edge> GetAllElements()
+        {
+            return horizontalMap.Values.Concat(verticalMap.Values);
         }
 
         public Element_Edge GetHorizontal(Vector2Int coord)
@@ -154,13 +218,25 @@ namespace Johnny.SimDungeon
             return null;
         }
 
-        public Element_Edge GetVertical(Vector2Int cooed)
+        public Element_Edge GetHorizontal(Vector3 worldPosition)
         {
-            if (verticalMap.TryGetValue(cooed, out var data))
+            var coord = CoordUtility.WorldPositionToLargeCoord(worldPosition);
+            return GetHorizontal(coord);
+        }
+
+        public Element_Edge GetVertical(Vector2Int coord)
+        {
+            if (verticalMap.TryGetValue(coord, out var data))
             {
                 return data;
             }
             return null;
+        }
+
+        public Element_Edge GetVertical(Vector3 worldPosition)
+        {
+            var coord = CoordUtility.WorldPositionToLargeCoord(worldPosition);
+            return GetVertical(coord);
         }
 
         public Element_Edge GetLeftEdgeFromTileCoord(Vector2Int coord)
@@ -183,94 +259,12 @@ namespace Johnny.SimDungeon
             return GetHorizontal(coord);
         }
 
-        private List<Element_Edge> GetNeighborEdges(Element_Edge edge)
-        {
-            var neighborEdges = new List<Element_Edge>();
-            var edgeCoord = edge.coord;
 
-            if (edge.Data.HorizontalEdge)
-            {
-                var leftHorizontal = GetHorizontal(edgeCoord + DirectionUtility.LEFT);
-                if (leftHorizontal != null) neighborEdges.Add(leftHorizontal);
 
-                var rightHorizontal = GetHorizontal(edgeCoord + DirectionUtility.RIGHT);
-                if (rightHorizontal != null) neighborEdges.Add(rightHorizontal);
-
-                var upLeftVertical = GetVertical(edgeCoord);
-                if (upLeftVertical != null) neighborEdges.Add(upLeftVertical);
-
-                var upRightVertical = GetVertical(edgeCoord + DirectionUtility.RIGHT);
-                if (upRightVertical != null) neighborEdges.Add(upRightVertical);
-
-                var downLeftVertical = GetVertical(edgeCoord + DirectionUtility.DOWN);
-                if (downLeftVertical != null) neighborEdges.Add(downLeftVertical);
-
-                var downRightVertical = GetVertical(edgeCoord + DirectionUtility.DOWN + DirectionUtility.RIGHT);
-                if (downRightVertical != null) neighborEdges.Add(downRightVertical);
-            }
-            else // Vertical Edge
-            {
-                var upVertical = GetVertical(edgeCoord + DirectionUtility.UP);
-                if (upVertical != null) neighborEdges.Add(upVertical);
-
-                var downVertical = GetVertical(edgeCoord + DirectionUtility.DOWN);
-                if (downVertical != null) neighborEdges.Add(downVertical);
-
-                var upLeftHorizontal = GetHorizontal(edgeCoord);
-                if (upLeftHorizontal != null) neighborEdges.Add(upLeftHorizontal);
-
-                var upRightHorizontal = GetHorizontal(edgeCoord + DirectionUtility.UP);
-                if (upRightHorizontal != null) neighborEdges.Add(upRightHorizontal);
-
-                var downLeftHorizontal = GetHorizontal(edgeCoord + DirectionUtility.LEFT);
-                if (downLeftHorizontal != null) neighborEdges.Add(downLeftHorizontal);
-
-                var downRightHorizontal = GetHorizontal(edgeCoord + DirectionUtility.LEFT + DirectionUtility.UP);
-                if (downRightHorizontal != null) neighborEdges.Add(downRightHorizontal);
-            }
-
-            return neighborEdges;
-        }
-
-        private Element_LargeCell[] GetAdjacentCells(Element_Edge edge)
-        {
-            var adjacentCells = new Element_LargeCell[2];
-            var edgeCoord = edge.coord;
-            if (edge.Data.HorizontalEdge)
-            {
-                var frontCell = ElementManager_LargeCell.Instance.GetElement(edgeCoord);
-                adjacentCells[0] = frontCell;
-                var backCell = ElementManager_LargeCell.Instance.GetDownCellFromTileCoord(edgeCoord);
-                adjacentCells[1] = backCell;
-            }
-            else
-            {
-                var frontCell = ElementManager_LargeCell.Instance.GetLeftCellFromTileCoord(edgeCoord);
-                adjacentCells[0] = frontCell;
-                var backCell = ElementManager_LargeCell.Instance.GetElement(edgeCoord);
-                adjacentCells[1] = backCell;
-            }
-            return adjacentCells;
-        }
-
-        public int CountConnectedEdges(Element_Edge edge)
-        {
-            var count = 0;
-            foreach (var neighbor in edge.Neighbors)
-            {
-                if (neighbor.Data.EdgeType != FlowTilemapEdgeType.Empty)
-                {
-                    count++;
-                }
-            }
-
-            return count;
-        }
         public void UnInit()
         {
-            horizontalMap.Clear();
-            verticalMap.Clear();
-            Inited = false;
+            //horizontalMap.Clear();
+            //verticalMap.Clear();
         }
 
         private void OnDrawGizmos()

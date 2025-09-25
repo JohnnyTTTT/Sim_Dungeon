@@ -13,9 +13,10 @@ namespace Johnny.SimDungeon
     public class Element_LargeCell : ElementData<FlowTilemapCell>
     {
         public Element_LargeCell[] neighbors = new Element_LargeCell[4];
+        public Element_SmallCell[] containedSmallCells = new Element_SmallCell[9];
         public Element_Edge[] edges = new Element_Edge[4];
         public Region region;
-        public Entity_Ground ground;
+        private Entity_Floor m_Ground;
         public Entity_Ceiling ceiling;
 
         public Element_Edge horizontalEdge;
@@ -31,83 +32,34 @@ namespace Johnny.SimDungeon
         public Element_LargeCell(FlowTilemapCell data) : base(data)
         {
             coord = new Vector2Int(data.TileCoord.x, data.TileCoord.y);
-            worldPosition = CoordUtility.LargeCellCoordToWorldPosition(coord);
+            worldPosition = CoordUtility.LargeCoordToWorldPosition(coord);
         }
 
-        private FourDirectionalRotation GetEdgeDirection(Vector3 edge)
+        public void SetGroundEntity(Entity_Floor ground)
         {
-            var dir = new Vector2(edge.x - worldPosition.x, edge.z - worldPosition.z);
+            m_Ground = ground;
+            //var valid = 
+            //for (int i = 0; i < length; i++)
+            //{
 
-            if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y)) // X 方向差距更大
-            {
-                return dir.x > 0 ? FourDirectionalRotation.East : FourDirectionalRotation.West;
-            }
-            else
-            {
-                return dir.y > 0 ? FourDirectionalRotation.North : FourDirectionalRotation.South;
-            }
+            //}
+            //DungeonController.Instance.disablerController_SmallCell.RemoveDisablerCells(containedSmallCells);
+            //foreach (var item in containedSmallCells)
+            //{
+            //    item.isBuildingValid = true;
+            //}
+        }
+
+        public Entity_Floor GetGroundEntity()
+        {
+            return m_Ground;
         }
 
         public void DrawGizmos()
         {
             GizmoUnitily.DrawTwoSizeCube(worldPosition, Color.green, true);
-
-            //var origin = worldPosition - new Vector3(2, -0.1f, 2);
-            //foreach (var item in subCells)
-            //{
-            //    var color = Color.gray;
-            //    if (item.direction == Direction.Left && item.isEdge)
-            //    {
-            //        color = Color.red;
-            //    }
-            //    else if (item.direction == Direction.Up && item.isEdge)
-            //    {
-            //        color = Color.green;
-            //    }
-            //    else if (item.direction == Direction.Right && item.isEdge)
-            //    {
-            //        color = Color.darkRed;
-            //    }
-            //    else if (item.direction == Direction.Down && item.isEdge)
-            //    {
-            //        color = Color.darkGreen;
-            //    }
-            //    var position = new Vector3(item.position.x + 0.5f, 0f, item.position.y + 0.5f);
-            //    GizmoUnitily.DrawOneSizeCube(position, item.GizmoColor, true);
-            //}
             GizmoUnitily.DrawLabel(coord, $"{new Vector2Int(Data.TileCoord.x, Data.TileCoord.y)} - {Data.CellType} - {region}");
         }
-        //public override void Init(FlowTilemapCell flowTilemapCell)
-        //{
-        //    base.Init(flowTilemapCell);
-        //    var tileCoord = new Vector2Int(Data.TileCoord.x, Data.TileCoord.y);
-        //    name = tileCoord.ToString();
-        //    if (randomAngle)
-        //    {
-        //        var rotation = Quaternion.Euler(0, GetRandomRotation(), 0);
-        //        transform.rotation = rotation;
-        //    }
-        //    for (int x = 0; x < 4; x++)
-        //    {
-        //        for (int y = 0; y < 4; y++)
-        //        {
-        //            subCellCoords[x, y] = new Vector2Int(tileCoord.x * 4 + x, tileCoord.y * 4 + y);
-        //        }
-        //    }
-        //    EntityManager_Cell.Instance.Register(this);
-        //    registered = true;
-        //    //var leftEdge = DungeonController.Instance.GetLeftEdgeFromTileCoord(cell.TileCoord);
-        //    //var leftEdgeEntitly = new EdgeEntitly(leftEdge);
-        //    //var upEdge = DungeonController.Instance.GetUpEdgeFromTileCoord(cell.TileCoord);
-        //    //var upEdgetEntitly = new EdgeEntitly(upEdge);
-        //    //var rightEdge = DungeonController.Instance.GetRightEdgeFromTileCoord(cell.TileCoord);
-        //    //var rightEdgetEntitly = new EdgeEntitly(rightEdge);
-        //    //var downEdge = DungeonController.Instance.GetDownEdgeFromTileCoord(cell.TileCoord);
-        //    //var downEdgetEntitly = new EdgeEntitly(downEdge);
-
-        //    //edges = new EdgeEntitly[] { leftEdgeEntitly, upEdgetEntitly, rightEdgetEntitly, downEdgetEntitly };
-
-        //}
 
         public override string ToString()
         {
@@ -132,14 +84,12 @@ namespace Johnny.SimDungeon
         }
         private static ElementManager_LargeCell s_Instance;
 
-
         public Vector2Int drawGizmosCoord;
 
-        public bool drawAll;
+
 
         public void Init(FlowTilemapCellDatabase cells)
         {
-            if (Inited) return;
             map.Clear();
 
             foreach (var cell in cells)
@@ -148,7 +98,6 @@ namespace Johnny.SimDungeon
                 map[cell.TileCoord.ToVector2Int()] = element;
             }
 
-            Inited = true;
             Debug.Log($"[-----System-----] : DataManager Cell inited , Cell count <{map.Count}>");
         }
 
@@ -168,18 +117,28 @@ namespace Johnny.SimDungeon
                 element.neighbors[1] = GetUpCellFromTileCoord(coord);
                 element.neighbors[2] = GetRightCellFromTileCoord(coord);
                 element.neighbors[3] = GetDownCellFromTileCoord(coord);
-            }
-        }
 
-        public List<Element_LargeCell> GetAllCells()
-        {
-            return new List<Element_LargeCell>(map.Values);
+                var startPosition = element.worldPosition + new Vector3(-0.5f, -0.5f);
+                var startcoord = CoordUtility.WorldPositionToSmallCoord(startPosition);
+
+                var s0 = ElementManager_SmallCell.Instance.GetElement(startcoord);
+                if (s0 != null) element.containedSmallCells[0] = s0;
+
+                var s1 = ElementManager_SmallCell.Instance.GetUpCellFromCoord(startcoord);
+                if (s1 != null) element.containedSmallCells[1] = s1;
+
+                var s2 = ElementManager_SmallCell.Instance.GetRightCellFromCoord(startcoord);
+                if (s2 != null) element.containedSmallCells[2] = s2;
+
+                var s3 = ElementManager_SmallCell.Instance.GetElement(startcoord + new Vector2Int(1, 1));
+                if (s3 != null) element.containedSmallCells[3] = s3;
+
+            }
         }
 
         public void UnInit()
         {
-            map.Clear();
-            Inited = false;
+            //map.Clear();
         }
 
         public Element_LargeCell GetLeftCellFromTileCoord(Vector2Int coord)
@@ -209,7 +168,7 @@ namespace Johnny.SimDungeon
             {
                 foreach (var item in map)
                 {
-                    if (drawAll || item.Value.Data.CellType == FlowTilemapCellType.Floor)
+                    if ( item.Value.Data.CellType == FlowTilemapCellType.Floor)
                     {
                         item.Value.DrawGizmos();
                     }

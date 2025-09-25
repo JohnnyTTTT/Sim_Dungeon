@@ -4,6 +4,7 @@ using Loxodon.Framework.ViewModels;
 using SoulGames.EasyGridBuilderPro;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,16 +17,19 @@ namespace Johnny.SimDungeon
             if (SelectedItem != null)
             {
                 BindingService.MainGameViewModel.ActiveCategoryObjectItemView = SelectedItem;
+                BindingService.MainGameViewModel.GridType = SelectedItem.GridType;
             }
             else
             {
                 BindingService.MainGameViewModel.ActiveCategoryObjectItemView = null;
+                GridManager.Instance.SetActiveGridModeInAllGrids(GridMode.None);
+                BindingService.MainGameViewModel.GridType = GridType.Nothing;
             }
         }
 
-        public CategoryObjectItemViewModel CreateItem(BuildableObjectUICategorySO buildableObjectUICategorySO)
+        public CategoryObjectItemViewModel CreateItem(BuildableObjectUICategorySO buildableObjectUICategorySO, GridType gridType)
         {
-            var item = new CategoryObjectItemViewModel(this.ItemSelectCommand, ItemClickCommand, buildableObjectUICategorySO);
+            var item = new CategoryObjectItemViewModel(gridType, this.ItemSelectCommand, ItemClickCommand, buildableObjectUICategorySO);
             return item;
         }
 
@@ -33,7 +37,7 @@ namespace Johnny.SimDungeon
 
     public class CategoryObjectsPanelView : ViewBase<CategoryObjectsPanelViewModel>
     {
-        public Dictionary<EasyGridBuilderPro, ObservableList<CategoryObjectItemViewModel>> AllItems = new Dictionary<EasyGridBuilderPro, ObservableList<CategoryObjectItemViewModel>>();
+        public Dictionary<GameMode, ObservableList<CategoryObjectItemViewModel>> AllItems = new Dictionary<GameMode, ObservableList<CategoryObjectItemViewModel>>();
 
         [SerializeField] private CanvasGroup m_CanvasGroup;
         [SerializeField] private CategoryObjectsListView m_ListView;
@@ -41,15 +45,14 @@ namespace Johnny.SimDungeon
         protected override void Start()
         {
             ViewModel = BindingService.CategoryObjectsPanelViewModel;
-            GridManager.Instance.OnActiveEasyGridBuilderProChanged += OnActiveEasyGridBuilderProChanged;
+            MainGameViewModel.OnGameModeChanged += OnGameModeChanged;
             GridManager.Instance.OnActiveGridModeChanged += OnActiveGridModeChanged;
             base.Start();
         }
 
-        private void OnActiveEasyGridBuilderProChanged(EasyGridBuilderPro activeEasyGridBuilderProSystem)
+        private void OnGameModeChanged(GameMode gameMode)
         {
-            if (activeEasyGridBuilderProSystem == null) return;
-            if (AllItems.TryGetValue(activeEasyGridBuilderProSystem, out var datas))
+            if (AllItems.TryGetValue(gameMode, out var datas))
             {
                 ViewModel.Items = datas;
                 ViewModel.SelectedItem = null;
@@ -74,39 +77,74 @@ namespace Johnny.SimDungeon
             staticBindingSet.Bind(this.gameObject).For(v => v.activeSelf).To(() => BindingService.MainGameViewModel.ShouldShowCategoryUI).OneWay();
         }
 
-        public void Init(EasyGridBuilderPro activeEasyGridBuilderPro)
+        public void Init()
         {
-            AllItems[activeEasyGridBuilderPro] = new ObservableList<CategoryObjectItemViewModel>();
-
-            var uniqueCategorieshashSet = new HashSet<BuildableObjectUICategorySO>();
-            foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableGridObjectSOList())
+            AllItems[GameMode.Structure] = new ObservableList<CategoryObjectItemViewModel>();
+            foreach (var category in BuildableAssets.Instance.Structures)
             {
-                if (buildableObjectSO.buildableObjectUICategorySO != null)
+                foreach (var buildableObjectSO in category.buildableObjectSOs)
                 {
-                    uniqueCategorieshashSet.Add(buildableObjectSO.buildableObjectUICategorySO);
-                }
-            }
-            foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableEdgeObjectSOList())
-            {
-                if (buildableObjectSO.buildableObjectUICategorySO != null)
-                {
-                    uniqueCategorieshashSet.Add(buildableObjectSO.buildableObjectUICategorySO);
-                }
-            }
-            foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableFreeObjectSOList())
-            {
-                if (buildableObjectSO.buildableObjectUICategorySO != null)
-                {
-                    uniqueCategorieshashSet.Add(buildableObjectSO.buildableObjectUICategorySO);
+                    if (buildableObjectSO.buildableObjectUICategorySO != null)
+                    {
+                        if (!AllItems[GameMode.Structure].Any(x => x.Data == buildableObjectSO))
+                        {
+                            var item = ViewModel.CreateItem(buildableObjectSO.buildableObjectUICategorySO, category.gridType);
+                            AllItems[GameMode.Structure].Add(item);
+                        }
+                    }
                 }
             }
 
-
-            foreach (var uniqueCategories in uniqueCategorieshashSet)
+            AllItems[GameMode.Placement] = new ObservableList<CategoryObjectItemViewModel>();
+            foreach (var category in BuildableAssets.Instance.Placements)
             {
-                var item = ViewModel.CreateItem(uniqueCategories);
-                AllItems[activeEasyGridBuilderPro].Add(item);
+                foreach (var buildableObjectSO in category.buildableObjectSOs)
+                {
+                    if (buildableObjectSO.buildableObjectUICategorySO != null)
+                    {
+                        if (!AllItems[GameMode.Placement].Any(x => x.Data == buildableObjectSO))
+                        {
+                            var item = ViewModel.CreateItem(buildableObjectSO.buildableObjectUICategorySO, category.gridType);
+                            AllItems[GameMode.Placement].Add(item);
+                        }
+                    }
+                }
             }
+
+            //foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableGridObjectSOList())
+            //{
+            //    if (buildableObjectSO.buildableObjectUICategorySO != null)
+            //    {
+            //        uniqueCategorieshashSet.Add(buildableObjectSO.buildableObjectUICategorySO);
+            //    }
+            //}
+            //foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableEdgeObjectSOList())
+            //{
+            //    if (buildableObjectSO.buildableObjectUICategorySO != null)
+            //    {
+            //        uniqueCategorieshashSet.Add(buildableObjectSO.buildableObjectUICategorySO);
+            //    }
+            //}
+            //foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableFreeObjectSOList())
+            //{
+            //    if (buildableObjectSO.buildableObjectUICategorySO != null)
+            //    {
+            //        uniqueCategorieshashSet.Add(buildableObjectSO.buildableObjectUICategorySO);
+            //    }
+            //}
+            //foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableCornerObjectSOList())
+            //{
+            //    if (buildableObjectSO.buildableObjectUICategorySO != null)
+            //    {
+            //        uniqueCategorieshashSet.Add(buildableObjectSO.buildableObjectUICategorySO);
+            //    }
+            //}
+
+            //foreach (var uniqueCategories in uniqueCategorieshashSet)
+            //{
+            //    var item = ViewModel.CreateItem(uniqueCategories);
+            //    AllItems[activeEasyGridBuilderPro].Add(item);
+            //}
 
         }
 

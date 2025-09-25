@@ -30,7 +30,7 @@ namespace Johnny.SimDungeon
         public static void DrawLabel(Vector2Int center, string label)
         {
 #if UNITY_EDITOR
-            var worldCenter = CoordUtility.LargeCellCoordToWorldPosition(center);
+            var worldCenter = CoordUtility.LargeCoordToWorldPosition(center);
             DrawLabel(worldCenter, label);
 #endif
         }
@@ -83,7 +83,7 @@ namespace Johnny.SimDungeon
 
         public static void DrawTwoSizeCube(Vector2Int center, Color color, bool isWire)
         {
-            var worldCenter = CoordUtility.LargeCellCoordToWorldPosition(center);
+            var worldCenter = CoordUtility.LargeCoordToWorldPosition(center);
             DrawTwoSizeCube(worldCenter, color, isWire);
         }
     }

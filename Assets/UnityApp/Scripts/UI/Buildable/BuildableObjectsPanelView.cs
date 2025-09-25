@@ -76,22 +76,29 @@ namespace Johnny.SimDungeon
             staticBindingSet.Bind(this).For(v => v.ActiveCategoryObjectItemView).To(() => BindingService.MainGameViewModel.ActiveCategoryObjectItemView).OneWay();
         }
 
-        public void Init(EasyGridBuilderPro activeEasyGridBuilderPro)
+        public void Init()
         {
             var buildableObjectSOs = new HashSet<BuildableObjectSO>();
-            foreach (var buildableObjectSO in activeEasyGridBuilderPro.GetBuildableGridObjectSOList())
+            foreach (var category in BuildableAssets.Instance.Structures)
             {
-                buildableObjectSOs.Add(buildableObjectSO);
+                foreach (var buildableObjectSO in category.buildableObjectSOs)
+                {
+                    if (buildableObjectSO.buildableObjectUICategorySO != null)
+                    {
+                        buildableObjectSOs.Add(buildableObjectSO);
+                    }
+                }
             }
-            foreach (var buildableFreeObjectSO in activeEasyGridBuilderPro.GetBuildableEdgeObjectSOList())
+            foreach (var category in BuildableAssets.Instance.Placements)
             {
-                buildableObjectSOs.Add(buildableFreeObjectSO);
+                foreach (var buildableObjectSO in category.buildableObjectSOs)
+                {
+                    if (buildableObjectSO.buildableObjectUICategorySO != null)
+                    {
+                        buildableObjectSOs.Add(buildableObjectSO);
+                    }
+                }
             }
-            foreach (var buildableFreeObjectSO in activeEasyGridBuilderPro.GetBuildableFreeObjectSOList())
-            {
-                buildableObjectSOs.Add(buildableFreeObjectSO);
-            }
-
 
             foreach (var buildableObjectSO in buildableObjectSOs)
             {

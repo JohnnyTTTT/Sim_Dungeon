@@ -16,7 +16,7 @@ namespace Johnny.SimDungeon
                 if (template.TryGetComponent<Entity>(out var entity))
                 {
                     var buildableObjectSO = entity.buildableObjectSO;
-                    entity.Direction = DirectionUtility.GetDirectionForWorld(rotation);
+                    entity.Direction = DirectionUtility.ToDirection(rotation);
                     if (entity is Entity_Wall)
                     {
                         var so = buildableObjectSO as BuildableEdgeObjectSO;
@@ -24,23 +24,26 @@ namespace Johnny.SimDungeon
                         {
                             so = SpawnManager.Instance.defaultWall;
                         }
-                        if (SpawnManager.Instance.TryInitializeBuildableEdgeObjectSinglePlacement(position, rotation, so, out var buildable, null))
+                        var coord = CoordUtility.WorldPositionToLargeCoord(position);
+                        var prefabs = RandomUtility.UpdateBuildableObjectSORandomPrefab(coord, so);
+                        var easyGridBuilderPro = SpawnManager.Instance.m_EasyGridBuilderPro_LargeCell;
+                        if (SpawnManager.Instance.TryInitializeBuildableEdgeObjectSinglePlacement(easyGridBuilderPro, position, rotation, so, out var buildable, prefabs))
                         {
                             reslut = buildable.gameObject;
                         }
                     }
-                    else if (entity is Entity_Ground)
+                    else if (entity is Entity_Floor)
                     {
-                        var so = buildableObjectSO as BuildableGridObjectSO;
+                        var so = buildableObjectSO as BuildableCornerObjectSO;
                         if (so == null)
                         {
-                            so = SpawnManager.Instance.defaultGround;
+                            so = SpawnManager.Instance.defaultFloor;
                         }
-                        var coord = CoordUtility.WorldPositionToTileCoord(position);
-                        rotation = RandomUtility.GetRandomRotation(coord);
-                        if (SpawnManager.Instance.TryInitializeBuildableGridObjectSinglePlacement(position, rotation, so, out var buildable, null))
+                        var coord = CoordUtility.WorldPositionToSmallCoord(position);
+                        var prefabs = RandomUtility.UpdateBuildableObjectSORandomPrefab(coord, so);
+                        var easyGridBuilderPro = SpawnManager.Instance.m_EasyGridBuilderPro_SmallCell;
+                        if (SpawnManager.Instance.TryInitializeBuildableCornerObjectSinglePlacement(easyGridBuilderPro,position, rotation, so, out var buildable, prefabs))
                         {
-
                             reslut = buildable.gameObject;
                         }
                     }
@@ -49,9 +52,10 @@ namespace Johnny.SimDungeon
                         var so = buildableObjectSO as BuildableCornerObjectSO;
                         if (so == null)
                         {
-                            so = SpawnManager.Instance.defaultCorner;
+                            so = SpawnManager.Instance.defaultPillar;
                         }
-                        if (SpawnManager.Instance.TryInitializeBuildableCornerObjectSinglePlacement(position, so, out var buildable, null))
+                        var easyGridBuilderPro = SpawnManager.Instance.m_EasyGridBuilderPro_LargeCell;
+                        if (SpawnManager.Instance.TryInitializeBuildableCornerObjectSinglePlacement(easyGridBuilderPro,position, rotation, so, out var buildable, null))
                         {
                             reslut = buildable.gameObject;
                         }
@@ -63,12 +67,12 @@ namespace Johnny.SimDungeon
                         {
                             so = SpawnManager.Instance.defaultDoor;
                         }
-                        if (SpawnManager.Instance.TryInitializeBuildableFreeObjectSinglePlacement(position, rotation, so, out var buildable, null))
+                        var easyGridBuilderPro = SpawnManager.Instance.m_EasyGridBuilderPro_LargeCell;
+                        if (SpawnManager.Instance.TryInitializeBuildableFreeObjectSinglePlacement(easyGridBuilderPro,position, rotation, so, out var buildable, null))
                         {
                             reslut = buildable.gameObject;
                         }
                     }
-
                 }
                 else
                 {
@@ -89,7 +93,7 @@ namespace Johnny.SimDungeon
         {
             if (template.TryGetComponent<Entity_Wall>(out _))
             {
-                var dir = DirectionUtility.GetDirectionForWorld(rotation);
+                var dir = DirectionUtility.ToDirection(rotation);
                 Debug.Log(rotation.eulerAngles);
             }
 

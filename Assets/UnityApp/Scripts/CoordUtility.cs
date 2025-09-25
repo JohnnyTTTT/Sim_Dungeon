@@ -22,11 +22,12 @@ namespace Johnny.SimDungeon
             return new Vector2Int(coord.x, coord.y);
         }
 
-        public static Vector3 GetSmallCellWorldPosition(Vector2Int coord, int v)
+        //Small
+        public static Vector3 SmallCoordToWorldPosition(Vector2Int coord)
         {
             if (Application.isPlaying)
             {
-                return SpawnManager.Instance.m_EasyGridBuilderProSize1.GetCellWorldPosition(coord, 0);
+                return SpawnManager.Instance.m_EasyGridBuilderPro_SmallCell.GetCellWorldPosition(coord, 0);
             }
             else
             {
@@ -34,11 +35,11 @@ namespace Johnny.SimDungeon
             }
         }
 
-        public static Vector2Int GetSmallCellCorrd(Vector3 worldPosition)
+        public static Vector2Int WorldPositionToSmallCoord(Vector3 worldPosition)
         {
             if (Application.isPlaying)
             {
-                return SpawnManager.Instance.m_EasyGridBuilderProSize1.GetActiveGridCellPosition(worldPosition);
+                return SpawnManager.Instance.m_EasyGridBuilderPro_SmallCell.GetActiveGridCellPosition(worldPosition);
             }
             else
             {
@@ -52,16 +53,15 @@ namespace Johnny.SimDungeon
         }
 
 
-        public static Vector2Int WorldPositionToTileCoord(Vector3 coord)
-        {
-            return DungeonController.Instance.dungeonModel.WorldPositionToTilemapCoord(coord).ToVector2Int();
-        }
-
-        public static Vector3 LargeCellCoordToWorldPosition(Vector2Int coord)
+        //Large
+        public static Vector3 LargeCoordToWorldPosition(Vector2Int coord)
         {
             return DungeonController.Instance.gridFlowDungeonQuery.TileCoordToWorldCoord(coord.ToIntVector2());
         }
 
-
+        public static Vector2Int WorldPositionToLargeCoord(Vector3 coord)
+        {
+            return DungeonController.Instance.dungeonModel.WorldPositionToTilemapCoord(coord).ToVector2Int();
+        }
     }
 }

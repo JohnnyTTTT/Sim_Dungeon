@@ -11,6 +11,7 @@ namespace Johnny.SimDungeon
 {
     public class MainGameViewModel : ViewModelBase
     {
+        public static event Action<GameMode> OnGameModeChanged;
         public GameMode GameMode
         {
             get
@@ -22,23 +23,28 @@ namespace Johnny.SimDungeon
                 if (m_GameMode != value)
                 {
                     Set(ref m_GameMode, value);
+                    Debug.Log($"<GameMode Changed> - {m_GameMode.SetColor(Color.yellowGreen)}");
                     switch (m_GameMode)
                     {
-                        case GameMode.None:
+                        case GameMode.Loading:
                             break;
                         case GameMode.Default:
-                            GridType = GridType.None;
+                            //GridType = GridType.Nothing;
                             break;
                         case GameMode.Structure:
-                            GridType = GridType.SizeTwo;
+                            //GridType = GridType.Small;
                             break;
                         case GameMode.Placement:
-                            GridType = GridType.SizeOne;
+                            //GridType = GridType.Large;
+                            break;
+
+                        case GameMode.God:
                             break;
                         default:
                             break;
                     }
                     RaisePropertyChanged();
+                    OnGameModeChanged?.Invoke(m_GameMode);
                 }
             }
         }
@@ -64,26 +70,32 @@ namespace Johnny.SimDungeon
                 if (m_GridType != value)
                 {
                     Set(ref m_GridType, value);
-                    var size1 = SpawnManager.Instance.m_EasyGridBuilderProSize1;
-                    var size2 = SpawnManager.Instance.m_EasyGridBuilderProSize2;
+                    Debug.Log($"<GridType Changed> - {m_GridType.SetColor(Color.lightGoldenRodYellow)}");
+                    var small = SpawnManager.Instance.m_EasyGridBuilderPro_SmallCell;
+                    var large = SpawnManager.Instance.m_EasyGridBuilderPro_LargeCell;
                     switch (m_GridType)
                     {
-                        case GridType.None:
-                            size1.gameObject.SetActive(false);
-                            size2.gameObject.SetActive(false);
+                        case GridType.Undefined:
+                            small.gameObject.SetActive(false);
+                            large.gameObject.SetActive(false);
+                            break;
+                        case GridType.Nothing:
+                            small.gameObject.SetActive(false);
+                            large.gameObject.SetActive(false);
                             //ActiveEasyGridBuilderPro = null;
                             break;
-                        case GridType.SizeOne:
-                            size1.gameObject.SetActive(true);
-                            size2.gameObject.SetActive(false);
-                            ActiveEasyGridBuilderPro = size1;
+                        case GridType.Large:
+                            large.gameObject.SetActive(true);
+                            small.gameObject.SetActive(false);
+                            ActiveEasyGridBuilderPro = small;
                             break;
-                        case GridType.SizeTwo:
-                            size2.gameObject.SetActive(true);
-                            size1.gameObject.SetActive(false);
-                            ActiveEasyGridBuilderPro = size2;
+                        case GridType.Small:
+                            large.gameObject.SetActive(false);
+                            small.gameObject.SetActive(true);
+                            ActiveEasyGridBuilderPro = large;
                             break;
                     }
+
                 }
             }
         }
@@ -100,12 +112,11 @@ namespace Johnny.SimDungeon
                 if (m_IsLandExpandMode != value)
                 {
                     Set(ref m_IsLandExpandMode, value);
-                    var grid = SpawnManager.Instance.m_EasyGridBuilderProSize2;
+                    var grid = SpawnManager.Instance.m_EasyGridBuilderPro_LargeCell;
                     var position = grid.transform.position;
                     if (m_IsLandExpandMode)
                     {
                         grid.transform.position = new Vector3(position.x, 4f, position.z);
-                        grid.SetInputActiveBuildableObjectSO(SpawnManager.Instance.defaultAreaExpand, onlySetBuildableExistInBuildablesList: false);
                     }
                     else
                     {

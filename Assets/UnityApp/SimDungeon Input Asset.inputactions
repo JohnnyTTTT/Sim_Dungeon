@@ -7,7 +7,7 @@
             "id": "9ed88cd0-bcf6-4df6-b3a2-aaa776db9826",
             "actions": [
                 {
-                    "name": "Multi Selection",
+                    "name": "Flood Fill",
                     "type": "Button",
                     "id": "77b9e457-545a-413b-8697-6fce92e0f429",
                     "expectedControlType": "",
@@ -24,7 +24,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Multi Selection",
+                    "action": "Flood Fill",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

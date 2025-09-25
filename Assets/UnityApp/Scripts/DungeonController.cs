@@ -43,7 +43,7 @@ namespace Johnny.SimDungeon
 
         [Title("Disabler")]
         public DisablerController disablerController_SmallCell;
-        public DisablerController ddisablerController_LargeCell;
+        public DisablerController disablerController_LargeCell;
 
         public bool worldDataInited;
         private RuntimeSimSceneObjectInstantiator m_RuntimeSimSceneObjectInstantiator;
@@ -51,34 +51,74 @@ namespace Johnny.SimDungeon
 
         private void Start()
         {
-            m_RuntimeSimSceneObjectInstantiator = new RuntimeSimSceneObjectInstantiator();
-            StartCoroutine(PostStart());
+            StartCoroutine(BuildDungeonPlaying());
         }
 
-        private IEnumerator PostStart()
+        private IEnumerator BuildDungeonPlaying()
         {
             Debug.Log("[-----System-----] : Dungeon Build Start");
-            yield return new WaitForEndOfFrame();
             BindingService.MainGameViewModel.GameMode = GameMode.Loading;
+
+
+            yield return new WaitForEndOfFrame();
+
             DestroyDungeon();
-            yield return new WaitForEndOfFrame();
-            BuildDungeon();
-            tilemapSize = new IntVector2(dungeonModel.Tilemap.Width, dungeonModel.Tilemap.Height);
-            yield return new WaitForEndOfFrame();
-            worldDataInited = true;
+
             RandomUtility.SetSeed((int)Instance.dungeon.Config.Seed);
             yield return new WaitForEndOfFrame();
-            BindingService.MainGameViewModel.GameMode = GameMode.Default;
+
+
+
+            m_RuntimeSimSceneObjectInstantiator = new RuntimeSimSceneObjectInstantiator();
+            dungeon.Build(m_RuntimeSimSceneObjectInstantiator);
+
             yield return new WaitForEndOfFrame();
-            disablerController_SmallCell.Init();
-            ddisablerController_LargeCell.Init();
+            tilemapSize = new IntVector2(dungeonModel.Tilemap.Width, dungeonModel.Tilemap.Height);
+            worldDataInited = true;
+
+            //disablerController_LargeCell.Init();
+            //disablerController_SmallCell.Init();
+
+            var disablerLargeCell = new HashSet<Vector2Int>();
+            var disablerSmallCell = new HashSet<Vector2Int>();
+            foreach (var item in ElementManager_LargeCell.Instance.GetAllElements())
+            {
+                if (item.Data.CellType != FlowTilemapCellType.Floor)
+                {
+                    disablerLargeCell.Add(item.coord);
+                    foreach (var small in item.containedSmallCells)
+                    {
+                        if (small != null)
+                        {
+                            disablerSmallCell.Add(small.coord);
+                        }
+                    }
+                }
+            }
+
+            foreach (var edge in ElementManager_Edge.Instance.GetAllElements())
+            {
+                if (edge.Data.EdgeType != FlowTilemapEdgeType.Empty)
+                {
+                    foreach (var small in edge.containedSmallCells)
+                    {
+                        disablerSmallCell.Add(small.coord);
+                    }
+                }
+            }
+
+
+            disablerController_LargeCell.AddDisablerCells(disablerLargeCell);
+            disablerController_SmallCell.AddDisablerCells(disablerSmallCell);
+
+            BindingService.MainGameViewModel.GameMode = GameMode.Default;
+            BindingService.MainGameViewModel.GridType = GridType.Nothing;
+            Debug.Log("[-----System-----] : Dungeon Build End");
 
         }
 
-
-        public void BuildDungeon()
+        public void BuildDungeonEditor()
         {
-            m_RuntimeSimSceneObjectInstantiator = new RuntimeSimSceneObjectInstantiator();
             dungeon.Build(new RuntimeSimSceneObjectInstantiator());
         }
 
@@ -98,11 +138,13 @@ namespace Johnny.SimDungeon
             var gridFlowDungeonModel = model as GridFlowDungeonModel;
             ElementManager_LargeCell.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
             ElementManager_Edge.Instance.Init(gridFlowDungeonModel.Tilemap.Edges);
-            ElementManager_Region.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
-            ElementManager_SmallCell.Instance.Init(SpawnManager.Instance.m_EasyGridBuilderProSize1);
+
+            ElementManager_SmallCell.Instance.Init(SpawnManager.Instance.m_EasyGridBuilderPro_SmallCell);
+
             ElementManager_LargeCell.Instance.PostInit();
             ElementManager_Edge.Instance.PostInit();
 
+            ElementManager_Region.Instance.Init();
             Debug.Log("[-----System-----] : OnDungeonMarkersEmitted");
         }
 

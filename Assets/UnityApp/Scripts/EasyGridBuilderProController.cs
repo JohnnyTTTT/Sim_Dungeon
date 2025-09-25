@@ -8,10 +8,12 @@ namespace Johnny.SimDungeon
 {
     public enum GridType
     {
-        None,
-        SizeOne,
-        SizeTwo,
+        Undefined,
+        Nothing,
+        Large,
+        Small,
     }
+
     public class EasyGridBuilderProController : MonoBehaviour
     {
         public static EasyGridBuilderProController Instance
@@ -27,7 +29,6 @@ namespace Johnny.SimDungeon
 
         }
         private static EasyGridBuilderProController s_Instance;
-
 
 
         //Temp

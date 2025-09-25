@@ -42,7 +42,8 @@ namespace Johnny.SimDungeon
         [ShowInInspector]
         public int RegionCount
         {
-            get {
+            get
+            {
                 return regionList.Count;
             }
         }
@@ -69,17 +70,40 @@ namespace Johnny.SimDungeon
             regionList.Remove(room);
         }
 
-        public void Init(FlowTilemapCellDatabase cells)
+        public void Init()
         {
             regionList.Clear();
+            foreach (var cell in ElementManager_LargeCell.Instance.GetAllElements())
+            {
+                if (cell.Data.CellType != FlowTilemapCellType.Floor) continue;
+                if (cell.region != null) continue;
+
+                var regionCells = FloodFill(cell);
+                if (regionCells != null && regionCells.Count > 0)
+                {
+                    var newRegion = CreateRegion(RoomType.EmptyRoom);
+                    newRegion.AddCells(regionCells);
+
+                    Debug.Log($"新房间（ID: {newRegion.name}）被创建，包含 {regionCells.Count} 个格子。房间总数 {Instance.regionList.Count}");
+                }
+            }
         }
+
+
+
 
         public void UnInit()
         {
+            //regionList.Clear();
+        }
+
+
+        private void OnDestroy()
+        {
             regionList.Clear();
         }
 
-        private HashSet<Element_LargeCell> FloodFill(Element_LargeCell start)
+        public HashSet<Element_LargeCell> FloodFill(Element_LargeCell start)
         {
             var visited = new HashSet<Element_LargeCell>();
             var queue = new Queue<Element_LargeCell>();
@@ -106,7 +130,7 @@ namespace Johnny.SimDungeon
                     var dir = DirectionUtility.CardinalDirections[i];
 
                     if (neighbor == null || visited.Contains(neighbor)) continue;
-                    if (HasWallBetween(current, neighbor, dir)) continue;
+                    if (DirectionUtility.HasEdgeBetween(current, neighbor, dir)) continue;
 
                     // 不跳过旧房间格子
                     visited.Add(neighbor);
@@ -123,7 +147,7 @@ namespace Johnny.SimDungeon
 
         public void HandleWallPlacedIncremental(Entity_Wall entity)
         {
-            if (ElementManager_Edge.Instance.CountConnectedEdges(entity.edgeElement) < 2)
+            if (DirectionUtility.GetEdgeConnectedEdgesCount(entity.edgeElement) < 2)
             {
                 //Debug.Log("新墙连接少于2，不形成封闭空间。跳过房间检查。");
                 return;
@@ -176,14 +200,7 @@ namespace Johnny.SimDungeon
 
         }
 
-        private bool HasWallBetween(Element_LargeCell a, Element_LargeCell b, Vector2Int dir)
-        {
-            if (dir == DirectionUtility.LEFT) return a.edges[0].Data.EdgeType > FlowTilemapEdgeType.Empty;
-            if (dir == DirectionUtility.UP) return a.edges[1].Data.EdgeType > FlowTilemapEdgeType.Empty;
-            if (dir == DirectionUtility.RIGHT) return a.edges[2].Data.EdgeType > FlowTilemapEdgeType.Empty;
-            if (dir == DirectionUtility.DOWN) return a.edges[3].Data.EdgeType > FlowTilemapEdgeType.Empty;
-            return false;
-        }
+
 
         private void OnDrawGizmos()
         {
