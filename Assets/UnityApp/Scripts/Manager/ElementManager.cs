@@ -13,9 +13,9 @@ namespace Johnny.SimDungeon
     }
     public abstract class ElementManager<V> : ElementManager where V : Element
     {
-        public Dictionary<IntVector2, V> map = new Dictionary<IntVector2, V>();
+        public Dictionary<Vector2Int, V> map = new Dictionary<Vector2Int, V>();
 
-        public V GetElement(IntVector2 coord)
+        public V GetElement(Vector2Int coord)
         {
             if (map.TryGetValue(coord, out var data))
             {
@@ -24,7 +24,7 @@ namespace Johnny.SimDungeon
             return null;
         }
 
-        public V GetElement(Vector3 worldPosition)
+        public virtual V GetElement(Vector3 worldPosition)
         {
             var coord = CoordUtility.WorldPositionToTileCoord(worldPosition);
             return GetElement(coord);

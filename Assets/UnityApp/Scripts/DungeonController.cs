@@ -41,6 +41,10 @@ namespace Johnny.SimDungeon
         public BuildingItemSpawnListener buildingItemSpawnListener;
         public EasyGridBuilderProController easyGridBuilderProController;
 
+        [Title("Disabler")]
+        public DisablerController disablerController_SmallCell;
+        public DisablerController ddisablerController_LargeCell;
+
         public bool worldDataInited;
         private RuntimeSimSceneObjectInstantiator m_RuntimeSimSceneObjectInstantiator;
         public IntVector2 tilemapSize;
@@ -66,7 +70,8 @@ namespace Johnny.SimDungeon
             yield return new WaitForEndOfFrame();
             BindingService.MainGameViewModel.GameMode = GameMode.Default;
             yield return new WaitForEndOfFrame();
-
+            disablerController_SmallCell.Init();
+            ddisablerController_LargeCell.Init();
 
         }
 
@@ -80,7 +85,7 @@ namespace Johnny.SimDungeon
         public void DestroyDungeon()
         {
             dungeon.DestroyDungeon();
-            //InvalidAreaManager.Instance.Clear();
+            InvalidAreaManager.Instance.Clear();
         }
 
 
@@ -91,11 +96,11 @@ namespace Johnny.SimDungeon
         public override void OnDungeonMarkersEmitted(Dungeon dungeon, DungeonModel model, LevelMarkerList markers)
         {
             var gridFlowDungeonModel = model as GridFlowDungeonModel;
-            ElementManager_Cell.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
+            ElementManager_LargeCell.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
             ElementManager_Edge.Instance.Init(gridFlowDungeonModel.Tilemap.Edges);
             ElementManager_Region.Instance.Init(gridFlowDungeonModel.Tilemap.Cells);
-            ElementManager_Tile.Instance.Init(SpawnManager.Instance.m_EasyGridBuilderProSize1);
-            ElementManager_Cell.Instance.PostInit();
+            ElementManager_SmallCell.Instance.Init(SpawnManager.Instance.m_EasyGridBuilderProSize1);
+            ElementManager_LargeCell.Instance.PostInit();
             ElementManager_Edge.Instance.PostInit();
 
             Debug.Log("[-----System-----] : OnDungeonMarkersEmitted");
@@ -109,17 +114,17 @@ namespace Johnny.SimDungeon
             //    item.UpdateData();
             //}
             SpawnManager.Instance.Init();
-            //InvalidAreaManager.Instance.UpdateMesh();
+            InvalidAreaManager.Instance.UpdateMesh();
 
             Debug.Log("[-----System-----] : OnPostDungeonBuild");
         }
 
         public override void OnDungeonDestroyed(Dungeon dungeon)
         {
-            ElementManager_Cell.Instance.UnInit();
+            ElementManager_LargeCell.Instance.UnInit();
             ElementManager_Edge.Instance.UnInit();
             ElementManager_Region.Instance.UnInit();
-            ElementManager_Tile.Instance.UnInit();
+            ElementManager_SmallCell.Instance.UnInit();
             SpawnManager.Instance.UnInit();
 
         }

@@ -63,7 +63,7 @@ MeshRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 5
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 3f846841d1d0f894f98626e1fb855dd0, type: 2}
@@ -230,13 +230,6 @@ MonoBehaviour:
   Direction: 3
   buildableObjectSO: {fileID: 0}
   originWalls:
-  - full: {fileID: 0}
-    shorten: {fileID: 0}
-    slopeShorten: {fileID: 0}
-  - full: {fileID: 0}
-    shorten: {fileID: 0}
-    slopeShorten: {fileID: 0}
-  doorCutedWalls:
   - full: {fileID: 0}
     shorten: {fileID: 0}
     slopeShorten: {fileID: 0}
@@ -621,7 +614,7 @@ MeshRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 5
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 3a0f36eb32c96364ab665bb497d19dfe, type: 2}

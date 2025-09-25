@@ -108,10 +108,17 @@ MonoBehaviour:
   drawGizmos: 0
   Direction: 3
   buildableObjectSO: {fileID: 0}
-  primary: {fileID: 8326472648274943273}
-  secondary: {fileID: 7658154835860340688}
+  originWalls:
+  - full: {fileID: 0}
+    shorten: {fileID: 0}
+    slopeShorten: {fileID: 0}
+  - full: {fileID: 0}
+    shorten: {fileID: 0}
+    slopeShorten: {fileID: 0}
   isHidden: 0
   wallNormal: {x: 0, y: 0, z: 1}
+  wallRenderMode: 0
+  WallHideMode: 0
 --- !u!114 &8980230178865248745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -316,6 +323,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.Entity_SubEdge
   parent: {fileID: 0}
   relativeEdge: {fileID: 0}
+  fullMode: {fileID: 0}
+  halfMode: {fileID: 0}
+  slopeMode: {fileID: 0}
 --- !u!1 &6936059395705363694
 GameObject:
   m_ObjectHideFlags: 0
@@ -385,6 +395,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.Entity_SubEdge
   parent: {fileID: 0}
   relativeEdge: {fileID: 0}
+  fullMode: {fileID: 0}
+  halfMode: {fileID: 0}
+  slopeMode: {fileID: 0}
 --- !u!1001 &2617852966877422293
 PrefabInstance:
   m_ObjectHideFlags: 0

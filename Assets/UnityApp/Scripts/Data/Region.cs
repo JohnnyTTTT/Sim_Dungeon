@@ -12,7 +12,7 @@ namespace Johnny.SimDungeon
     {
         public string name;
         public RoomType roomType;
-        public HashSet<Element_Cell> containedCells = new HashSet<Element_Cell>();
+        public HashSet<Element_LargeCell> containedCells = new HashSet<Element_LargeCell>();
         public bool isClosed;
 
         public BiomeSO biome;
@@ -27,21 +27,21 @@ namespace Johnny.SimDungeon
             roomColor = Random.ColorHSV();
         }
 
-        public void AddCell(Element_Cell cellElement)
+        public void AddCell(Element_LargeCell cellElement)
         {
             containedCells.Add(cellElement);
             cellElement.region = this;
             CalculateCells();
         }
 
-        public void RemoveCell(Element_Cell cellData)
+        public void RemoveCell(Element_LargeCell cellData)
         {
             cellData.region = null;
             containedCells.Remove(cellData);
             CalculateCells();
         }
 
-        public void AddCells(IEnumerable<Element_Cell> cells)
+        public void AddCells(IEnumerable<Element_LargeCell> cells)
         {
             foreach (var item in cells)
             {
@@ -51,7 +51,7 @@ namespace Johnny.SimDungeon
             }
         }
 
-        public void RemoveCells(IEnumerable<Element_Cell> cells)
+        public void RemoveCells(IEnumerable<Element_LargeCell> cells)
         {
             foreach (var cell in cells)
             {
@@ -104,7 +104,7 @@ namespace Johnny.SimDungeon
             foreach (var item in containedCells)
             {
                 //item.DrawGizmos();
-                GizmoUnitily.DrawTwoSizeCube(item.Data.TileCoord, roomColor, true);
+                GizmoUnitily.DrawTwoSizeCube(item.coord, roomColor, true);
             }
             GizmoUnitily.DrawLabel(center, name);
         }

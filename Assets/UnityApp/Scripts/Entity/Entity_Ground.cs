@@ -6,11 +6,11 @@ namespace Johnny.SimDungeon
 {
     public class Entity_Ground : Entity
     {
-        public Element_Cell cellElement;
+        public Element_LargeCell cellElement;
         public override void UpdateData()
         {
             base.UpdateData();
-            cellElement = ElementManager_Cell.Instance.GetElement(transform.position);
+            cellElement = ElementManager_LargeCell.Instance.GetElement(transform.position);
             cellElement.ground = this;
         }
 

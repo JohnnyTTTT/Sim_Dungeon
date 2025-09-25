@@ -79,10 +79,10 @@ namespace Johnny.SimDungeon
             regionList.Clear();
         }
 
-        private HashSet<Element_Cell> FloodFill(Element_Cell start)
+        private HashSet<Element_LargeCell> FloodFill(Element_LargeCell start)
         {
-            var visited = new HashSet<Element_Cell>();
-            var queue = new Queue<Element_Cell>();
+            var visited = new HashSet<Element_LargeCell>();
+            var queue = new Queue<Element_LargeCell>();
             var mapSize = DungeonController.Instance.tilemapSize;
 
             queue.Enqueue(start);
@@ -115,7 +115,7 @@ namespace Johnny.SimDungeon
             }
 
             // 到边界的区域依然返回空
-            if (reachedBoundary) return new HashSet<Element_Cell>();
+            if (reachedBoundary) return new HashSet<Element_LargeCell>();
 
             return visited;
         }
@@ -129,13 +129,13 @@ namespace Johnny.SimDungeon
                 return;
             }
 
-            var cellA = entity.edgeElement.adjacentCells[0];
-            var cellB = entity.edgeElement.adjacentCells[1];
+            var cellA = entity.edgeElement.adjacentLargeCells[0];
+            var cellB = entity.edgeElement.adjacentLargeCells[1];
 
             if (cellA == null || cellB == null) return;
 
             // ========== 步骤1: 收集受影响 cell ==========
-            var affectedCells = new HashSet<Element_Cell> { cellA, cellB };
+            var affectedCells = new HashSet<Element_LargeCell> { cellA, cellB };
 
             // 收集受影响的旧房间 cell（邻居属于旧房间）
             foreach (var c in affectedCells.ToList())
@@ -149,7 +149,7 @@ namespace Johnny.SimDungeon
             }
 
             // ========== 步骤2: FloodFill 生成区域 ==========
-            var processed = new HashSet<Element_Cell>();
+            var processed = new HashSet<Element_LargeCell>();
             foreach (var c in affectedCells)
             {
                 if (processed.Contains(c)) continue;
@@ -176,12 +176,12 @@ namespace Johnny.SimDungeon
 
         }
 
-        private bool HasWallBetween(Element_Cell a, Element_Cell b, IntVector2 dir)
+        private bool HasWallBetween(Element_LargeCell a, Element_LargeCell b, Vector2Int dir)
         {
-            if (dir == DirectionUtility.UP) return a.upEdge.Data.EdgeType > FlowTilemapEdgeType.Empty;
-            if (dir == DirectionUtility.DOWN) return a.downEdge.Data.EdgeType > FlowTilemapEdgeType.Empty;
-            if (dir == DirectionUtility.LEFT) return a.leftEdge.Data.EdgeType > FlowTilemapEdgeType.Empty;
-            if (dir == DirectionUtility.RIGHT) return a.rightEdge.Data.EdgeType > FlowTilemapEdgeType.Empty;
+            if (dir == DirectionUtility.LEFT) return a.edges[0].Data.EdgeType > FlowTilemapEdgeType.Empty;
+            if (dir == DirectionUtility.UP) return a.edges[1].Data.EdgeType > FlowTilemapEdgeType.Empty;
+            if (dir == DirectionUtility.RIGHT) return a.edges[2].Data.EdgeType > FlowTilemapEdgeType.Empty;
+            if (dir == DirectionUtility.DOWN) return a.edges[3].Data.EdgeType > FlowTilemapEdgeType.Empty;
             return false;
         }
 

@@ -81,7 +81,7 @@ namespace Johnny.SimDungeon
                         case GridType.SizeTwo:
                             size2.gameObject.SetActive(true);
                             size1.gameObject.SetActive(false);
-                           ActiveEasyGridBuilderPro = size2;
+                            ActiveEasyGridBuilderPro = size2;
                             break;
                     }
                 }
@@ -235,6 +235,22 @@ namespace Johnny.SimDungeon
             ViewModel = BindingService.MainGameViewModel;
             m_GridManager = GridManager.Instance;
             m_GridManager.OnActiveGridModeChanged += OnActiveGridModeChanged;
+            m_GridManager.OnActiveBuildableSOChanged += OnActiveBuildableSOChanged;
+        }
+
+        private void OnActiveBuildableSOChanged(EasyGridBuilderPro easyGridBuilderPro, BuildableObjectSO buildableObjectSO)
+        {
+            if (buildableObjectSO != null)
+            {
+                Debug.Log($"<BuildableObjectSO Changed> - { buildableObjectSO.objectName.SetColor(Color.blue)}");
+                //Cursor.visible = false;
+            }
+            else
+            {
+                Debug.Log($"<BuildableObjectSO Changed> - {"Nothing".SetColor(Color.blue)}");
+                //Cursor.visible = true;
+            }
+
         }
 
         private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)

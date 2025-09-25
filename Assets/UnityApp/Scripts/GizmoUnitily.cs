@@ -27,10 +27,10 @@ namespace Johnny.SimDungeon
 #endif
         }
 
-        public static void DrawLabel(IntVector2 center, string label)
+        public static void DrawLabel(Vector2Int center, string label)
         {
 #if UNITY_EDITOR
-            var worldCenter = CoordUtility.TileCoordToWorldPosition(center);
+            var worldCenter = CoordUtility.LargeCellCoordToWorldPosition(center);
             DrawLabel(worldCenter, label);
 #endif
         }
@@ -48,26 +48,20 @@ namespace Johnny.SimDungeon
             }
         }
 
-        public static void DrawWall(Vector3 center, Color color, bool isHorizontalEdge)
+        public static void DrawWall(Vector3 position, Color color, bool isHorizontalEdge)
         {
             Gizmos.color = color;
-            var offset = isHorizontalEdge ?  new Vector3(0f, 0f, -1f) : new Vector3(-1f, 0f, 0f) ;
             if (isHorizontalEdge)
             {
-    
-                Gizmos.DrawWireCube(center + offset, new Vector3(2f, 0.01f, 0.3f));
+                Gizmos.DrawWireCube(position, new Vector3(2f, 0.01f, 0.3f));
 
             }
             else
             {
-                Gizmos.DrawWireCube(center + offset, new Vector3(0.3f, 0.01f, 2f));
+                Gizmos.DrawWireCube(position, new Vector3(0.3f, 0.01f, 2f));
             }
         }
-        public static void DrawWall(IntVector2 center, Color color, bool isHorizontalEdge)
-        {
-            var position = CoordUtility.TileCoordToWorldPosition(center);
-            DrawWall(position, color, isHorizontalEdge);
-        }
+
 
         internal static void DrawLine(Vector3 vector3, object worldPosition, Color yellow)
         {
@@ -87,9 +81,9 @@ namespace Johnny.SimDungeon
             }
         }
 
-        public static void DrawTwoSizeCube(IntVector2 center, Color color, bool isWire)
+        public static void DrawTwoSizeCube(Vector2Int center, Color color, bool isWire)
         {
-            var worldCenter = CoordUtility.TileCoordToWorldPosition(center);
+            var worldCenter = CoordUtility.LargeCellCoordToWorldPosition(center);
             DrawTwoSizeCube(worldCenter, color, isWire);
         }
     }

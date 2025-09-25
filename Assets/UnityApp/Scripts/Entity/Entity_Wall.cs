@@ -108,7 +108,7 @@ namespace Johnny.SimDungeon
         public override void UpdateData()
         {
             base.UpdateData();
-            edgeElement.wall = this;
+            edgeElement.SetWallEntity(this);
         }
 
         public void OnDrawGizmos()
@@ -116,8 +116,8 @@ namespace Johnny.SimDungeon
             if (drawGizmos)
             {
                 GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 1f, 0f), edgeElement.worldPosition, Color.blue);
-                GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 2f, 0f), edgeElement.adjacentCells[0].worldPosition, Color.yellow);
-                GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 2f, 0f), edgeElement.adjacentCells[1].worldPosition, Color.green);
+                GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 2f, 0f), edgeElement.adjacentLargeCells[0].worldPosition, Color.yellow);
+                GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 2f, 0f), edgeElement.adjacentLargeCells[1].worldPosition, Color.green);
             }
         }
     }

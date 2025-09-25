@@ -45,7 +45,7 @@ namespace Johnny.SimDungeon
         }
 
 
-        protected virtual void SetParentCellElement_JustUseThisFunction(Element_Cell element)
+        protected virtual void SetParentCellElement_JustUseThisFunction(Element_LargeCell element)
         {
             //ParentElement = element;
         }

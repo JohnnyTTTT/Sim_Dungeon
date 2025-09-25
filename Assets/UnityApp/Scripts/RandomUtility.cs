@@ -21,7 +21,7 @@ namespace Johnny.SimDungeon
             return (float)s_Rng.NextDouble();
         }
 
-        public static float GetRandomFloat(IntVector2 coord, float max)
+        public static float GetRandomFloat(Vector2Int coord, float max)
         {
             if (max < 0f)
                 throw new ArgumentOutOfRangeException(nameof(max), "max must be >= 0");
@@ -35,7 +35,7 @@ namespace Johnny.SimDungeon
             return (float)rng.NextDouble() * max;
         }
 
-        public static int GetRandomInt(IntVector2 coord, int max)
+        public static int GetRandomInt(Vector2Int coord, int max)
         {
             if (max < 0)
                 throw new ArgumentOutOfRangeException(nameof(max), "max must be >= 0");
@@ -49,7 +49,7 @@ namespace Johnny.SimDungeon
             return rng.Next(max + 1);
         }
 
-        public static Direction GetRandomDirection(IntVector2 coord)
+        public static Direction GetRandomDirection(Vector2Int coord)
         {
             int index = GetRandomInt(coord, 4);
 
@@ -63,14 +63,14 @@ namespace Johnny.SimDungeon
             return Direction.Up;
         }
 
-        public static FourDirectionalRotation GetRandomFourDirectionalRotation(IntVector2 coord)
+        public static FourDirectionalRotation GetRandomFourDirectionalRotation(Vector2Int coord)
         {
             var values = System.Enum.GetValues(typeof(FourDirectionalRotation));
             var index = GetRandomInt(coord, values.Length);
             return (FourDirectionalRotation)values.GetValue(index);
         }
 
-        public static Quaternion GetRandomRotation(IntVector2 coord)
+        public static Quaternion GetRandomRotation(Vector2Int coord)
         {
             // 用坐标作为随机种子，确保同一个格子每次结果一致
             var seed = coord.x * 73856093 ^ coord.y * 19349663;
@@ -98,7 +98,7 @@ namespace Johnny.SimDungeon
             }
         }
 
-        public static BuildableObjectSO.RandomPrefabs UpdateBuildableObjectSORandomPrefab(IntVector2 coord, BuildableObjectSO buildableObjectSO)
+        public static BuildableObjectSO.RandomPrefabs UpdateBuildableObjectSORandomPrefab(Vector2Int coord, BuildableObjectSO buildableObjectSO)
         {
             var totalProbability = 0f;
             foreach (var randomPrefab in buildableObjectSO.randomPrefabs)
@@ -118,7 +118,7 @@ namespace Johnny.SimDungeon
 
 
 
-        public static T GetRandomElement<T>(IntVector2 coord, T[] array)
+        public static T GetRandomElement<T>(Vector2Int coord, T[] array)
         {
             if (array == null || array.Length == 0)
             {

@@ -29,7 +29,7 @@ namespace Johnny.SimDungeon
         public DevelopMode currentMode;
         [SerializeField] private GameObject cellDetectionPrefab;
         [SerializeField] private LayerMask detectionLayer;
-        private Element_Cell m_LasatDetectionCell;
+        private Element_LargeCell m_LasatDetectionCell;
         private List<GameObject> m_Instantiates = new List<GameObject>();
 
         private void Update()
@@ -38,7 +38,7 @@ namespace Johnny.SimDungeon
             if (PhysicsUtility.MouseRaycastHit(detectionLayer, out var hit))
             {
                 var position = new Vector3(hit.point.x, 0f, hit.point.z);
-                var cell = ElementManager_Cell.Instance.GetElement(position);
+                var cell = ElementManager_LargeCell.Instance.GetElement(position);
                 if (cell == null)
                 {
                     Clear();
@@ -74,10 +74,9 @@ namespace Johnny.SimDungeon
             }
         }
 
-        private void CreateCellDetection(Element_Cell cell, Color? color = null)
+        private void CreateCellDetection(Element_LargeCell cell, Color? color = null)
         {
-            var position = CoordUtility.TileCoordToWorldPosition(cell.Data.TileCoord);
-            var obj = Instantiate(cellDetectionPrefab, position, Quaternion.identity, transform);
+            var obj = Instantiate(cellDetectionPrefab, cell.worldPosition, Quaternion.identity, transform);
             obj.name = cell.ToString();
             if (color != null)
             {

@@ -14,16 +14,16 @@ namespace Johnny.SimDungeon
 
     public static class DirectionUtility
     {
-        public static readonly IntVector2 LEFT = new IntVector2(-1, 0);
-        public static readonly IntVector2 UP = new IntVector2(0, 1);
-        public static readonly IntVector2 RIGHT = new IntVector2(1, 0);
-        public static readonly IntVector2 DOWN = new IntVector2(0, -1);
+        public static readonly Vector2Int LEFT = new Vector2Int(-1, 0);
+        public static readonly Vector2Int UP = new Vector2Int(0, 1);
+        public static readonly Vector2Int RIGHT = new Vector2Int(1, 0);
+        public static readonly Vector2Int DOWN = new Vector2Int(0, -1);
 
-        public static readonly IntVector2[] CardinalDirections ={
-            new IntVector2(-1, 0),
-            new IntVector2(0, 1),
-            new IntVector2(1, 0),
-            new IntVector2(0, -1)};
+        public static readonly Vector2Int[] CardinalDirections ={
+            new Vector2Int(-1, 0),
+            new Vector2Int(0, 1),
+            new Vector2Int(1, 0),
+            new Vector2Int(0, -1)};
 
         public static Vector3 dirLeft = Vector3.left;
         public static Vector3 dirUp = Vector3.forward;

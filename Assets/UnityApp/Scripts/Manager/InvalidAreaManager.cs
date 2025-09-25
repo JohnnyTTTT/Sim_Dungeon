@@ -55,8 +55,8 @@ namespace Johnny.SimDungeon
             {
                 for (int x = 0; x < width; x++)
                 {
-                    var corrd = new IntVector2(x, y);
-                    var cell = ElementManager_Cell.Instance.GetElement(corrd);
+                    var coord = new Vector2Int(x, y);
+                    var cell = ElementManager_LargeCell.Instance.GetElement(coord);
                     if (cell.Data.CellType == FlowTilemapCellType.Floor) continue;
 
                     float px = x * cellSize;

@@ -6,11 +6,11 @@ namespace Johnny.SimDungeon
     {
         public override void UpdateData()
         {
-            var data = ElementManager_Cell.Instance.GetElement(transform.position);
+            var data = ElementManager_LargeCell.Instance.GetElement(transform.position);
             SetParentCellElement_JustUseThisFunction(data);
         }
 
-        protected override void SetParentCellElement_JustUseThisFunction(Element_Cell element)
+        protected override void SetParentCellElement_JustUseThisFunction(Element_LargeCell element)
         {
             base.SetParentCellElement_JustUseThisFunction(element);
             element.ceiling = this;

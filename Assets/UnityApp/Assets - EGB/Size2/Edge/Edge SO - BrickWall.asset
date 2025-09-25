@@ -19,6 +19,9 @@ MonoBehaviour:
   - objectPrefab: {fileID: 3407519850946740615, guid: cf6f2d683c38319478c6294b1b8cc157, type: 3}
     ghostObjectPrefab: {fileID: 3407519850946740615, guid: ecbc5d3ac777183429b1901a75b3e0a0, type: 3}
     probability: 20
+  - objectPrefab: {fileID: 3407519850946740615, guid: 125db8a0ffe338648822a5ff8816ce3f, type: 3}
+    ghostObjectPrefab: {fileID: 3407519850946740615, guid: ecbc5d3ac777183429b1901a75b3e0a0, type: 3}
+    probability: 20
   eachPlacementUseRandomPrefab: 1
   validPlacementMaterial: {fileID: 2100000, guid: 60b6e8cab158bd44dbdf258b7527565a, type: 2}
   invalidPlacementMaterial: {fileID: 2100000, guid: 1a665553bd032b84f8122a81c18ba378, type: 2}

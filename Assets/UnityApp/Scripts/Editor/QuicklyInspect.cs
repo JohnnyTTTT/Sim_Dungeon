@@ -43,9 +43,9 @@ namespace Johnny.SimDungeon
 
         private void Update()
         {
-            if (ElementManager_Cell.Instance!= null && ElementManager_Cell.Instance.drawGizmos != showCellGizmo)
+            if (ElementManager_LargeCell.Instance!= null && ElementManager_LargeCell.Instance.drawGizmos != showCellGizmo)
             {
-                ElementManager_Cell.Instance.drawGizmos = showCellGizmo;
+                ElementManager_LargeCell.Instance.drawGizmos = showCellGizmo;
             }
             if (ElementManager_Edge.Instance != null && ElementManager_Edge.Instance.drawGizmos != showEdgeGizmo)
             {
@@ -55,9 +55,9 @@ namespace Johnny.SimDungeon
             {
                 ElementManager_Region.Instance.drawGizmos = showRoomGizmo;
             }
-            if (ElementManager_Tile.Instance != null && ElementManager_Tile.Instance.drawGizmos != showTileGizmo)
+            if (ElementManager_SmallCell.Instance != null && ElementManager_SmallCell.Instance.drawGizmos != showTileGizmo)
             {
-                ElementManager_Tile.Instance.drawGizmos = showTileGizmo;
+                ElementManager_SmallCell.Instance.drawGizmos = showTileGizmo;
             }
         }
     }

@@ -240,49 +240,6 @@ MonoBehaviour:
   drawGizmos: 0
   Direction: 0
   buildableObjectSO: {fileID: 0}
-  cellElement:
-    GUID: 0
-    Data:
-      CellType: 0
-      CustomCellInfo:
-        name: 
-        defaultColor: {r: 1, g: 1, b: 1, a: 1}
-      Item:
-        A: 0
-        B: 0
-        C: 0
-        D: 0
-      Tags: []
-      Overlay:
-        markerName: 
-        color: {r: 0, g: 0, b: 0, a: 0}
-        tileBlockingOverlay: 1
-        mergeConfig:
-          minHeight: 0
-          maxHeight: 0
-          wallOverlayRule: 0
-          markerHeightOffsetForLayoutTiles: 0
-          markerHeightOffsetForNonLayoutTiles: 0
-          removeElevationMarker: 0
-      NodeCoord:
-        x: 0
-        y: 0
-      TileCoord:
-        x: 0
-        y: 0
-      UseCustomColor: 0
-      CustomColor: {r: 1, g: 1, b: 1, a: 1}
-      MainPath: 0
-      LayoutCell: 0
-      DistanceFromMainPath: 2147483647
-      Height: 0
-    neighbors: []
-    ground: {fileID: 0}
-    ceiling: {fileID: 0}
-    horizontalSubEdge: {fileID: 0}
-    verticalSubEdge: {fileID: 0}
-    worldPosition: {x: 0, y: 0, z: 0}
-    coord: {x: 0, y: 0}
 --- !u!1 &6020493600131077151
 GameObject:
   m_ObjectHideFlags: 0
@@ -346,7 +303,7 @@ MeshRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 5
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 2a4fa4a59b1e9544eba7b07db4188316, type: 2}
