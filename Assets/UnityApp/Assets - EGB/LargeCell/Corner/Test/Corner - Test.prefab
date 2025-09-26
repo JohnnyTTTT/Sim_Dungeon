@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5786089787855489354
+--- !u!1 &6452639433968708661
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,40 +8,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4549288026964822154}
-  - component: {fileID: -5948579079094935183}
-  - component: {fileID: -8930773524602078114}
-  - component: {fileID: 5770569670784123236}
+  - component: {fileID: 7803159104911250065}
+  - component: {fileID: 6064916390740535206}
+  - component: {fileID: -2133071820958090486}
+  - component: {fileID: -5613622768780511369}
   m_Layer: 0
-  m_Name: Grid Object - Stone Floor Type3
+  m_Name: Corner - Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4549288026964822154
+--- !u!4 &7803159104911250065
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5786089787855489354}
+  m_GameObject: {fileID: 6452639433968708661}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5364666269931342328}
+  - {fileID: 6744030275131726575}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-5948579079094935183
+--- !u!114 &6064916390740535206
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5786089787855489354}
+  m_GameObject: {fileID: 6452639433968708661}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 075d51f54b249fc47acb62aabc7225cd, type: 3}
@@ -81,8 +81,8 @@ MonoBehaviour:
   gridAxis: 0
   activateGizmos: 0
   lockAutoGenerationAndValues: 1
-  objectScale: {x: 1, y: 0.05, z: 1}
-  objectCenter: {x: 0, y: -0.025, z: 0}
+  objectScale: {x: 2, y: 1, z: 1}
+  objectCenter: {x: 0, y: 0.5, z: 0}
   objectCustomPivot: {x: 0, y: 0, z: 0}
   activeSceneObject: 0
   sceneObjectBuildableCornerObjectSO: {fileID: 0}
@@ -91,23 +91,38 @@ MonoBehaviour:
   sceneObjectFreeRotation: 0
   verticalGridIndex: 0
   debugCellSize: 0
---- !u!114 &-8930773524602078114
+--- !u!114 &-2133071820958090486
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5786089787855489354}
+  m_GameObject: {fileID: 6452639433968708661}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2283c72bc44d51a4a80c4509d3ec8f2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.Entity_Corner
+  drawGizmos: 0
+  Direction: 0
+  buildableObjectSO: {fileID: 0}
+--- !u!114 &-5613622768780511369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6452639433968708661}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a3512c9bbe65ed4db50f2b79cb91f2f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoulGames.EasyGridBuilderPro.BuildableObjectEffects
   useScalingEffectOnSpawn: 1
   blockScallingEffectForGhostObject: 0
-  scalingAffectXAxis: 1
+  scalingAffectXAxis: 0
   scalingAffectYAxis: 1
-  scalingAffectZAxis: 1
+  scalingAffectZAxis: 0
   scaleEffectAnimationCurve:
     serializedVersion: 2
     m_Curve:
@@ -161,30 +176,21 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.25
+      value: 0
       inSlope: 0
-      outSlope: 0
+      outSlope: 1
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.20729682
-      value: 0.9358668
-      inSlope: -0.0025475656
-      outSlope: -0.0025475656
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.23532832
-    - serializedVersion: 3
-      time: 0.6
-      value: 0
-      inSlope: 3.6580591
-      outSlope: 3.6580591
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.12222751
+      inWeight: 0
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -192,7 +198,7 @@ MonoBehaviour:
   useSpawnGameObjectsOnSpawn: 0
   spawnGameObjectOnSpawnProperties:
     spawnGameObjectList: []
-    preventSpawnInGhostMode: 1
+    preventSpawnInGhostMode: 0
     spawnRandomOneFromList: 0
     spawnLocalPosition: {x: 0, y: 0, z: 0}
     spawnLocalRotation: {x: 0, y: 0, z: 0}
@@ -200,21 +206,20 @@ MonoBehaviour:
     spawnnedObjectLifetime: 1
   useSpawnGameObjectsOnDestroy: 0
   spawnGameObjectOnDestroyProperties:
-    spawnGameObjectList:
-    - {fileID: 7936883349496481740, guid: 0f9bb9b39d6982a4f9e1a49d9ff01cd3, type: 3}
+    spawnGameObjectList: []
     spawnRandomOneFromList: 0
-    spawnLocalPosition: {x: 0, y: 0.5, z: 0}
+    spawnLocalPosition: {x: 0, y: 0, z: 0}
     spawnLocalRotation: {x: 0, y: 0, z: 0}
     spawnLocalScale: {x: 1, y: 1, z: 1}
-    spawnnedObjectLifetime: 5
+    spawnnedObjectLifetime: 1
   changeObjectMaterial: 0
   rootObject: {fileID: 0}
   excludedChildObjects: []
-  baseMaterial: {fileID: 2100000, guid: d55537e87a547ac499a74a633b036012, type: 2}
-  destroyerHoverChangeMaterial: {fileID: 2100000, guid: 393ac59727782db45b214bd6ea3a5b7c, type: 2}
-  selectorHoverChangeMaterial: {fileID: 2100000, guid: 36408c231694b7941ae625e416a1472e, type: 2}
-  selectorSelectedMaterial: {fileID: 2100000, guid: f09454d79c5634243bb530a95652996e, type: 2}
-  moverHoverChangeMaterial: {fileID: 2100000, guid: 36408c231694b7941ae625e416a1472e, type: 2}
+  baseMaterial: {fileID: 0}
+  destroyerHoverChangeMaterial: {fileID: 0}
+  selectorHoverChangeMaterial: {fileID: 0}
+  selectorSelectedMaterial: {fileID: 0}
+  moverHoverChangeMaterial: {fileID: 0}
   makeSoundEffect: 0
   destroyerHoverEnterAudioClip: {fileID: 0}
   destroyerHoverExitAudioClip: {fileID: 0}
@@ -226,84 +231,70 @@ MonoBehaviour:
   moverHoverExitAudioClip: {fileID: 0}
   moverStartMovingAudioClip: {fileID: 0}
   moverEndMovingAudioClip: {fileID: 0}
---- !u!114 &5770569670784123236
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5786089787855489354}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: daec8e946475c694993081a7e070b728, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Johnny.SimDungeon.Entity_Ground
-  drawGizmos: 0
-  Direction: 0
-  buildableObjectSO: {fileID: 0}
---- !u!1001 &5618705567955185171
+--- !u!1001 &6739312408012390257
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 4549288026964822154}
+    m_TransformParent: {fileID: 7803159104911250065}
     m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
+    - target: {fileID: 1768318062061644, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
+      propertyPath: m_Name
+      value: SM_Prop_Bed_006
+      objectReference: {fileID: 0}
+    - target: {fileID: 4858881373185438, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
+    - target: {fileID: 4858881373185438, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.05
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
+    - target: {fileID: 4858881373185438, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
+    - target: {fileID: 4858881373185438, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
+    - target: {fileID: 4858881373185438, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
+    - target: {fileID: 4858881373185438, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.7071068
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
+    - target: {fileID: 4858881373185438, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
+    - target: {fileID: 4858881373185438, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
+    - target: {fileID: 4858881373185438, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
+    - target: {fileID: 4858881373185438, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -7511558181221131132, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
+    - target: {fileID: 23478139903545910, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 36db9d593da3fb04491eb1b29a29189c, type: 2}
-    - target: {fileID: 919132149155446097, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
-      propertyPath: m_Name
-      value: StoneFloor_003
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
+      objectReference: {fileID: 2100000, guid: e6444527f789f434c99dec5288886501, type: 2}
+    m_RemovedComponents:
+    - {fileID: 64764468392012644, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
---- !u!4 &5364666269931342328 stripped
+  m_SourcePrefab: {fileID: 100100000, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
+--- !u!4 &6744030275131726575 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 28ec4d168fe2b85438bf622fd543f1d8, type: 3}
-  m_PrefabInstance: {fileID: 5618705567955185171}
+  m_CorrespondingSourceObject: {fileID: 4858881373185438, guid: 3d72411d409fc684cbb3da43c8e5c7ed, type: 3}
+  m_PrefabInstance: {fileID: 6739312408012390257}
   m_PrefabAsset: {fileID: 0}

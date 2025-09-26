@@ -140,20 +140,27 @@ namespace Johnny.SimDungeon
             }
         }
 
-
         public static bool HasEdgeBetween(Element_LargeCell a, Element_LargeCell b, Vector2Int dir)
         {
-            if (dir == LEFT) return a.edges[0].Data.EdgeType > FlowTilemapEdgeType.Empty;
-            if (dir == UP) return a.edges[1].Data.EdgeType > FlowTilemapEdgeType.Empty;
-            if (dir == RIGHT) return a.edges[2].Data.EdgeType > FlowTilemapEdgeType.Empty;
-            if (dir == DOWN) return a.edges[3].Data.EdgeType > FlowTilemapEdgeType.Empty;
+            if (dir == LEFT) 
+                return ElementManager_Edge.Instance.GetLeftEdgeFromTileCoord(a.coord).Data.EdgeType > FlowTilemapEdgeType.Empty;
+         
+            if (dir == UP) 
+                return ElementManager_Edge.Instance.GetUpEdgeFromTileCoord(a.coord).Data.EdgeType > FlowTilemapEdgeType.Empty;
+          
+            if (dir == RIGHT) 
+                return ElementManager_Edge.Instance.GetRightEdgeFromTileCoord(a.coord).Data.EdgeType > FlowTilemapEdgeType.Empty;
+           
+            if (dir == DOWN) 
+                return ElementManager_Edge.Instance.GetDownEdgeFromTileCoord(a.coord).Data.EdgeType > FlowTilemapEdgeType.Empty;
             return false;
         }
 
         public static int GetEdgeConnectedEdgesCount(Element_Edge edge)
         {
             var count = 0;
-            foreach (var neighbor in edge.Neighbors)
+            var neighbors = ElementManager_Edge.Instance.GetNeighborEdges(edge);
+            foreach (var neighbor in neighbors)
             {
                 if (neighbor.Data.EdgeType != FlowTilemapEdgeType.Empty)
                 {

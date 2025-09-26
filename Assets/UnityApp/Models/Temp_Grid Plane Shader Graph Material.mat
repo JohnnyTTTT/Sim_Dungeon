@@ -142,9 +142,9 @@ Material:
     - _USE_ALPHA_MASK: 0
     - _USE_SCROLLING_NOISE: 0
     - _UseShadowThreshold: 0
-    - _ZTestDepthEqualForOpaque: 8
+    - _ZTestDepthEqualForOpaque: 4
     - _ZTestGBuffer: 4
-    - _ZTestTransparent: 8
+    - _ZTestTransparent: 4
     - _ZWrite: 0
     m_Colors:
     - _Alpha_Mask_Offset: {r: 0, g: 0, b: 0, a: 0}

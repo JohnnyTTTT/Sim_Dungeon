@@ -3,27 +3,45 @@ using Sirenix.OdinInspector;
 using SoulGames.EasyGridBuilderPro;
 using System;
 using UnityEngine;
+using static UnityEditor.Rendering.FilterWindow;
 
 namespace Johnny.SimDungeon
 {
+    public enum FlowTilemapSmallCellType
+    {
+        Empty,
+        Floor,
+        Wall,
+        Door,
+    }
     public class Element_SmallCell : Element
     {
+        public Element_SmallCell[] neighbors = new Element_SmallCell[4];
         public Vector2Int coord;
         public Vector3 worldPosition;
-        public bool isBuildingValid;
-        public Element_Edge wall;
-        public Element_LargeCell parentCell;
+        public FlowTilemapSmallCellType cellType;
+        public Region region;
+        //public Element_Edge wall;
+        //public Element_LargeCell parentCell;
+
         public Element_SmallCell(Vector2Int vector)
         {
             coord = vector;
-            worldPosition = CoordUtility.SmallCoordToWorldPosition(coord);
-            parentCell = ElementManager_LargeCell.Instance.GetElement(worldPosition);
+            worldPosition = CoordUtility.SmallCoordToWorldPosition(coord) + new Vector3(0.5f, 0f, 0.5f);
+            //parentCell = ElementManager_LargeCell.Instance.GetElement(worldPosition);
 
         }
 
         public void DrawGizmos()
         {
-            GizmoUnitily.DrawOneSizeCube(worldPosition+new Vector3(0.5f,0f,0.5f), wall != null ? Color.red : Color.blue, true);
+            var color = (cellType) switch
+            {
+                FlowTilemapSmallCellType.Empty => Color.black,
+                FlowTilemapSmallCellType.Floor => Color.blue,
+                FlowTilemapSmallCellType.Wall => Color.red,
+                FlowTilemapSmallCellType.Door => Color.green,
+            };
+            GizmoUnitily.DrawOneSizeCube(worldPosition + new Vector3(0.5f, 0f, 0.5f), color, true);
         }
     }
 
@@ -55,6 +73,18 @@ namespace Johnny.SimDungeon
             }
             Debug.Log($"[-----System-----] : DataManager_Tile inited , tile count <{map.Count}>");
         }
+        public void PostInit()
+        {
+            foreach (var element in map.Values)
+            {
+                var coord = element.coord;
+
+                element.neighbors[0] = GetLeftCellFromCoord(coord);
+                element.neighbors[1] = GetUpCellFromCoord(coord);
+                element.neighbors[2] = GetRightCellFromCoord(coord);
+                element.neighbors[3] = GetDownCellFromCoord(coord);
+            }
+        }
 
         public override Element_SmallCell GetElement(Vector3 worldPosition)
         {
@@ -84,7 +114,7 @@ namespace Johnny.SimDungeon
 
         public void UnInit()
         {
-            //map.Clear();
+            map.Clear();
         }
 
         private void OnDrawGizmos()

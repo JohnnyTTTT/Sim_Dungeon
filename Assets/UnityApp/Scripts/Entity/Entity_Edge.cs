@@ -25,14 +25,13 @@ namespace Johnny.SimDungeon
             if (Direction == Direction.Up || Direction == Direction.Down)
             {
                 var parentElement = front.z > back.z ? frontCell : backCell;
-                edgeElement = parentElement.edges[3];
+                edgeElement = ElementManager_Edge.Instance.GetDownEdgeFromTileCoord(parentElement.coord);
             }
             else
             {
                 var parentElement = front.x > back.x ? frontCell : backCell;
-                edgeElement = parentElement.edges[0];
+                edgeElement = ElementManager_Edge.Instance.GetLeftEdgeFromTileCoord(parentElement.coord);
             }
-
         }
     }
 }

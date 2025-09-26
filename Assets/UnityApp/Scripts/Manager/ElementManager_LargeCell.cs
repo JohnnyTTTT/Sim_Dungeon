@@ -13,8 +13,8 @@ namespace Johnny.SimDungeon
     public class Element_LargeCell : ElementData<FlowTilemapCell>
     {
         public Element_LargeCell[] neighbors = new Element_LargeCell[4];
-        public Element_SmallCell[] containedSmallCells = new Element_SmallCell[9];
-        public Element_Edge[] edges = new Element_Edge[4];
+        //public Element_SmallCell[] containedSmallCells = new Element_SmallCell[9];
+        //public Element_Edge[] edges = new Element_Edge[4];
         public Region region;
         private Entity_Floor m_Ground;
         public Entity_Ceiling ceiling;
@@ -103,60 +103,61 @@ namespace Johnny.SimDungeon
 
         public void PostInit()
         {
-            var edgeManager = ElementManager_Edge.Instance;
             foreach (var element in map.Values)
             {
                 var coord = element.coord;
 
-                element.edges[0] = edgeManager.GetLeftEdgeFromTileCoord(coord);
-                element.edges[1] = edgeManager.GetUpEdgeFromTileCoord(coord);
-                element.edges[2] = edgeManager.GetRightEdgeFromTileCoord(coord);
-                element.edges[3] = edgeManager.GetDownEdgeFromTileCoord(coord);
+                //element.edges[0] = edgeManager.GetLeftEdgeFromTileCoord(coord);
+                //element.edges[1] = edgeManager.GetUpEdgeFromTileCoord(coord);
+                //element.edges[2] = edgeManager.GetRightEdgeFromTileCoord(coord);
+                //element.edges[3] = edgeManager.GetDownEdgeFromTileCoord(coord);
 
-                element.neighbors[0] = GetLeftCellFromTileCoord(coord);
-                element.neighbors[1] = GetUpCellFromTileCoord(coord);
-                element.neighbors[2] = GetRightCellFromTileCoord(coord);
-                element.neighbors[3] = GetDownCellFromTileCoord(coord);
+                element.neighbors[0] = GetLeftCellFromCoord(coord);
+                element.neighbors[1] = GetUpCellFromCoord(coord);
+                element.neighbors[2] = GetRightCellFromCoord(coord);
+                element.neighbors[3] = GetDownCellFromCoord(coord);
 
-                var startPosition = element.worldPosition + new Vector3(-0.5f, -0.5f);
-                var startcoord = CoordUtility.WorldPositionToSmallCoord(startPosition);
+                //var startPosition = element.worldPosition + new Vector3(-0.5f, -0.5f);
+                //var startcoord = CoordUtility.WorldPositionToSmallCoord(startPosition);
 
-                var s0 = ElementManager_SmallCell.Instance.GetElement(startcoord);
-                if (s0 != null) element.containedSmallCells[0] = s0;
+                //var s0 = ElementManager_SmallCell.Instance.GetElement(startcoord);
+                //if (s0 != null) element.containedSmallCells[0] = s0;
 
-                var s1 = ElementManager_SmallCell.Instance.GetUpCellFromCoord(startcoord);
-                if (s1 != null) element.containedSmallCells[1] = s1;
+                //var s1 = ElementManager_SmallCell.Instance.GetUpCellFromCoord(startcoord);
+                //if (s1 != null) element.containedSmallCells[1] = s1;
 
-                var s2 = ElementManager_SmallCell.Instance.GetRightCellFromCoord(startcoord);
-                if (s2 != null) element.containedSmallCells[2] = s2;
+                //var s2 = ElementManager_SmallCell.Instance.GetRightCellFromCoord(startcoord);
+                //if (s2 != null) element.containedSmallCells[2] = s2;
 
-                var s3 = ElementManager_SmallCell.Instance.GetElement(startcoord + new Vector2Int(1, 1));
-                if (s3 != null) element.containedSmallCells[3] = s3;
+                //var s3 = ElementManager_SmallCell.Instance.GetElement(startcoord + new Vector2Int(1, 1));
+                //if (s3 != null) element.containedSmallCells[3] = s3;
 
             }
+
+
         }
 
         public void UnInit()
         {
-            //map.Clear();
+            map.Clear();
         }
 
-        public Element_LargeCell GetLeftCellFromTileCoord(Vector2Int coord)
+        public Element_LargeCell GetLeftCellFromCoord(Vector2Int coord)
         {
             return GetElement(coord + DirectionUtility.LEFT);
         }
 
-        public Element_LargeCell GetUpCellFromTileCoord(Vector2Int coord)
+        public Element_LargeCell GetUpCellFromCoord(Vector2Int coord)
         {
             return GetElement(coord + DirectionUtility.UP);
         }
 
-        public Element_LargeCell GetRightCellFromTileCoord(Vector2Int coord)
+        public Element_LargeCell GetRightCellFromCoord(Vector2Int coord)
         {
             return GetElement(coord + DirectionUtility.RIGHT);
         }
 
-        public Element_LargeCell GetDownCellFromTileCoord(Vector2Int coord)
+        public Element_LargeCell GetDownCellFromCoord(Vector2Int coord)
         {
             return GetElement(coord + DirectionUtility.DOWN);
         }

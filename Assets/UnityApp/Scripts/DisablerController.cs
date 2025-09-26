@@ -16,7 +16,6 @@ namespace Johnny.SimDungeon
         [SerializeField] private GridArea m_GridArea;
         private GridAreaDisablerData m_GridAreaDisablerData;
         private Material m_GridMaterial;
-        private Vector2Int m_GridSize;
         private List<Vector2Int> m_OccupiedCellPositionLis = new List<Vector2Int>();
 
         public Color temp_ShowColor;
@@ -63,13 +62,8 @@ namespace Johnny.SimDungeon
             {
                 m_GridMaterial = m_EasyGridBuilderProXZ.GetComponentInChildren<Renderer>().sharedMaterial;
             }
-            if (m_GridSize.x <= 0)
-            {
-                var grid = m_EasyGridBuilderProXZ.GetActiveGrid() as GridXZ;
-                m_GridSize = new Vector2Int(grid.GetWidth(), grid.GetLength());
-            }
-            var gridWidth = m_GridSize.x;
-            var gridLength = m_GridSize.y;
+            var gridWidth = DungeonController.Instance.smallTilemapSize.x;
+            var gridLength = DungeonController.Instance.smallTilemapSize.y;
             var generatedTexture = m_GridMaterial.GetTexture(Shader.PropertyToID("_Generated_Texture")) as Texture2D;
             var colors = new Color[gridWidth * gridLength];
             for (int x = 0; x < gridWidth; x++)

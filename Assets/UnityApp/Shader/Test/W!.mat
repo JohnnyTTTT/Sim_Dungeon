@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Wall
-  m_Shader: {fileID: 4800000, guid: 5a63c534b15ff1c44aa5eccaabf4924e, type: 3}
+  m_Name: W!
+  m_Shader: {fileID: 4800000, guid: a7d6464bd50e448468a7dfc7697894dd, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -24,7 +24,6 @@ Material:
   stringTagMap: {}
   disabledShaderPasses:
   - TransparentBackface
-  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3

@@ -54,14 +54,14 @@ namespace Johnny.SimDungeon
 
     public class Entity_Wall : Entity_Edge
     {
-        [ShowInInspector]
-        public FourDirectionalRotation fourDirectionalRotation
-        {
-            get
-            {
-                return DirectionUtility.ToEdgeFourDirectionalRotation(Direction);
-            }
-        }
+        //[ShowInInspector]
+        //public EdgeObjectCellDirection  edgeObjectCell
+        //{
+        //    get
+        //    {
+        //        return DirectionUtility.ToEdgeFourDirectionalRotation(Direction);
+        //    }
+        //}
         public WallModelGroup[] originWalls = new WallModelGroup[2];
 
         public bool isHidden;
@@ -69,6 +69,9 @@ namespace Johnny.SimDungeon
         public Vector3 wallNormal = Vector3.forward;
         public WallRenderMode wallRenderMode;
         public WallHideMode WallHideMode;
+        public Entity_SubEdge primary;
+        public Entity_SubEdge secondary;
+
         protected override void Start()
         {
             base.Start();
@@ -81,11 +84,12 @@ namespace Johnny.SimDungeon
             //{
             //    return;
             //}
-            //if (edgeElement.adjacentCells[0].Data.CellType != FlowTilemapCellType.Floor || edgeElement.adjacentCells[1].Data.CellType != FlowTilemapCellType.Floor)
+      
+            //if (edgeElement.adjacentLargeCells[0].Data.CellType != FlowTilemapCellType.Floor || edgeElement.adjacentLargeCells[1].Data.CellType != FlowTilemapCellType.Floor)
             //{
             //    return;
             //}
-
+            //var hide = false;
             //if (m_Camera == null)
             //{
             //    m_Camera = CameraController.Instance.MainCamera.transform;
@@ -94,15 +98,15 @@ namespace Johnny.SimDungeon
             //var dot = Vector3.Dot(camDir, wallNormal.normalized);
             //if (dot < 0)
             //{
-            //    wallCutType = WallCutType.None;
+            //    hide = true;
             //}
             //else
             //{
-            //    wallCutType = WallCutType.Half;
+            //    hide = false;
             //}
             ////Debug.Log(hidden,this);
-            //primary.SetWallCutType(wallCutType);
-            //secondary.SetWallCutType(wallCutType);
+            //primary.gameObject.SetActive(hide);
+            //secondary.gameObject.SetActive(hide);
         }
 
         public override void UpdateData()
@@ -116,8 +120,17 @@ namespace Johnny.SimDungeon
             if (drawGizmos)
             {
                 GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 1f, 0f), edgeElement.worldPosition, Color.blue);
-                GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 2f, 0f), edgeElement.adjacentLargeCells[0].worldPosition, Color.yellow);
-                GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 2f, 0f), edgeElement.adjacentLargeCells[1].worldPosition, Color.green);
+                //GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 2f, 0f), edgeElement.adjacentLargeCells[0].worldPosition, Color.yellow);
+                //GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 2f, 0f), edgeElement.adjacentLargeCells[1].worldPosition, Color.green);
+
+                //if(edgeElement.containedSmallCells[0] != null)
+                //GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 3f, 0f), edgeElement.containedSmallCells[0].worldPosition, Color.red);
+
+                //if (edgeElement.containedSmallCells[1] != null)
+                //    GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 3f, 0f), edgeElement.containedSmallCells[1].worldPosition, Color.red);
+
+                //if (edgeElement.containedSmallCells[2] != null)
+                //    GizmoUnitily.DrawLine(transform.position + transform.right + new Vector3(0f, 3f, 0f), edgeElement.containedSmallCells[2].worldPosition, Color.red);
             }
         }
     }

@@ -9,19 +9,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: beba53afc14c86a4fbf61783aa1f213f, type: 3}
-  m_Name: Grid SO - SingleBed Wood
-  m_EditorClassIdentifier: Assembly-CSharp::SoulGames.EasyGridBuilderPro.BuildableGridObjectSO
-  objectName: ' SingleBed Wood'
-  objectIcon: {fileID: 21300226, guid: 69238578584b14d4e801067fa2bd7db1, type: 3}
-  buildableObjectUICategorySO: {fileID: 11400000, guid: 83c9e1e38622a1d4fa7b7999208425f2, type: 2}
+  m_Script: {fileID: 11500000, guid: 778207c9cf632c047b538a11bf345d18, type: 3}
+  m_Name: Corner SO - Test
+  m_EditorClassIdentifier: 
+  objectName: Pillar
+  objectIcon: {fileID: 21300000, guid: 6806c7c4de6f4c74da6563e939757650, type: 3}
+  buildableObjectUICategorySO: {fileID: 11400000, guid: e7f773eb27b6c8448897157c1c5c8abd, type: 2}
   randomPrefabs:
-  - objectPrefab: {fileID: 4549288026964822154, guid: 7eb3859ca1d53f143b1b333c0d10f3c3, type: 3}
-    ghostObjectPrefab: {fileID: 4549288026964822154, guid: 7eb3859ca1d53f143b1b333c0d10f3c3, type: 3}
+  - objectPrefab: {fileID: 7803159104911250065, guid: 212dfd88552a9424892d08dceba9d067, type: 3}
+    ghostObjectPrefab: {fileID: 7803159104911250065, guid: 212dfd88552a9424892d08dceba9d067, type: 3}
     probability: 0
-  eachPlacementUseRandomPrefab: 1
-  validPlacementMaterial: {fileID: 2100000, guid: 60b6e8cab158bd44dbdf258b7527565a, type: 2}
-  invalidPlacementMaterial: {fileID: 2100000, guid: 1a665553bd032b84f8122a81c18ba378, type: 2}
+  eachPlacementUseRandomPrefab: 0
+  validPlacementMaterial: {fileID: 2100000, guid: e8a2c7224a8b9844e9a2c84e5f5ace41, type: 2}
+  invalidPlacementMaterial: {fileID: 2100000, guid: fe48486a20e56a94f84ee96b1792ee98, type: 2}
   setSpawnedObjectLayer: 0
   spawnedObjectLayer:
     serializedVersion: 2
@@ -55,11 +55,15 @@ MonoBehaviour:
   painterBrushType: 1
   painterBrushOpacity: 1
   painterBrushFallOff: 0
-  buildableGridObjectCategorySO: {fileID: 11400000, guid: c85083430bc35cd40b5562e71814ea62, type: 2}
+  buildableCornerObjectCategorySO: {fileID: 11400000, guid: a5d67003d94ae5c4e8293aa785166722, type: 2}
   snapToTheClosestVerticalGridHeight: 0
   minimumHeightThresholdPercentage: 25
+  rotationType: 0
+  freeRotationSpeed: 100
   freezeRotation: 0
   fourDirectionalRotation: 0
+  eightDirectionalRotation: 0
+  freeRotation: 0
   placementType: 0
   intervalBetweenEachPlacement: 0
-  spawnOnlyAtEndPoints: 0
+  spawnOnlyAtEndPoints: 1

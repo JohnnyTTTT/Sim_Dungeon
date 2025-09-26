@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Johnny.SimDungeon
 {
@@ -80,7 +81,6 @@ namespace Johnny.SimDungeon
 
         public void Init()
         {
-            spwanedEntity.Clear();
             var doors = new List<Entity_Door>();
             foreach (var item in spwanedEntity)
             {
@@ -91,16 +91,16 @@ namespace Johnny.SimDungeon
                 item.UpdateData();
             }
 
-            foreach (var item in doors)
-            {
-                item.CutWall();
-            }
+            //foreach (var item in doors)
+            //{
+            //    item.CutWall();
+            //}
             Debug.Log($"[-----System-----] : Entities UpdateData - Count <{spwanedEntity.Count}>");
         }
 
         public void UnInit()
         {
-            //spwanedEntity.Clear();
+            spwanedEntity.Clear();
         }
 
         private void OnDestroy()
@@ -134,11 +134,17 @@ namespace Johnny.SimDungeon
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
 
-            foreach (var item in m_CreatedBuildableEdgeObject)
+            var cells = new HashSet<Element_LargeCell>();
+            foreach (var entity in m_CreatedBuildableEdgeObject)
             {
-                ElementManager_Region.Instance.HandleWallPlacedIncremental(item);
+                var adjacentLargeCells = ElementManager_Edge.Instance.GetAdjacentEdges(entity.edgeElement);
+                foreach (var cell in adjacentLargeCells)
+                {
+                    cells.Add(cell);
+                }
+                //ElementManager_Region.Instance.HandleWallPlacedIncremental(item);
             }
-
+            ElementManager_Region.Instance.HandleWallsPlacedIncremental(cells);
             m_CreatedBuildableEdgeObject.Clear();
             //GridManager.Instance.TryGetBuildableEdgeObjectGhost
         }
@@ -167,7 +173,7 @@ namespace Johnny.SimDungeon
             foreach (var cell in cellList)
             {
                 var leftCell = cell.neighbors[0];
-                var leftEdge = cell.edges[0];
+                var leftEdge = ElementManager_Edge.Instance.GetLeftEdgeFromTileCoord(cell.coord);
                 if (!cellList.Contains(leftCell) && leftEdge.GetWallEntity() == null && (leftCell.Data.CellType == FlowTilemapCellType.Custom || leftCell.region == null))
                 {
                     leftEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
@@ -175,7 +181,7 @@ namespace Johnny.SimDungeon
                 }
 
                 var upCell = cell.neighbors[1];
-                var upEdge = cell.edges[1];
+                var upEdge = ElementManager_Edge.Instance.GetUpEdgeFromTileCoord(cell.coord);
                 if (!cellList.Contains(upCell) && upEdge.GetWallEntity() == null && (upCell.Data.CellType == FlowTilemapCellType.Custom || upCell.region == null))
                 {
 
@@ -184,7 +190,7 @@ namespace Johnny.SimDungeon
                 }
 
                 var rightCell = cell.neighbors[2];
-                var rightEdge = cell.edges[2];
+                var rightEdge = ElementManager_Edge.Instance.GetRightEdgeFromTileCoord(cell.coord);
                 if (!cellList.Contains(rightCell) && rightEdge.GetWallEntity() == null && (rightCell.Data.CellType == FlowTilemapCellType.Custom || rightCell.region == null))
                 {
                     rightEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
@@ -192,7 +198,7 @@ namespace Johnny.SimDungeon
                 }
 
                 var downCell = cell.neighbors[3];
-                var downEdge = cell.edges[3];
+                var downEdge = ElementManager_Edge.Instance.GetDownEdgeFromTileCoord(cell.coord);
                 if (!cellList.Contains(downCell) && downEdge.GetWallEntity() == null && (downCell.Data.CellType == FlowTilemapCellType.Custom || downCell.region == null))
                 {
                     downEdge.Data.EdgeType = FlowTilemapEdgeType.Fence;
@@ -251,6 +257,7 @@ namespace Johnny.SimDungeon
 
         private void OnBuildableObjectPlaced(EasyGridBuilderPro easyGridBuilderPro, BuildableObject buildableObject)
         {
+            buildableObject.transform.position += new Vector3(0f, -0.1f, 0f);
             if (DungeonController.Instance.worldDataInited)
             {
                 if (buildableObject is BuildableGridObject buildableGridObject)
@@ -326,7 +333,7 @@ namespace Johnny.SimDungeon
         public bool TryInitializeBuildableGridObjectSinglePlacement(EasyGridBuilderPro easyGridBuilderPro, Vector3 worldPosition, Quaternion rotation, BuildableGridObjectSO buildableGridObjectSO, out BuildableGridObject buildableGridObject, BuildableObjectSO.RandomPrefabs radomPrefabs = null)
         {
             var fourDirectional = DirectionUtility.GetEdgeFourDirectionalRotationForWorld(rotation);
-            return TryInitializeBuildableGridObjectSinglePlacement(easyGridBuilderPro, worldPosition, fourDirectional, buildableGridObjectSO,out buildableGridObject);
+            return TryInitializeBuildableGridObjectSinglePlacement(easyGridBuilderPro, worldPosition, fourDirectional, buildableGridObjectSO, out buildableGridObject);
         }
 
         public bool TryInitializeBuildableCornerObjectSinglePlacement(EasyGridBuilderPro easyGridBuilderPro, Vector3 worldPosition, Quaternion rotation, BuildableCornerObjectSO buildableCornerObjectSO, out BuildableCornerObject buildableCornerObject, BuildableObjectSO.RandomPrefabs buildableObjectSORandomPrefab = null)

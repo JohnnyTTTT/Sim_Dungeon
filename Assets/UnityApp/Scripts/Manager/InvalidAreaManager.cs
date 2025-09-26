@@ -48,8 +48,8 @@ namespace Johnny.SimDungeon
             var verts = new List<Vector3>();
             var tris = new List<int>();
 
-            var width = DungeonController.Instance.tilemapSize.x;
-            var hight = DungeonController.Instance.tilemapSize.y;
+            var width = DungeonController.Instance.smallTilemapSize.x;
+            var hight = DungeonController.Instance.smallTilemapSize.y;
             int index = 0;
             for (int y = 0; y < hight; y++)
             {

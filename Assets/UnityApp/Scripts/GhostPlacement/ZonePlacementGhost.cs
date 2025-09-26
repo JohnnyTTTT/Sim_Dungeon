@@ -95,7 +95,14 @@ namespace Johnny.SimDungeon
 
         private void OnBuildableObjectPlaced(EasyGridBuilderPro easyGridBuilderPro, BuildableObject buildableObject)
         {
-            Debug.Log(buildableObject.GetObjectFourDirectionalRotation());
+            //if (buildableObject is BuildableEdgeObject buildable)
+            //{
+            //    foreach (var item in buildable.GetCellPositionDictionary())
+            //    {
+            //        Debug.Log(item.Key+" "+ item.Value);
+            //    }
+            //}
+
         }
 
         private void FloodFillActionPerformed(InputAction.CallbackContext obj)
@@ -104,7 +111,7 @@ namespace Johnny.SimDungeon
             {
                 var region = m_LastDetectionCell.region;
                 var prefab = m_CandidateBuildableGridObjectSO.randomPrefabs[0].ghostObjectPrefab;
-                foreach (var regionCell in region.containedCells)
+                foreach (var regionCell in region.containedLargeCells)
                 {
                     if (regionCell != m_LastDetectionCell)
                     {

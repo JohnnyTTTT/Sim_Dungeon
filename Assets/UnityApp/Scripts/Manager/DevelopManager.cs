@@ -64,21 +64,21 @@ namespace Johnny.SimDungeon
                             if (cell.neighbors[3] != null)
                                 CreateLargeCellDetection(cell.neighbors[3], Color.red);
 
-                            if (cell.containedSmallCells[0] != null)
-                                CreateSmallCellDetection(cell.containedSmallCells[0], Color.green);
-                            if (cell.containedSmallCells[1] != null)
-                                CreateSmallCellDetection(cell.containedSmallCells[1], Color.blue);
-                            if (cell.containedSmallCells[2] != null)
-                                CreateSmallCellDetection(cell.containedSmallCells[2], Color.yellow);
-                            if (cell.containedSmallCells[3] != null)
-                                CreateSmallCellDetection(cell.containedSmallCells[3], Color.red);
+                            //if (cell.containedSmallCells[0] != null)
+                            //    CreateSmallCellDetection(cell.containedSmallCells[0], Color.green);
+                            //if (cell.containedSmallCells[1] != null)
+                            //    CreateSmallCellDetection(cell.containedSmallCells[1], Color.blue);
+                            //if (cell.containedSmallCells[2] != null)
+                            //    CreateSmallCellDetection(cell.containedSmallCells[2], Color.yellow);
+                            //if (cell.containedSmallCells[3] != null)
+                            //    CreateSmallCellDetection(cell.containedSmallCells[3], Color.red);
 
                             break;
                         case DevelopMode.Area:
                             var area = cell.region;
                             if (area != null)
                             {
-                                foreach (var child in area.containedCells)
+                                foreach (var child in area.containedLargeCells)
                                 {
                                     CreateLargeCellDetection(child);
                                 }
