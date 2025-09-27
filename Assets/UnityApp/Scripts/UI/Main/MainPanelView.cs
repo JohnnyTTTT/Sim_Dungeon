@@ -42,28 +42,15 @@ namespace Johnny.SimDungeon
             m_CategoryObjectsPanelView.Init();
             m_BuildableObjectsPanelView.Init();
             Debug.Log("[-----UI-----] : Init CategoryObjects And BuildableObjects");
-            m_GridManager.OnActiveGridModeChanged += OnActiveGridModeChanged;
 
             base.Start();
         }
 
-
-
         protected override void Binding(BindingSet<ViewBase<MainGameViewModel>, MainGameViewModel> bindingSet)
         {
-            bindingSet.Bind(this.m_DestroyToggle).For(v => v.isOn, v => v.onValueChanged).To(vm => vm.IsDestroyMode).TwoWay();
+            //bindingSet.Bind(this.m_DestroyToggle).For(v => v.isOn, v => v.onValueChanged).To(vm => vm.IsDestroyMode).TwoWay();
             bindingSet.Bind(this.m_LandExpandToggle).For(v => v.isOn, v => v.onValueChanged).To(vm => vm.IsLandExpandMode).TwoWay();
         }
-
-        private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)
-        {
-
-        }
-
-        //private void OnActiveEasyGridBuilderProChanged(EasyGridBuilderPro activeEasyGridBuilderProSystem)
-        //{
-        //    BindingService.CategoryObjectsPanelViewModel.ActiveEasyGridBuilderPro = activeEasyGridBuilderProSystem;
-        //}
 
     }
 }

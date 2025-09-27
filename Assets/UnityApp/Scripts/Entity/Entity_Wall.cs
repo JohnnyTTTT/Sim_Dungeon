@@ -71,6 +71,7 @@ namespace Johnny.SimDungeon
         public WallHideMode WallHideMode;
         public Entity_SubEdge primary;
         public Entity_SubEdge secondary;
+        public bool isFront;
 
         protected override void Start()
         {

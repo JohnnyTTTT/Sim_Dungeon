@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7788474732771662738}
   - component: {fileID: -8930773524602078114}
   - component: {fileID: -3052809267800701051}
+  - component: {fileID: 899390577472664467}
   m_Layer: 0
   m_Name: Grid Object - Stone Floor Type4
   m_TagString: Untagged
@@ -82,7 +83,7 @@ MonoBehaviour:
   activateGizmos: 0
   lockAutoGenerationAndValues: 1
   objectScale: {x: 1, y: 0.05, z: 1}
-  objectCenter: {x: 0, y: -0.025, z: 0}
+  objectCenter: {x: 0, y: 0.025, z: 0}
   objectCustomPivot: {x: 0, y: 0, z: 0}
   activeSceneObject: 0
   sceneObjectBuildableCornerObjectSO: {fileID: 0}
@@ -207,10 +208,10 @@ MonoBehaviour:
     spawnLocalRotation: {x: 0, y: 0, z: 0}
     spawnLocalScale: {x: 1, y: 1, z: 1}
     spawnnedObjectLifetime: 5
-  changeObjectMaterial: 0
+  changeObjectMaterial: 1
   rootObject: {fileID: 0}
   excludedChildObjects: []
-  baseMaterial: {fileID: 2100000, guid: d55537e87a547ac499a74a633b036012, type: 2}
+  baseMaterial: {fileID: 2100000, guid: 36db9d593da3fb04491eb1b29a29189c, type: 2}
   destroyerHoverChangeMaterial: {fileID: 2100000, guid: 393ac59727782db45b214bd6ea3a5b7c, type: 2}
   selectorHoverChangeMaterial: {fileID: 2100000, guid: 36408c231694b7941ae625e416a1472e, type: 2}
   selectorSelectedMaterial: {fileID: 2100000, guid: f09454d79c5634243bb530a95652996e, type: 2}
@@ -241,6 +242,27 @@ MonoBehaviour:
   drawGizmos: 0
   Direction: 0
   buildableObjectSO: {fileID: 0}
+--- !u!65 &899390577472664467
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5786089787855489354}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 0.05, z: 1}
+  m_Center: {x: 0, y: 0.025, z: 0}
 --- !u!1001 &1792097069119855427
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -255,7 +277,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 611575be58ec7894bb1ee8eabdd43337, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.05
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 611575be58ec7894bb1ee8eabdd43337, type: 3}
       propertyPath: m_LocalPosition.z

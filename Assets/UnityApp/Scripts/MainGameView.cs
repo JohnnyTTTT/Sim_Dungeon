@@ -58,7 +58,6 @@ namespace Johnny.SimDungeon
             }
         }
 
-
         public GridType GridType
         {
             get
@@ -87,12 +86,10 @@ namespace Johnny.SimDungeon
                         case GridType.Large:
                             large.gameObject.SetActive(true);
                             small.gameObject.SetActive(false);
-                            ActiveEasyGridBuilderPro = small;
                             break;
                         case GridType.Small:
                             large.gameObject.SetActive(false);
                             small.gameObject.SetActive(true);
-                            ActiveEasyGridBuilderPro = large;
                             break;
                     }
 
@@ -128,39 +125,27 @@ namespace Johnny.SimDungeon
         }
         private bool m_IsLandExpandMode;
 
-        public bool IsDestroyMode
-        {
-            get
-            {
-                return m_IsDestroyMode;
-            }
-            set
-            {
-                if (m_IsDestroyMode != value)
-                {
-                    Set(ref m_IsDestroyMode, value);
-                    GridManager.Instance.SetActiveGridModeInAllGrids(GridMode.DestroyMode);
-                    RaisePropertyChanged();
-                }
-            }
-        }
-        private bool m_IsDestroyMode;
-
-        public bool IsBuildMode
-        {
-            get
-            {
-                return m_IsBuildMode;
-            }
-            set
-            {
-                if (m_IsBuildMode != value)
-                {
-                    Set(ref m_IsBuildMode, value);
-                }
-            }
-        }
-        private bool m_IsBuildMode;
+        //public bool IsDestroyMode
+        //{
+        //    get
+        //    {
+        //        return m_IsDestroyMode;
+        //    }
+        //    set
+        //    {
+        //        if (m_IsDestroyMode != value)
+        //        {
+        //            Set(ref m_IsDestroyMode, value);
+        //            if (m_IsDestroyMode)
+        //            {
+        //                GridManager.Instance.SetActiveGridModeInAllGrids(GridMode.DestroyMode);
+        //                BindingService.MainGameViewModel.GridType = GridType.Large;
+        //            }
+        //            RaisePropertyChanged();
+        //        }
+        //    }
+        //}
+        //private bool m_IsDestroyMode;
 
         public bool ShouldShowCategoryUI
         {
@@ -174,24 +159,9 @@ namespace Johnny.SimDungeon
         {
             get
             {
-                return IsBuildableMode && ActiveCategoryObjectItemView != null && !IsDestroyMode;
+                return IsBuildableMode && ActiveCategoryObjectItemView != null;
             }
         }
-
-        public EasyGridBuilderProXZ ActiveEasyGridBuilderPro
-        {
-            get
-            {
-                return m_ActiveEasyGridBuilderPro;
-            }
-            set
-            {
-                Set(ref m_ActiveEasyGridBuilderPro, value);
-                GridManager.Instance.SetActiveGridSystem(m_ActiveEasyGridBuilderPro);
-                RaisePropertyChanged();
-            }
-        }
-        private EasyGridBuilderProXZ m_ActiveEasyGridBuilderPro;
 
         public CategoryObjectItemViewModel ActiveCategoryObjectItemView
         {
@@ -222,6 +192,23 @@ namespace Johnny.SimDungeon
         }
         private CategoryObjectItemViewModel m_activeCategoryObjectItemView;
 
+        public Entity SelectEntity
+        {
+            get
+            {
+                return m_SelectEntity;
+            }
+            set
+            {
+                if (m_SelectEntity != value)
+                {
+                    Set(ref m_SelectEntity, value);
+                }
+            }
+        }
+        private Entity m_SelectEntity;
+
+
     }
     public class MainGameView : ViewBase<MainGameViewModel>
     {
@@ -245,20 +232,28 @@ namespace Johnny.SimDungeon
         {
             ViewModel = BindingService.MainGameViewModel;
             m_GridManager = GridManager.Instance;
+            m_GridManager.OnActiveEasyGridBuilderProChanged += OnActiveEasyGridBuilderProChanged;
             m_GridManager.OnActiveGridModeChanged += OnActiveGridModeChanged;
             m_GridManager.OnActiveBuildableSOChanged += OnActiveBuildableSOChanged;
+        }
+
+
+
+        private void OnActiveEasyGridBuilderProChanged(EasyGridBuilderPro activeEasyGridBuilderProSystem)
+        {
+            Debug.Log($"<GridType Changed> - {activeEasyGridBuilderProSystem.name.SetColor(Color.softYellow)}");
         }
 
         private void OnActiveBuildableSOChanged(EasyGridBuilderPro easyGridBuilderPro, BuildableObjectSO buildableObjectSO)
         {
             if (buildableObjectSO != null)
             {
-                Debug.Log($"<BuildableObjectSO Changed> - { buildableObjectSO.objectName.SetColor(Color.blue)}");
+                Debug.Log($"<BuildableObjectSO Changed> - {easyGridBuilderPro.name} , { buildableObjectSO.objectName.SetColor(Color.blue)}");
                 //Cursor.visible = false;
             }
             else
             {
-                Debug.Log($"<BuildableObjectSO Changed> - {"Nothing".SetColor(Color.blue)}");
+                Debug.Log($"<BuildableObjectSO Changed> - {easyGridBuilderPro.name} , {"Nothing".SetColor(Color.blue)}");
                 //Cursor.visible = true;
             }
 
@@ -266,36 +261,29 @@ namespace Johnny.SimDungeon
 
         private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)
         {
-            Debug.Log($"<GridMode Changed> - {gridMode.SetColor(Color.yellow)}");
-            switch (gridMode)
-            {
-                case GridMode.None:
-                    ViewModel.IsBuildMode = false;
-                    ViewModel.IsLandExpandMode = false;
-                    ViewModel.IsDestroyMode = false;
-                    break;
-                case GridMode.BuildMode:
-                    ViewModel.IsBuildMode = true;
-                    ViewModel.IsDestroyMode = false;
-                    break;
-                case GridMode.DestroyMode:
-                    ViewModel.IsBuildMode = false;
-                    ViewModel.IsLandExpandMode = false;
-                    ViewModel.IsDestroyMode = true;
-                    break;
-                case GridMode.SelectMode:
-                    ViewModel.IsBuildMode = false;
-                    ViewModel.IsLandExpandMode = false;
-                    ViewModel.IsDestroyMode = false;
-                    break;
-                case GridMode.MoveMode:
-                    ViewModel.IsBuildMode = false;
-                    ViewModel.IsLandExpandMode = false;
-                    ViewModel.IsDestroyMode = false;
-                    break;
-                default:
-                    break;
-            }
+            Debug.Log($"<GridMode Changed> - {easyGridBuilderPro.name} , {gridMode.SetColor(Color.yellow)}");
+            //switch (gridMode)
+            //{
+            //    case GridMode.None:
+            //        ViewModel.IsLandExpandMode = false;
+            //        //ViewModel.IsDestroyMode = false;
+            //        break;
+            //    case GridMode.BuildMode:
+            //        //ViewModel.IsDestroyMode = false;
+            //        break;
+            //    case GridMode.DestroyMode:
+            //        ViewModel.IsLandExpandMode = false;
+            //        break;
+            //    case GridMode.SelectMode:
+            //        ViewModel.IsLandExpandMode = false;
+            //        //ViewModel.IsDestroyMode = false;
+            //        break;
+            //    case GridMode.MoveMode:
+            //        ViewModel.IsLandExpandMode = false;
+            //        break;
+            //    default:
+            //        break;
+            //}
         }
 
         //[ShowInInspector]

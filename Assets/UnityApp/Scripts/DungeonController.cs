@@ -126,6 +126,7 @@ namespace Johnny.SimDungeon
 
             BindingService.MainGameViewModel.GameMode = GameMode.Default;
             BindingService.MainGameViewModel.GridType = GridType.Nothing;
+            //GridManager.Instance.SetActiveGridModeInAllGrids(GridMode.SelectMode);
             Debug.Log("[-----System-----] : Dungeon Build End");
 
         }

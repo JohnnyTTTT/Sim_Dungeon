@@ -136,8 +136,8 @@ namespace Johnny.SimDungeon
 
         private void CollectSmallCells(Region region)
         {
-            var coord = region.containedLargeCells.First().worldPosition;
-            var firstSmall = ElementManager_SmallCell.Instance.GetElement(coord);
+            var position = region.containedLargeCells.First().worldPosition;
+            var firstSmall = ElementManager_SmallCell.Instance.GetElement(position);
             var regionCells = FloodFill(firstSmall);
             if (regionCells != null && regionCells.Count > 0)
             {

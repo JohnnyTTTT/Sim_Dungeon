@@ -196,7 +196,7 @@ namespace Johnny.SimDungeon
             return GetVertical(coord);
         }
 
-        public Element_LargeCell[] GetAdjacentEdges(Element_Edge edge)
+        public Element_LargeCell[] GetAdjacentLargeCells(Element_Edge edge)
         {
             var reslut = new Element_LargeCell[2];
             var edgeCoord = edge.coord;
@@ -268,27 +268,27 @@ namespace Johnny.SimDungeon
         public Element_SmallCell[] GetContainedSmallCells(Element_Edge edge)
         {
             var reslut = new Element_SmallCell[3];
-            var edgeCoord = edge.coord;
+            var coord = CoordUtility.WorldPositionToSmallCoord(edge.worldPosition);
             if (edge.Data.HorizontalEdge)
             {
-                var cellMid = ElementManager_SmallCell.Instance.GetElement(edgeCoord);
+                var cellMid = ElementManager_SmallCell.Instance.GetElement(coord);
                 reslut[1] = cellMid;
 
-                var cellLeft = ElementManager_SmallCell.Instance.GetLeftCellFromCoord(edgeCoord);
+                var cellLeft = ElementManager_SmallCell.Instance.GetLeftCellFromCoord(coord);
                 reslut[0] = cellLeft;
 
-                var cellRight = ElementManager_SmallCell.Instance.GetRightCellFromCoord(edgeCoord);
+                var cellRight = ElementManager_SmallCell.Instance.GetRightCellFromCoord(coord);
                 reslut[2] = cellRight;
             }
             else
             {
-                var cellMid = ElementManager_SmallCell.Instance.GetElement(edgeCoord);
+                var cellMid = ElementManager_SmallCell.Instance.GetElement(coord);
                 reslut[1] = cellMid;
 
-                var cellUp = ElementManager_SmallCell.Instance.GetUpCellFromCoord(edgeCoord); ;
+                var cellUp = ElementManager_SmallCell.Instance.GetUpCellFromCoord(coord); ;
                 reslut[0] = cellUp;
 
-                var cellDown = ElementManager_SmallCell.Instance.GetDownCellFromCoord(edgeCoord);
+                var cellDown = ElementManager_SmallCell.Instance.GetDownCellFromCoord(coord);
                 reslut[2] = cellDown;
             }
 

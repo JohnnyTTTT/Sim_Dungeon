@@ -38,12 +38,12 @@ MonoBehaviour:
   affectByAreaDisablers: 1
   affectByBasicAreaEnablers: 1
   affectByAreaEnablers: 1
-  isObjectReplacable: 0
+  isObjectReplacable: 1
   replacingObjectIgnoreCustomConditions: 1
-  isObjectSelectable: 0
-  isSelectedObjectRotatable: 0
-  isObjectDestructable: 0
-  isObjectMovable: 0
+  isObjectSelectable: 1
+  isSelectedObjectRotatable: 1
+  isObjectDestructable: 1
+  isObjectMovable: 1
   enableTerrainInteractions: 0
   flattenTerrain: 0
   flattenerSize: 0

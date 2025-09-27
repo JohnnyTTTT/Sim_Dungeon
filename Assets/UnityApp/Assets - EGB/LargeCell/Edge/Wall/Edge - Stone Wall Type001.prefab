@@ -119,6 +119,9 @@ MonoBehaviour:
   wallNormal: {x: 0, y: 0, z: 1}
   wallRenderMode: 0
   WallHideMode: 0
+  primary: {fileID: 0}
+  secondary: {fileID: 0}
+  isFront: 0
 --- !u!114 &8980230178865248745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,7 +238,7 @@ MonoBehaviour:
     spawnLocalRotation: {x: 0, y: 0, z: 0}
     spawnLocalScale: {x: 1, y: 1, z: 1}
     spawnnedObjectLifetime: 5
-  changeObjectMaterial: 0
+  changeObjectMaterial: 1
   rootObject: {fileID: 0}
   excludedChildObjects: []
   baseMaterial: {fileID: 2100000, guid: fb04d5cb3691d6a4ea6a43716f3bc31d, type: 2}

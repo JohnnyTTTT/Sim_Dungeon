@@ -38,7 +38,7 @@ namespace Johnny.SimDungeon
 
         [Title("Global Settings")]
         public Transform m_SpawnRoot;
-        public List<Entity> spwanedEntity = new List<Entity>();
+        public List<Entity> spwanedEntityForEditor = new List<Entity>();
 
         [Title("Easy GridBuilder Pro Settings")]
         public EasyGridBuilderProXZ m_EasyGridBuilderPro_SmallCell;
@@ -48,6 +48,7 @@ namespace Johnny.SimDungeon
         [Title("Default BuildableGridObjectSO")]
         public BuildableCornerObjectSO defaultFloor;
         public BuildableEdgeObjectSO defaultWall;
+        //public BuildableEdgeObjectSO defaultWall_B;
         public BuildableCornerObjectSO defaultPillar;
         public BuildableFreeObjectSO defaultDoor;
         public Material defaultSectionMaterial;
@@ -71,6 +72,7 @@ namespace Johnny.SimDungeon
 
             staticBindingSet.Build();
             m_GridManager = GridManager.Instance;
+
             m_GridManager.OnActiveBuildableSOChanged += OnActiveBuildableSOChanged;
             m_GridManager.OnBuildableObjectPlaced += OnBuildableObjectPlaced;
             m_GridManager.OnGridObjectBoxPlacementFinalized += OnGridObjectBoxPlacementFinalized;
@@ -81,33 +83,64 @@ namespace Johnny.SimDungeon
 
         public void Init()
         {
-            var doors = new List<Entity_Door>();
-            foreach (var item in spwanedEntity)
+            if (Application.isPlaying)
             {
-                if (item is Entity_Door door)
+                if (m_GridManager.TryGetGridBuiltObjectsManager(out var gridBuiltObjectsManager))
                 {
-                    doors.Add(door);
+                    var objs = gridBuiltObjectsManager.GetBuiltObjectsList();
+                    foreach (var item in objs)
+                    {
+                        if (item.TryGetComponent<Entity>(out var entity))
+                        {
+                            //if (item is Entity_Door door)
+                            //{
+                            //    doors.Add(door);
+                            //}
+                            entity.UpdateData();
+                        }
+                    }
                 }
-                item.UpdateData();
             }
+            else
+            {
+                foreach (var entity in spwanedEntityForEditor)
+                {
+                    entity.UpdateData();
+                }
+            }
+
+
 
             //foreach (var item in doors)
             //{
             //    item.CutWall();
             //}
-            Debug.Log($"[-----System-----] : Entities UpdateData - Count <{spwanedEntity.Count}>");
+            Debug.Log($"[-----System-----] : Entities UpdateData - Count <{spwanedEntityForEditor.Count}>");
         }
 
         public void UnInit()
         {
-            spwanedEntity.Clear();
+            spwanedEntityForEditor.Clear();
         }
 
         private void OnDestroy()
         {
-            spwanedEntity.Clear();
+            spwanedEntityForEditor.Clear();
             m_CandidateAreaExpandProxies.Clear();
             m_CreatedBuildableEdgeObject.Clear();
+        }
+
+        public GridType GetGridTypeFromEasyGridBuilderPro(EasyGridBuilderPro gridBuilderPro)
+        {
+            if (gridBuilderPro == m_EasyGridBuilderPro_LargeCell)
+            {
+                return GridType.Large;
+            }
+            else if (gridBuilderPro == m_EasyGridBuilderPro_SmallCell)
+            {
+                return GridType.Small;
+            }
+            return GridType.Nothing;
         }
 
         private void OnActiveBuildableSOChanged(EasyGridBuilderPro easyGridBuilderPro, BuildableObjectSO buildableObjectSO)
@@ -126,6 +159,7 @@ namespace Johnny.SimDungeon
 
         private void OnEdgeObjectBoxPlacementFinalized(EasyGridBuilderPro easyGridBuilderPro)
         {
+
             StartCoroutine(OnPostEdgeObjectBoxPlacementFinalized());
         }
 
@@ -137,7 +171,12 @@ namespace Johnny.SimDungeon
             var cells = new HashSet<Element_LargeCell>();
             foreach (var entity in m_CreatedBuildableEdgeObject)
             {
-                var adjacentLargeCells = ElementManager_Edge.Instance.GetAdjacentEdges(entity.edgeElement);
+                var containedSmallCells = ElementManager_Edge.Instance.GetContainedSmallCells(entity.edgeElement);
+                foreach (var small in containedSmallCells)
+                {
+                    small.cellType = FlowTilemapSmallCellType.Wall;
+                }
+                var adjacentLargeCells = ElementManager_Edge.Instance.GetAdjacentLargeCells(entity.edgeElement);
                 foreach (var cell in adjacentLargeCells)
                 {
                     cells.Add(cell);
@@ -248,11 +287,11 @@ namespace Johnny.SimDungeon
                 rotation = Quaternion.Euler(new Vector3(0f, 90f, 0f));
             }
 
-            if (TryInitializeBuildableEdgeObjectSinglePlacement(m_EasyGridBuilderPro_LargeCell, postion, rotation, defaultWall, out var obj))
-            {
-                var entity = obj.GetComponent<Entity_Wall>();
-                entity.UpdateData();
-            }
+            //if (TryInitializeBuildableEdgeObjectSinglePlacement(m_EasyGridBuilderPro_LargeCell, postion, rotation, defaultWall, out var obj))
+            //{
+            //    var entity = obj.GetComponent<Entity_Wall>();
+            //    entity.UpdateData();
+            //}
         }
 
         private void OnBuildableObjectPlaced(EasyGridBuilderPro easyGridBuilderPro, BuildableObject buildableObject)
@@ -272,8 +311,10 @@ namespace Johnny.SimDungeon
                 {
                     var entity = buildableEdgeObject.GetComponent<Entity_Wall>();
                     entity.UpdateData();
+
+                    var edge = entity.edgeElement;
                     entity.edgeElement.Data.EdgeType = FlowTilemapEdgeType.Wall;
-                    m_CreatedBuildableEdgeObject.Add(entity);
+                    //m_CreatedBuildableEdgeObject.Add(entity);
                 }
 
                 //if (buildableObject is BuildableCornerObject buildableCornerObject)
@@ -288,7 +329,7 @@ namespace Johnny.SimDungeon
             //Debug.Log("Rooms : " + ElementManager_Room.Instance.roomList.Count);
         }
 
-        public bool TryInitializeBuildableEdgeObjectSinglePlacement(EasyGridBuilderPro easyGridBuilderPro, Vector3 worldPosition, Quaternion rotation, BuildableEdgeObjectSO buildableEdgeObjectSO, out BuildableEdgeObject spawnnedBuildableEdgeObject, BuildableObjectSO.RandomPrefabs radomPrefabs = null)
+        public bool TryInitializeBuildableEdgeObjectSinglePlacement(EasyGridBuilderPro easyGridBuilderPro, Vector3 worldPosition, Quaternion rotation, BuildableEdgeObjectSO buildableEdgeObjectSO, out BuildableEdgeObject buildableGridObject, BuildableObjectSO.RandomPrefabs radomPrefabs = null)
         {
             //BindingService.MainGameViewModel.GameMode = GameMode.Structure;
             var fourDirectional = DirectionUtility.GetEdgeFourDirectionalRotationForWorld(rotation);
@@ -298,9 +339,14 @@ namespace Johnny.SimDungeon
                 radomPrefabs = RandomUtility.UpdateBuildableObjectSORandomPrefab(coord, buildableEdgeObjectSO);
             }
 
-            if (easyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement(worldPosition, buildableEdgeObjectSO, fourDirectional, false, true, true, 0, true, out spawnnedBuildableEdgeObject, radomPrefabs, null))
+            if (easyGridBuilderPro.TryInitializeBuildableEdgeObjectSinglePlacement(worldPosition, buildableEdgeObjectSO, fourDirectional, false, true, true, 0, true, out buildableGridObject, radomPrefabs, null))
             {
-                spawnnedBuildableEdgeObject.transform.parent = m_SpawnRoot;
+                buildableGridObject.transform.parent = m_SpawnRoot;
+                var children = buildableGridObject.GetComponentsInChildren<BuildableEdgeObject>();
+                foreach (var item in children)
+                {
+                    item.SetOccupiedGridSystem(easyGridBuilderPro);
+                }
                 return true;
             }
             else
@@ -321,6 +367,10 @@ namespace Johnny.SimDungeon
             if (easyGridBuilderPro.TryInitializeBuildableGridObjectSinglePlacement(worldPosition, buildableGridObjectSO, dir, true, true, 0, true, out buildableGridObject, radomPrefabs, null))
             {
                 buildableGridObject.transform.parent = m_SpawnRoot;
+                if (buildableGridObject.GetIsActiveSceneObject(out _))
+                {
+                    Debug.Log(buildableGridObject.name);
+                }
                 return true;
             }
             else

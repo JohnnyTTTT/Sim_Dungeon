@@ -1,3 +1,4 @@
+using Loxodon.Framework.Binding;
 using Loxodon.Framework.Binding.Builder;
 using Loxodon.Framework.Observables;
 using Loxodon.Framework.ViewModels;
@@ -12,24 +13,37 @@ namespace Johnny.SimDungeon
 {
     public class CategoryObjectsPanelViewModel : ListViewModel<CategoryObjectItemViewModel>
     {
+        public CategoryObjectItemViewModel destroyItem;
+        public CategoryObjectItemViewModel moveItem;
+
         protected override void OnSelectedItemChanged()
         {
             if (SelectedItem != null)
             {
-                BindingService.MainGameViewModel.ActiveCategoryObjectItemView = SelectedItem;
+                if (SelectedItem.GridMode == GridMode.BuildMode)
+                {
+                    BindingService.MainGameViewModel.ActiveCategoryObjectItemView = SelectedItem;
+                }
                 BindingService.MainGameViewModel.GridType = SelectedItem.GridType;
+                if (GridManager.Instance.GetActiveEasyGridBuilderPro().GetActiveGridMode() != SelectedItem.GridMode)
+                {
+                    GridManager.Instance.SetActiveGridModeInAllGrids(SelectedItem.GridMode);
+                }
             }
             else
             {
                 BindingService.MainGameViewModel.ActiveCategoryObjectItemView = null;
-                GridManager.Instance.SetActiveGridModeInAllGrids(GridMode.None);
+                if (GridManager.Instance.GetActiveEasyGridBuilderPro().GetActiveGridMode() != GridMode.None)
+                {
+                    GridManager.Instance.SetActiveGridModeInAllGrids(GridMode.None);
+                }
                 BindingService.MainGameViewModel.GridType = GridType.Nothing;
             }
         }
 
-        public CategoryObjectItemViewModel CreateItem(BuildableObjectUICategorySO buildableObjectUICategorySO, GridType gridType)
+        public CategoryObjectItemViewModel CreateItem(BuildableObjectUICategorySO buildableObjectUICategorySO, GridMode gridMode, GridType gridType)
         {
-            var item = new CategoryObjectItemViewModel(gridType, this.ItemSelectCommand, ItemClickCommand, buildableObjectUICategorySO);
+            var item = new CategoryObjectItemViewModel(gridMode, gridType, this.ItemSelectCommand, ItemClickCommand, buildableObjectUICategorySO);
             return item;
         }
 
@@ -41,6 +55,8 @@ namespace Johnny.SimDungeon
 
         [SerializeField] private CanvasGroup m_CanvasGroup;
         [SerializeField] private CategoryObjectsListView m_ListView;
+        [SerializeField] private CategoryObjectItemView m_DestroyItemView;
+        [SerializeField] private CategoryObjectItemView m_MoveItemView;
 
         protected override void Start()
         {
@@ -61,7 +77,7 @@ namespace Johnny.SimDungeon
 
         private void OnActiveGridModeChanged(EasyGridBuilderPro easyGridBuilderPro, GridMode gridMode)
         {
-            if (gridMode != GridMode.BuildMode)
+            if (gridMode != GridMode.BuildMode && ViewModel.SelectedItem != null)
             {
                 ViewModel.SelectedItem = null;
             }
@@ -70,6 +86,8 @@ namespace Johnny.SimDungeon
         protected override void Binding(BindingSet<ViewBase<CategoryObjectsPanelViewModel>, CategoryObjectsPanelViewModel> bindingSet)
         {
             bindingSet.Bind(this.m_ListView).For(v => v.Items).To(vm => vm.Items).OneWay();
+            //bindingSet.Bind(m_DestroyItemView).For(v => v.ViewModel).To(vm => vm.destroyItem).OneWay();
+            //bindingSet.Bind(m_MoveItemView).For(v => v.ViewModel).To(vm => vm.moveItem).OneWay();
         }
 
         protected override void StaticBinding(BindingSet<ViewBase<CategoryObjectsPanelViewModel>> staticBindingSet)
@@ -79,6 +97,12 @@ namespace Johnny.SimDungeon
 
         public void Init()
         {
+            ViewModel.destroyItem = ViewModel.CreateItem(null, GridMode.DestroyMode, GridType.Large);
+            ViewModel.moveItem = ViewModel.CreateItem(null, GridMode.MoveMode, GridType.Small);
+
+            m_DestroyItemView.ViewModel =(ViewModel.destroyItem);
+            m_MoveItemView.ViewModel=(ViewModel.moveItem);
+
             AllItems[GameMode.Structure] = new ObservableList<CategoryObjectItemViewModel>();
             foreach (var category in BuildableAssets.Instance.Structures)
             {
@@ -88,7 +112,7 @@ namespace Johnny.SimDungeon
                     {
                         if (!AllItems[GameMode.Structure].Any(x => x.Data == buildableObjectSO))
                         {
-                            var item = ViewModel.CreateItem(buildableObjectSO.buildableObjectUICategorySO, category.gridType);
+                            var item = ViewModel.CreateItem(buildableObjectSO.buildableObjectUICategorySO, GridMode.BuildMode, category.gridType);
                             AllItems[GameMode.Structure].Add(item);
                         }
                     }
@@ -104,7 +128,7 @@ namespace Johnny.SimDungeon
                     {
                         if (!AllItems[GameMode.Placement].Any(x => x.Data == buildableObjectSO))
                         {
-                            var item = ViewModel.CreateItem(buildableObjectSO.buildableObjectUICategorySO, category.gridType);
+                            var item = ViewModel.CreateItem(buildableObjectSO.buildableObjectUICategorySO, GridMode.BuildMode, category.gridType);
                             AllItems[GameMode.Placement].Add(item);
                         }
                     }
@@ -150,11 +174,11 @@ namespace Johnny.SimDungeon
 
         private void OnActiveBuildableSOChanged(EasyGridBuilderPro easyGridBuilderPro, BuildableObjectSO buildableObjectSO)
         {
-            if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro != easyGridBuilderPro) return;
-            if (buildableObjectSO == null && ViewModel.SelectedItem != null)
-            {
-                ViewModel.SelectedItem = null;
-            }
+            //if (BindingService.MainGameViewModel.ActiveEasyGridBuilderPro != easyGridBuilderPro) return;
+            //if (buildableObjectSO == null && ViewModel.SelectedItem != null)
+            //{
+            //    ViewModel.SelectedItem = null;
+            //}
         }
 
 

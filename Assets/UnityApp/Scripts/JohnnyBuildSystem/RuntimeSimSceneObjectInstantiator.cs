@@ -17,7 +17,7 @@ namespace Johnny.SimDungeon
                 {
                     var buildableObjectSO = entity.buildableObjectSO;
                     entity.Direction = DirectionUtility.ToDirection(rotation);
-                    if (entity is Entity_Wall)
+                    if (entity is Entity_Wall wallEntit)
                     {
                         var so = buildableObjectSO as BuildableEdgeObjectSO;
                         if (so == null)
@@ -78,7 +78,7 @@ namespace Johnny.SimDungeon
                 {
                     //reslut = InstantiatePrefab(template, position, rotation, scale, parent);
                 }
-                SpawnManager.Instance.spwanedEntity.Add(reslut.GetComponent<Entity>());
+                //SpawnManager.Instance.spwanedEntity.Add(reslut.GetComponent<Entity>());
             }
             //Editor
             else
@@ -114,7 +114,7 @@ namespace Johnny.SimDungeon
                 gameObj.transform.rotation = rotation;
                 gameObj.transform.localScale = scale;
 
-                SpawnManager.Instance.spwanedEntity.Add(gameObj.GetComponent<Entity>());
+                SpawnManager.Instance.spwanedEntityForEditor.Add(gameObj.GetComponent<Entity>());
                 return gameObj;
             }
 

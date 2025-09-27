@@ -36,28 +36,33 @@ namespace Johnny.SimDungeon
         }
         protected override void OnBeginDrawEditors()
         {
-            var toolbarHeight = this.MenuTree.Config.SearchToolbarHeight;
-            if (this.MenuTree != null && this.MenuTree.Selection != null && this.MenuTree.Selection.Count > 0)
+            if (MenuTree != null)
             {
-                var selected = this.MenuTree.Selection.FirstOrDefault();
-                SirenixEditorGUI.BeginHorizontalToolbar(toolbarHeight);
+                var toolbarHeight = this.MenuTree.Config.SearchToolbarHeight;
+                if (this.MenuTree.Selection != null && this.MenuTree.Selection.Count > 0)
                 {
-                    if (selected != null)
+                    var selected = this.MenuTree.Selection.FirstOrDefault();
+                    SirenixEditorGUI.BeginHorizontalToolbar(toolbarHeight);
                     {
-                        GUILayout.Label(selected.Name);
-                    }
-                    if (selected.Value is UnityEngine.Object obj)
-                    {
-                        if (SirenixEditorGUI.ToolbarButton(new GUIContent("Pin")))
+                        if (selected != null)
                         {
+                            GUILayout.Label(selected.Name);
+                        }
+                        if (selected.Value is UnityEngine.Object obj)
+                        {
+                            if (SirenixEditorGUI.ToolbarButton(new GUIContent("Pin")))
                             {
-                                EditorGUIUtility.PingObject(obj);
-                                Selection.activeObject = obj;
+                                {
+                                    EditorGUIUtility.PingObject(obj);
+                                    Selection.activeObject = obj;
+                                }
                             }
                         }
                     }
                 }
             }
+
+
 
 
 

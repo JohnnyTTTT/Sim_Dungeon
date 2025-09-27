@@ -3,13 +3,22 @@
     "name": "SimDungeon Input Asset",
     "maps": [
         {
-            "name": "Keyboard",
+            "name": "Default",
             "id": "9ed88cd0-bcf6-4df6-b3a2-aaa776db9826",
             "actions": [
                 {
                     "name": "Flood Fill",
                     "type": "Button",
                     "id": "77b9e457-545a-413b-8697-6fce92e0f429",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Select",
+                    "type": "Button",
+                    "id": "38d248a9-ddef-41ce-b700-42e830cdf773",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -25,6 +34,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Flood Fill",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e710734b-1ffb-4430-a222-ae5f6e15f683",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

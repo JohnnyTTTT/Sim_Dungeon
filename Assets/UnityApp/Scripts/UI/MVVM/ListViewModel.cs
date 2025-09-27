@@ -52,11 +52,12 @@ namespace Johnny.SimDungeon
 
         protected virtual void OnItemClick(T item)
         {
-
+            Debug.Log(222);
         }
 
         private void OnItemSelect(T item)
         {
+            Debug.Log(111);
             SelectedItem = item;
             //item.IsSelected = !item.IsSelected;
             //if (item.IsSelected)

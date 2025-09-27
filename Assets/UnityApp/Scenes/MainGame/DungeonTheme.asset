@@ -992,7 +992,7 @@ MonoBehaviour:
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
-  selected: 1
+  selected: 0
   zIndex: 232
   inputPins:
   - {fileID: 3876872033898170860}
@@ -1151,9 +1151,9 @@ MonoBehaviour:
   m_Name: DungeonTheme
   m_EditorClassIdentifier: DungeonArchitect.Modules.Graph::DungeonArchitect.Graphs.Graph
   indexCounter:
-    index: 42
+    index: 44
   topZIndex:
-    index: 232
+    index: 266
   nodes:
   - {fileID: -6834357345733334772}
   - {fileID: 8695320524079790731}
@@ -1594,7 +1594,7 @@ MonoBehaviour:
   canBeSelected: 1
   canBeMoved: 1
   selected: 0
-  zIndex: 182
+  zIndex: 247
   inputPins: []
   outputPins:
   - {fileID: 9156150458333625078}
@@ -2045,15 +2045,15 @@ MonoBehaviour:
   caption: Game Object Node
   bounds:
     serializedVersion: 2
-    x: 645.02594
-    y: -325.57422
+    x: 536.6821
+    y: -315.32544
     width: 120
     height: 120
   canBeDeleted: 1
   canBeSelected: 1
   canBeMoved: 1
-  selected: 0
-  zIndex: 192
+  selected: 1
+  zIndex: 266
   inputPins:
   - {fileID: -3385880362137209039}
   outputPins:
