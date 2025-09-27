@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc34930bb49e7ac4a98e3843c21a284c, type: 3}
+  m_Name: Configuration
+  m_EditorClassIdentifier: 
+  _renderPipeline: 4
+  showInstallerOnReload: 0
+  _titleImage: {fileID: 2800000, guid: 0e729bc23b0cd4644b8784e545a8fc5c, type: 3}
+  _manualUrl: https://virtualplayground.d2.pl/wiki/CrossSection
+  _version: {fileID: 4900000, guid: 0298c8dd7a61ea44fa10bf8fc8b34a8b, type: 3}
+  _basePackagesURP:
+  - {fileID: 102900000, guid: 265e07fe5f77de74dab937b06fcd89b7, type: 3}
+  - {fileID: 102900000, guid: fb3fe34ae88a5b34385be3f97e3c64a3, type: 3}
+  - {fileID: 102900000, guid: 94f14635dfd3629418d4283dfcc355aa, type: 3}
+  - {fileID: 102900000, guid: 6d100cf4822ce8e449c91ca3495d461d, type: 3}
+  - {fileID: 102900000, guid: 46cc9edaa7693a24690e56fe20d36282, type: 3}
+  - {fileID: 102900000, guid: 225d4f7d0d762934da553ca558d50cf2, type: 3}
+  _packagesURP_version: 2.1
+  _basePackagesHDRP:
+  - {fileID: 102900000, guid: 265e07fe5f77de74dab937b06fcd89b7, type: 3}
+  - {fileID: 102900000, guid: 3d57655c3edf6f04990a58ea00af3a6e, type: 3}
+  - {fileID: 102900000, guid: e5716594403b96a4ea1bbc09b7034a33, type: 3}
+  - {fileID: 102900000, guid: 7bf8746147edf084daf0136a6d243b22, type: 3}
+  - {fileID: 102900000, guid: 33c43f6df9c441647ace7a0e327c1a64, type: 3}
+  - {fileID: 102900000, guid: 003142af4fc7a0c4f853e98081661a32, type: 3}
+  _packagesHDRP_version: 3.1
+  _outlinesBuiltinPackage: {fileID: 102900000, guid: ad6fd443436fc7f4895bab3b4c5ee353, type: 3}
+  _textmeshproPackage: {fileID: 102900000, guid: 1fe33af1be77f7b4695070d6691f4aa6, type: 3}

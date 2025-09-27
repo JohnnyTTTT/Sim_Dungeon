@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: PlasterWall CS
+  m_Shader: {fileID: 4800000, guid: 8238a0c7960d63a4d93d25e05aa31eca, type: 3}
+  m_Parent: {fileID: 2100000, guid: bab47cd68e6e4084bbc5c2da03dfe3e9, type: 2}
+  m_ModifiedSerializedProperties: 8
+  m_ValidKeywords:
+  - _ALPHATEST_ON
+  - _DETAIL_MAP
+  - _DISABLE_SSR_TRANSPARENT
+  - _DOUBLESIDED_ON
+  - _NORMALMAP
+  - _NORMALMAP_TANGENT_SPACE
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 1
+  m_CustomRenderQueue: -1
+  stringTagMap:
+    RenderType: TransparentCutout
+  disabledShaderPasses:
+  - DistortionVectors
+  - MOTIONVECTORS
+  - TransparentDepthPrepass
+  - TransparentDepthPostpass
+  - TransparentBackface
+  - RayTracingPrepass
+  - ForwardEmissiveForDeferred
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs: []
+    m_Ints: []
+    m_Floats:
+    - _AORemapMin: 0.6167169
+    - _CullMode: 0
+    - _CullModeForward: 0
+    - _DetailAlbedoScale: 1
+    - _DetailNormalScale: 1
+    - _DoubleSidedEnable: 1
+    - _IridescenceMask: 1
+    - _IridescenceThickness: 1
+    - _NormalScale: 1
+    - _Smoothness: 0.328
+    - _SmoothnessRemapMax: 0.5549824
+    - _SmoothnessRemapMin: 0
+    m_Colors:
+    - _BaseColor: {r: 0.9528302, g: 0.9380626, b: 0.8494571, a: 1}
+    - _Color: {r: 0.95283014, g: 0.9380626, b: 0.8494571, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
+--- !u!114 &2509280433437203154
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 13
+  hdPluginSubTargetMaterialVersions:
+    m_Keys: []
+    m_Values: 
